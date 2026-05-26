@@ -1,0 +1,15 @@
+{
+  "name": "xadani-oaxaca",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "vercel dev",
+    "serve": "python -m http.server 5177"
+  },
+  "dependencies": {
+    "stripe": "^18.0.0"
+  },
+  "devDependencies": {
+    "vercel": "^34.0.0"
+  }
+}
