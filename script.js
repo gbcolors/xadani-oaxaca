@@ -180,6 +180,7 @@ const paymentPreview = document.querySelector("#payment-preview");
 const reservationSubmit = document.querySelector("#reservation-submit");
 
 const checkoutEndpoint = "/api/create-checkout-session";
+let remoteMenuItems = [];
 const defaultSiteSettings = {
   businessName: "Xadani en Oaxaca",
   domain: "xadanienoaxaca.com",
@@ -224,6 +225,22 @@ function updatePaymentPreview() {
   reservationSubmit.textContent = payment.total > 0 ? "Continuar a pago seguro" : "Enviar solicitud";
 }
 
+async function apiJson(path, options = {}) {
+  const response = await fetch(path, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...(options.headers || {})
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error(`API ${response.status}`);
+  }
+
+  return response.json();
+}
+
 function getSiteSettings() {
   try {
     return {
@@ -232,6 +249,27 @@ function getSiteSettings() {
     };
   } catch {
     return defaultSiteSettings;
+  }
+}
+
+async function loadRemoteSettings() {
+  try {
+    const data = await apiJson("/api/settings");
+    localStorage.setItem(
+      "xadaniSiteSettings",
+      JSON.stringify({ ...defaultSiteSettings, ...(data.settings || {}) })
+    );
+  } catch {
+    // Local settings remain available before DATABASE_URL is configured.
+  }
+}
+
+async function loadRemoteMenu() {
+  try {
+    const data = await apiJson("/api/menu");
+    remoteMenuItems = data.menu || [];
+  } catch {
+    remoteMenuItems = [];
   }
 }
 
@@ -287,17 +325,31 @@ function renderMenu(category) {
 function getLocalMenuItems(category) {
   try {
     const rows = JSON.parse(localStorage.getItem("xadaniMenuOverrides")) || [];
-    return rows
+    const localRows = (remoteMenuItems.length ? [] : rows)
       .filter((item) => item.category === category)
       .map((item) => ({
         name: item.name,
         description: item.description,
         price: Number(item.price),
         tags: ["Nuevo"],
-        image: "https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=900&q=80"
+        image:
+          item.image ||
+          "https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=900&q=80"
       }));
+    const remoteRows = remoteMenuItems
+      .filter((item) => item.category === category)
+      .map((item) => ({
+        name: item.name,
+        description: item.description,
+        price: Number(item.price),
+        tags: item.tags?.length ? item.tags : ["Nuevo"],
+        image:
+          item.image ||
+          "https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=900&q=80"
+      }));
+    return [...remoteRows, ...localRows];
   } catch {
-    return [];
+    return remoteMenuItems.filter((item) => item.category === category);
   }
 }
 
@@ -354,6 +406,12 @@ function saveReservation(reservation) {
   const reservations = getSavedReservations();
   reservations.push(reservation);
   localStorage.setItem("xadaniReservations", JSON.stringify(reservations));
+  apiJson("/api/reservations", {
+    method: "POST",
+    body: JSON.stringify(reservation)
+  }).catch(() => {
+    // The local copy is kept when the database is not configured yet.
+  });
 }
 
 openReservationButtons.forEach((button) => {
@@ -458,3 +516,9 @@ if (stripeStatus === "success" || stripeStatus === "cancel") {
 
 applySiteSettings();
 renderMenu("calientes");
+
+Promise.all([loadRemoteSettings(), loadRemoteMenu()]).then(() => {
+  applySiteSettings();
+  const activeTab = document.querySelector(".tab.active");
+  renderMenu(activeTab?.dataset.category || "calientes");
+});

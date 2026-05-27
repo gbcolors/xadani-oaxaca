@@ -14,11 +14,14 @@ Usa esta opcion si quieres que funcionen los anticipos, experiencias y eventos c
 ```bash
 STRIPE_SECRET_KEY=sk_live_o_sk_test_de_stripe
 PUBLIC_SITE_URL=https://xadanienoaxaca.com
+DATABASE_URL=postgresql://user:password@host:5432/database?sslmode=require
+ADMIN_API_TOKEN=una-clave-larga-para-el-panel
 ```
 
 5. Despliega el proyecto.
 6. En `Settings > Domains`, agrega `xadanienoaxaca.com`.
 7. En tu proveedor de dominio, apunta el DNS a Vercel siguiendo las instrucciones que Vercel muestre.
+8. Inicializa la base con una peticion POST a `https://xadanienoaxaca.com/api/db/init`.
 
 Vercel aplica variables de entorno a nuevos deployments, asi que despues de cambiarlas hay que redeployar.
 

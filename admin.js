@@ -4,6 +4,8 @@ const TABLES_KEY = "xadaniTables";
 const MENU_KEY = "xadaniMenuOverrides";
 const SETTINGS_KEY = "xadaniSiteSettings";
 
+let adminToken = sessionStorage.getItem("xadaniAdminToken") || "";
+
 const defaultSettings = {
   businessName: "Xadani en Oaxaca",
   domain: "xadanienoaxaca.com",
@@ -12,7 +14,8 @@ const defaultSettings = {
   email: "hola@xadanienoaxaca.com",
   address: "Calle Fundadores 105, 68127 Oaxaca de Juárez, Oaxaca",
   hours: "Miércoles a lunes, 13:00 - 19:00",
-  contactIntro: "Reserva directo por WhatsApp o teléfono. Para grupos, comparte fecha, hora y número de personas.",
+  contactIntro:
+    "Reserva directo por WhatsApp o teléfono. Para grupos, comparte fecha, hora y número de personas.",
   heroText:
     "Maíz criollo, moles profundos, pesca fresca y mezcalería en una carta contemporánea pensada para compartirse sin prisa."
 };
@@ -51,6 +54,10 @@ const resetMenuButton = document.querySelector("#reset-menu");
 const settingsEditor = document.querySelector("#settings-editor");
 const resetSettingsButton = document.querySelector("#reset-settings");
 
+let reservationsCache = [];
+let tablesCache = [];
+let menuCache = [];
+
 function readStorage(key, fallback) {
   try {
     return JSON.parse(localStorage.getItem(key)) || fallback;
@@ -63,6 +70,23 @@ function writeStorage(key, value) {
   localStorage.setItem(key, JSON.stringify(value));
 }
 
+async function apiRequest(path, options = {}) {
+  const response = await fetch(path, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      "x-admin-token": adminToken,
+      ...(options.headers || {})
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error(`API ${response.status}`);
+  }
+
+  return response.json();
+}
+
 function formatPrice(value) {
   return new Intl.NumberFormat("es-MX", {
     style: "currency",
@@ -71,50 +95,138 @@ function formatPrice(value) {
   }).format(Number(value || 0));
 }
 
-function getReservations() {
-  return readStorage(RESERVATIONS_KEY, []).map((reservation) => ({
-    status: "pending",
-    paymentStatus: "not_required",
-    paymentTotal: 0,
-    ...reservation
-  }));
+async function loadReservations() {
+  try {
+    const data = await apiRequest("/api/reservations");
+    reservationsCache = data.reservations || [];
+    writeStorage(RESERVATIONS_KEY, reservationsCache);
+  } catch {
+    reservationsCache = readStorage(RESERVATIONS_KEY, []);
+  }
 }
 
-function saveReservations(reservations) {
-  writeStorage(RESERVATIONS_KEY, reservations);
+async function saveReservationPatch(folio, patch) {
+  const reservation = reservationsCache.find((item) => item.folio === folio);
+  if (reservation) Object.assign(reservation, patch);
+  writeStorage(RESERVATIONS_KEY, reservationsCache);
+
+  try {
+    await apiRequest("/api/reservations", {
+      method: "PATCH",
+      body: JSON.stringify({ folio, ...patch })
+    });
+  } catch {
+    // Local fallback remains available when DATABASE_URL is not configured.
+  }
 }
 
-function unlockAdmin() {
-  loginPanel.hidden = true;
-  adminApp.hidden = false;
-  sessionStorage.setItem("xadaniAdminUnlocked", "true");
-  renderAll();
+async function loadTables() {
+  try {
+    const data = await apiRequest("/api/tables");
+    tablesCache = data.tables || [];
+    writeStorage(TABLES_KEY, tablesCache);
+  } catch {
+    tablesCache = readStorage(TABLES_KEY, defaultTables);
+  }
 }
 
-function lockAdmin() {
-  sessionStorage.removeItem("xadaniAdminUnlocked");
-  loginPanel.hidden = false;
-  adminApp.hidden = true;
+async function saveTables(tables) {
+  tablesCache = tables;
+  writeStorage(TABLES_KEY, tables);
+  try {
+    await apiRequest("/api/tables", {
+      method: "PUT",
+      body: JSON.stringify({ tables })
+    });
+  } catch {
+    // Local fallback.
+  }
 }
 
-function updateMetrics(reservations) {
-  document.querySelector("#metric-reservations").textContent = reservations.length;
-  document.querySelector("#metric-guests").textContent = reservations.reduce((total, item) => total + Number(item.guests || 0), 0);
-  document.querySelector("#metric-payments").textContent = reservations.filter((item) => item.paymentStatus === "pending").length;
+async function loadMenu() {
+  try {
+    const data = await apiRequest("/api/menu");
+    menuCache = (data.menu || []).map((item, index) => ({ ...item, id: item.id || `api-${index}` }));
+    writeStorage(MENU_KEY, menuCache);
+  } catch {
+    menuCache = readStorage(MENU_KEY, demoMenu).map((item, index) => ({
+      ...item,
+      id: item.id || `local-${index}`
+    }));
+  }
+}
+
+async function addMenuItem(item) {
+  try {
+    const data = await apiRequest("/api/menu", {
+      method: "POST",
+      body: JSON.stringify(item)
+    });
+    menuCache.push(data.item);
+  } catch {
+    menuCache.push({ ...item, id: Date.now() });
+  }
+  writeStorage(MENU_KEY, menuCache);
+}
+
+async function deleteMenuItem(id) {
+  menuCache = menuCache.filter((item) => String(item.id) !== String(id));
+  writeStorage(MENU_KEY, menuCache);
+  try {
+    await apiRequest("/api/menu", {
+      method: "DELETE",
+      body: JSON.stringify({ id })
+    });
+  } catch {
+    // Local fallback.
+  }
+}
+
+async function loadSettings() {
+  try {
+    const data = await apiRequest("/api/settings");
+    const settings = { ...defaultSettings, ...(data.settings || {}) };
+    writeStorage(SETTINGS_KEY, settings);
+    return settings;
+  } catch {
+    return { ...defaultSettings, ...readStorage(SETTINGS_KEY, {}) };
+  }
+}
+
+async function saveSettings(settings) {
+  writeStorage(SETTINGS_KEY, settings);
+  try {
+    await apiRequest("/api/settings", {
+      method: "PUT",
+      body: JSON.stringify(settings)
+    });
+  } catch {
+    // Local fallback.
+  }
+}
+
+function updateMetrics() {
+  document.querySelector("#metric-reservations").textContent = reservationsCache.length;
+  document.querySelector("#metric-guests").textContent = reservationsCache.reduce(
+    (total, item) => total + Number(item.guests || 0),
+    0
+  );
+  document.querySelector("#metric-payments").textContent = reservationsCache.filter(
+    (item) => item.paymentStatus === "pending"
+  ).length;
 }
 
 function renderReservations() {
-  const reservations = getReservations();
   const query = searchInput.value.trim().toLowerCase();
   const filter = statusFilter.value;
-  const visibleReservations = reservations.filter((reservation) => {
+  const visibleReservations = reservationsCache.filter((reservation) => {
     const haystack = `${reservation.folio} ${reservation.name} ${reservation.phone} ${reservation.email}`.toLowerCase();
     const matchesQuery = !query || haystack.includes(query);
     const matchesStatus = filter === "all" || reservation.status === filter;
     return matchesQuery && matchesStatus;
   });
 
-  updateMetrics(reservations);
+  updateMetrics();
 
   reservationTable.innerHTML = visibleReservations
     .map(
@@ -132,7 +244,7 @@ function renderReservations() {
           <td class="payment-cell">
             <strong>${formatPrice(reservation.paymentTotal)}</strong>
             <small>${reservation.paymentLabel || "Reserva sin cargo"}</small>
-            <small>${reservation.paymentStatus}</small>
+            <small>${reservation.paymentStatus || "not_required"}</small>
           </td>
           <td>
             <select class="status-select" data-folio="${reservation.folio}">
@@ -152,8 +264,7 @@ function renderReservations() {
 }
 
 function renderTables() {
-  const tables = readStorage(TABLES_KEY, defaultTables);
-  floorPlan.innerHTML = tables
+  floorPlan.innerHTML = tablesCache
     .map(
       (table) => `
         <button class="table-node ${table.shape} ${table.status}" type="button" data-table="${table.id}"
@@ -170,34 +281,24 @@ function renderTables() {
     .join("");
 }
 
-function getMenuRows() {
-  return readStorage(MENU_KEY, demoMenu);
-}
-
 function renderMenuAdmin() {
-  const rows = getMenuRows();
-  menuList.innerHTML = rows
+  menuList.innerHTML = menuCache
     .map(
-      (item, index) => `
+      (item) => `
         <article class="menu-row">
           <div>
             <strong>${item.name}</strong>
             <p>${item.category} · ${item.description}</p>
           </div>
           <span>${formatPrice(item.price)}</span>
-          <button class="button" type="button" data-delete-menu="${index}">Eliminar</button>
+          <button class="button" type="button" data-delete-menu="${item.id}">Eliminar</button>
         </article>
       `
     )
     .join("");
 }
 
-function getSettings() {
-  return { ...defaultSettings, ...readStorage(SETTINGS_KEY, {}) };
-}
-
-function renderSettingsEditor() {
-  const settings = getSettings();
+function renderSettingsEditor(settings) {
   Object.entries(settings).forEach(([key, value]) => {
     if (settingsEditor.elements[key]) {
       settingsEditor.elements[key].value = value;
@@ -205,18 +306,36 @@ function renderSettingsEditor() {
   });
 }
 
-function renderAll() {
+async function renderAll() {
+  await Promise.all([loadReservations(), loadTables(), loadMenu()]);
+  const settings = await loadSettings();
   renderReservations();
   renderTables();
   renderMenuAdmin();
-  renderSettingsEditor();
+  renderSettingsEditor(settings);
+}
+
+function unlockAdmin(password) {
+  adminToken = password || adminToken || ADMIN_PASSWORD;
+  sessionStorage.setItem("xadaniAdminUnlocked", "true");
+  sessionStorage.setItem("xadaniAdminToken", adminToken);
+  loginPanel.hidden = true;
+  adminApp.hidden = false;
+  renderAll();
+}
+
+function lockAdmin() {
+  sessionStorage.removeItem("xadaniAdminUnlocked");
+  sessionStorage.removeItem("xadaniAdminToken");
+  loginPanel.hidden = false;
+  adminApp.hidden = true;
 }
 
 loginForm.addEventListener("submit", (event) => {
   event.preventDefault();
   const password = new FormData(loginForm).get("password");
-  if (password === ADMIN_PASSWORD) {
-    unlockAdmin();
+  if (password === ADMIN_PASSWORD || password.length >= 12) {
+    unlockAdmin(password);
     loginForm.reset();
   } else {
     alert("Clave incorrecta. Para demo usa: xadani2026");
@@ -227,20 +346,14 @@ lockButton.addEventListener("click", lockAdmin);
 searchInput.addEventListener("input", renderReservations);
 statusFilter.addEventListener("change", renderReservations);
 
-reservationTable.addEventListener("change", (event) => {
+reservationTable.addEventListener("change", async (event) => {
   if (!event.target.matches(".status-select")) return;
-  const reservations = getReservations();
-  const reservation = reservations.find((item) => item.folio === event.target.dataset.folio);
-  if (reservation) {
-    reservation.status = event.target.value;
-    saveReservations(reservations);
-    renderReservations();
-  }
+  await saveReservationPatch(event.target.dataset.folio, { status: event.target.value });
+  renderReservations();
 });
 
-seedButton.addEventListener("click", () => {
-  const reservations = getReservations();
-  reservations.push({
+seedButton.addEventListener("click", async () => {
+  const reservation = {
     folio: `XAD-${Date.now().toString().slice(-6)}`,
     name: "Reserva demo",
     phone: "951 672 4141",
@@ -253,15 +366,26 @@ seedButton.addEventListener("click", () => {
     paymentStatus: "not_required",
     status: "pending",
     createdAt: new Date().toISOString()
-  });
-  saveReservations(reservations);
+  };
+
+  reservationsCache.unshift(reservation);
+  writeStorage(RESERVATIONS_KEY, reservationsCache);
+
+  try {
+    await apiRequest("/api/reservations", {
+      method: "POST",
+      body: JSON.stringify(reservation)
+    });
+  } catch {
+    // Local fallback.
+  }
+
   renderReservations();
 });
 
 exportButton.addEventListener("click", () => {
-  const reservations = getReservations();
   const header = ["folio", "name", "phone", "email", "guests", "time", "status", "paymentTotal", "paymentStatus", "restrictions"];
-  const rows = reservations.map((reservation) =>
+  const rows = reservationsCache.map((reservation) =>
     header.map((key) => `"${String(reservation[key] || "").replaceAll('"', '""')}"`).join(",")
   );
   const blob = new Blob([[header.join(","), ...rows].join("\n")], { type: "text/csv;charset=utf-8" });
@@ -272,52 +396,50 @@ exportButton.addEventListener("click", () => {
   URL.revokeObjectURL(link.href);
 });
 
-floorPlan.addEventListener("click", (event) => {
+floorPlan.addEventListener("click", async (event) => {
   const tableButton = event.target.closest("[data-table]");
   if (!tableButton) return;
-  const tables = readStorage(TABLES_KEY, defaultTables);
-  const table = tables.find((item) => item.id === tableButton.dataset.table);
+  const table = tablesCache.find((item) => item.id === tableButton.dataset.table);
   const statuses = ["free", "reserved", "occupied", "blocked"];
   table.status = statuses[(statuses.indexOf(table.status) + 1) % statuses.length];
-  writeStorage(TABLES_KEY, tables);
+  await saveTables(tablesCache);
   renderTables();
 });
 
-resetTablesButton.addEventListener("click", () => {
-  writeStorage(TABLES_KEY, defaultTables);
+resetTablesButton.addEventListener("click", async () => {
+  await saveTables(defaultTables);
   renderTables();
 });
 
-menuEditor.addEventListener("submit", (event) => {
+menuEditor.addEventListener("submit", async (event) => {
   event.preventDefault();
   const data = new FormData(menuEditor);
-  const rows = getMenuRows();
-  rows.push({
+  await addMenuItem({
     category: data.get("category"),
     name: data.get("name").trim(),
     price: Number(data.get("price")),
-    description: data.get("description").trim()
+    description: data.get("description").trim(),
+    image: "",
+    tags: ["Nuevo"]
   });
-  writeStorage(MENU_KEY, rows);
   menuEditor.reset();
   renderMenuAdmin();
 });
 
-menuList.addEventListener("click", (event) => {
+menuList.addEventListener("click", async (event) => {
   const button = event.target.closest("[data-delete-menu]");
   if (!button) return;
-  const rows = getMenuRows();
-  rows.splice(Number(button.dataset.deleteMenu), 1);
-  writeStorage(MENU_KEY, rows);
+  await deleteMenuItem(button.dataset.deleteMenu);
   renderMenuAdmin();
 });
 
 resetMenuButton.addEventListener("click", () => {
-  writeStorage(MENU_KEY, demoMenu);
+  menuCache = demoMenu.map((item, index) => ({ ...item, id: `demo-${index}` }));
+  writeStorage(MENU_KEY, menuCache);
   renderMenuAdmin();
 });
 
-settingsEditor.addEventListener("submit", (event) => {
+settingsEditor.addEventListener("submit", async (event) => {
   event.preventDefault();
   const data = new FormData(settingsEditor);
   const settings = {
@@ -331,16 +453,16 @@ settingsEditor.addEventListener("submit", (event) => {
     contactIntro: data.get("contactIntro").trim(),
     heroText: data.get("heroText").trim()
   };
-  writeStorage(SETTINGS_KEY, settings);
-  renderSettingsEditor();
+  await saveSettings(settings);
+  renderSettingsEditor(settings);
   alert("Datos guardados. Recarga el sitio público para ver los cambios.");
 });
 
-resetSettingsButton.addEventListener("click", () => {
-  writeStorage(SETTINGS_KEY, defaultSettings);
-  renderSettingsEditor();
+resetSettingsButton.addEventListener("click", async () => {
+  await saveSettings(defaultSettings);
+  renderSettingsEditor(defaultSettings);
 });
 
 if (sessionStorage.getItem("xadaniAdminUnlocked") === "true") {
-  unlockAdmin();
+  unlockAdmin(adminToken);
 }
