@@ -1,6 +1,6 @@
 # Base de datos
 
-El sitio usa Postgres mediante la variable `DATABASE_URL`. Puede ser una base de datos de Vercel Postgres, Neon, Supabase o Railway.
+El sitio usa Postgres mediante `DATABASE_URL`. Tambien acepta `POSTGRES_URL`, `POSTGRES_PRISMA_URL` o `POSTGRES_URL_NON_POOLING` si Vercel/Neon las inyecta automaticamente.
 
 ## Variables necesarias
 
@@ -29,6 +29,8 @@ El endpoint crea:
 Tambien deja datos iniciales de mesas y ajustes del restaurante.
 
 El SQL base tambien queda documentado en `database/schema.sql`.
+
+Si ves `getaddrinfo ENOTFOUND host`, la variable todavia tiene el placeholder `@host`. Reemplazala por el string real que entrega tu proveedor de Postgres.
 
 ## Seguridad
 
