@@ -14,7 +14,7 @@ Usa esta opcion si quieres que funcionen los anticipos, experiencias y eventos c
 ```bash
 STRIPE_SECRET_KEY=sk_live_o_sk_test_de_stripe
 PUBLIC_SITE_URL=https://xadanienoaxaca.com
-DATABASE_URL=postgresql://user:password@host:5432/database?sslmode=require
+DATABASE_URL=postgresql://aws_user:aws_password@your-rds-endpoint.amazonaws.com:5432/xadani?sslmode=require
 ADMIN_API_TOKEN=una-clave-larga-para-el-panel
 ```
 
@@ -22,6 +22,12 @@ ADMIN_API_TOKEN=una-clave-larga-para-el-panel
 6. En `Settings > Domains`, agrega `xadanienoaxaca.com`.
 7. En tu proveedor de dominio, apunta el DNS a Vercel siguiendo las instrucciones que Vercel muestre.
 8. Inicializa la base con una peticion POST a `https://xadanienoaxaca.com/api/db/init`.
+
+Para AWS RDS, el valor de `DATABASE_URL` sale de tu instancia PostgreSQL:
+
+```text
+postgresql://USUARIO:CONTRASENA@ENDPOINT_RDS:5432/NOMBRE_BASE?sslmode=require
+```
 
 Vercel aplica variables de entorno a nuevos deployments, asi que despues de cambiarlas hay que redeployar.
 
