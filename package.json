@@ -5,7 +5,8 @@
   "scripts": {
     "start": "vercel dev",
     "serve": "python -m http.server 5177",
-    "local-server": "node local-server.js"
+    "local-server": "node local-server.js",
+    "start-provisional": "powershell -ExecutionPolicy Bypass -File scripts/start-provisional-server.ps1"
   },
   "dependencies": {
     "pg": "^8.13.1",
