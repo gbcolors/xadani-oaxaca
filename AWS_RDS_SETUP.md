@@ -13,6 +13,14 @@ En AWS crea una base:
 - Puerto: `5432`
 - Acceso publico: activado si Vercel se conectara directamente desde internet
 
+Tambien puedes usar el script incluido:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/create-aws-rds.ps1
+```
+
+El script verifica tu identidad AWS, crea una instancia RDS PostgreSQL si no existe y al final imprime el `DATABASE_URL` que debes pegar en Vercel.
+
 ## 2. Security group
 
 En el security group de RDS agrega una regla inbound:
