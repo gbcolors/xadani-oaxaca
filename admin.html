@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="es-MX">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin Xadani | Reservas y mesas</title>
+    <meta name="robots" content="noindex" />
+    <link rel="stylesheet" href="admin.css" />
+  </head>
+  <body>
+    <main class="admin-shell">
+      <aside class="admin-sidebar">
+        <a class="admin-brand" href="index.html">
+          <img src="assets/xadani-logo.png" alt="" />
+          <span>
+            <strong>Xadani</strong>
+            <small>Admin</small>
+          </span>
+        </a>
+        <nav aria-label="Panel admin">
+          <a href="#reservas">Reservas</a>
+          <a href="#mesas">Plano de mesas</a>
+          <a href="#menu-admin">Menú</a>
+          <a href="index.html">Ver sitio</a>
+        </nav>
+      </aside>
+
+      <section class="admin-content">
+        <header class="admin-header">
+          <div>
+            <p class="eyebrow">Panel local</p>
+            <h1>Reservas y operación</h1>
+          </div>
+          <button class="button" type="button" id="lock-admin">Bloquear</button>
+        </header>
+
+        <section class="login-panel" id="login-panel">
+          <div>
+            <p class="eyebrow">Acceso demo</p>
+            <h2>Entrar al panel</h2>
+            <p>
+              Este panel funciona en el navegador. Para operación real multiusuario se debe conectar
+              una base de datos y login seguro.
+            </p>
+          </div>
+          <form id="admin-login">
+            <label>
+              Clave
+              <input type="password" name="password" placeholder="xadani2026" required />
+            </label>
+            <button class="button primary" type="submit">Entrar</button>
+          </form>
+        </section>
+
+        <div class="admin-app" id="admin-app" hidden>
+          <section class="metric-grid" aria-label="Resumen">
+            <article>
+              <span>Reservas</span>
+              <strong id="metric-reservations">0</strong>
+            </article>
+            <article>
+              <span>Personas</span>
+              <strong id="metric-guests">0</strong>
+            </article>
+            <article>
+              <span>Pagos pendientes</span>
+              <strong id="metric-payments">0</strong>
+            </article>
+          </section>
+
+          <section class="admin-card" id="reservas">
+            <div class="card-heading">
+              <div>
+                <p class="eyebrow">Reservas</p>
+                <h2>Solicitudes recibidas</h2>
+              </div>
+              <div class="button-row">
+                <button class="button" type="button" id="seed-reservation">Agregar demo</button>
+                <button class="button" type="button" id="export-reservations">Exportar CSV</button>
+              </div>
+            </div>
+            <div class="filters">
+              <label>
+                Buscar
+                <input id="reservation-search" type="search" placeholder="Nombre, teléfono o folio" />
+              </label>
+              <label>
+                Estado
+                <select id="reservation-status-filter">
+                  <option value="all">Todos</option>
+                  <option value="pending">Pendiente</option>
+                  <option value="confirmed">Confirmada</option>
+                  <option value="seated">Sentada</option>
+                  <option value="completed">Completada</option>
+                  <option value="cancelled">Cancelada</option>
+                </select>
+              </label>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Folio</th>
+                    <th>Cliente</th>
+                    <th>Hora</th>
+                    <th>Personas</th>
+                    <th>Pago</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody id="reservation-table"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="admin-card" id="mesas">
+            <div class="card-heading">
+              <div>
+                <p class="eyebrow">Host stand</p>
+                <h2>Plano de mesas</h2>
+              </div>
+              <button class="button" type="button" id="reset-tables">Restaurar plano</button>
+            </div>
+            <div class="floor-plan" id="floor-plan"></div>
+          </section>
+
+          <section class="admin-card" id="menu-admin">
+            <div class="card-heading">
+              <div>
+                <p class="eyebrow">Editor</p>
+                <h2>Menú y precios</h2>
+              </div>
+              <button class="button" type="button" id="reset-menu">Restaurar menú demo</button>
+            </div>
+            <form class="menu-editor" id="menu-editor">
+              <label>
+                Categoría
+                <select name="category">
+                  <option value="calientes">Entradas calientes</option>
+                  <option value="frias">Entradas frías</option>
+                  <option value="fuertes">Fuertes</option>
+                  <option value="postres">Postres</option>
+                  <option value="bebidas">Bebidas</option>
+                </select>
+              </label>
+              <label>
+                Platillo
+                <input name="name" type="text" required />
+              </label>
+              <label>
+                Precio
+                <input name="price" type="number" min="1" required />
+              </label>
+              <label class="wide">
+                Descripción
+                <textarea name="description" rows="3" required></textarea>
+              </label>
+              <button class="button primary" type="submit">Agregar platillo</button>
+            </form>
+            <div class="menu-admin-list" id="menu-admin-list"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <script src="admin.js"></script>
+  </body>
+</html>

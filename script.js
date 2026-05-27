@@ -213,7 +213,9 @@ function updatePaymentPreview() {
 }
 
 function renderMenu(category) {
-  grid.innerHTML = menuItems[category]
+  const menuOverrides = getLocalMenuItems(category);
+  const visibleItems = [...menuItems[category], ...menuOverrides];
+  grid.innerHTML = visibleItems
     .map(
       (item) => `
         <article class="dish-card">
@@ -232,6 +234,23 @@ function renderMenu(category) {
       `
     )
     .join("");
+}
+
+function getLocalMenuItems(category) {
+  try {
+    const rows = JSON.parse(localStorage.getItem("xadaniMenuOverrides")) || [];
+    return rows
+      .filter((item) => item.category === category)
+      .map((item) => ({
+        name: item.name,
+        description: item.description,
+        price: Number(item.price),
+        tags: ["Nuevo"],
+        image: "https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=900&q=80"
+      }));
+  } catch {
+    return [];
+  }
 }
 
 tabs.forEach((tab) => {
