@@ -180,6 +180,18 @@ const paymentPreview = document.querySelector("#payment-preview");
 const reservationSubmit = document.querySelector("#reservation-submit");
 
 const checkoutEndpoint = "/api/create-checkout-session";
+const defaultSiteSettings = {
+  businessName: "Xadani en Oaxaca",
+  domain: "xadanienoaxaca.com",
+  phone: "951 672 4141",
+  phoneHref: "+529516724141",
+  email: "hola@xadanienoaxaca.com",
+  address: "Calle Fundadores 105, 68127 Oaxaca de Juárez, Oaxaca",
+  hours: "Miércoles a lunes, 13:00 - 19:00",
+  contactIntro: "Reserva directo por WhatsApp o teléfono. Para grupos, comparte fecha, hora y número de personas.",
+  heroText:
+    "Maíz criollo, moles profundos, pesca fresca y mezcalería en una carta contemporánea pensada para compartirse sin prisa."
+};
 
 function formatPrice(price) {
   return new Intl.NumberFormat("es-MX", {
@@ -210,6 +222,42 @@ function updatePaymentPreview() {
   const payment = getSelectedPayment();
   paymentPreview.querySelector("strong").textContent = formatPrice(payment.total);
   reservationSubmit.textContent = payment.total > 0 ? "Continuar a pago seguro" : "Enviar solicitud";
+}
+
+function getSiteSettings() {
+  try {
+    return {
+      ...defaultSiteSettings,
+      ...(JSON.parse(localStorage.getItem("xadaniSiteSettings")) || {})
+    };
+  } catch {
+    return defaultSiteSettings;
+  }
+}
+
+function applySiteSettings() {
+  const settings = getSiteSettings();
+  document.querySelectorAll("[data-setting]").forEach((element) => {
+    const key = element.dataset.setting;
+    if (settings[key]) {
+      element.textContent = settings[key];
+    }
+  });
+  document.querySelectorAll("[data-setting-href]").forEach((element) => {
+    const key = element.dataset.settingHref;
+    if (key === "phoneHref" && settings.phoneHref) {
+      element.href = `tel:${settings.phoneHref}`;
+    }
+    if (key === "emailHref" && settings.email) {
+      element.href = `mailto:${settings.email}`;
+    }
+  });
+  document.querySelectorAll("[data-setting-placeholder]").forEach((element) => {
+    const key = element.dataset.settingPlaceholder;
+    if (settings[key]) {
+      element.placeholder = settings[key];
+    }
+  });
 }
 
 function renderMenu(category) {
@@ -408,4 +456,5 @@ if (stripeStatus === "success" || stripeStatus === "cancel") {
   });
 }
 
+applySiteSettings();
 renderMenu("calientes");

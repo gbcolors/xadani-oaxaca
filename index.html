@@ -53,7 +53,7 @@
           <img class="hero-logo" src="assets/xadani-logo.png" alt="Xadani en Oaxaca Restaurant Familiar" />
           <p class="eyebrow">Cocina de raíz oaxaqueña</p>
           <h1>Xadani en Oaxaca</h1>
-          <p>
+          <p data-setting="heroText">
             Maíz criollo, moles profundos, pesca fresca y mezcalería en una carta contemporánea
             pensada para compartirse sin prisa.
           </p>
@@ -165,25 +165,31 @@
         <div class="contact-copy">
           <p class="eyebrow">Contacto y ubicación</p>
           <h2>Te esperamos en Oaxaca</h2>
-          <p>Reserva directo por WhatsApp o teléfono. Para grupos, comparte fecha, hora y número de personas.</p>
+          <p data-setting="contactIntro">
+            Reserva directo por WhatsApp o teléfono. Para grupos, comparte fecha, hora y número de personas.
+          </p>
           <div class="contact-actions">
             <button class="button primary" type="button" data-open-reservation>Reservar mesa</button>
-            <a class="button secondary" href="tel:+529516724141">Llamar</a>
+            <a class="button secondary" href="tel:+529516724141" data-setting-href="phoneHref">Llamar</a>
           </div>
         </div>
         <div class="contact-panel">
           <dl>
             <div>
               <dt>Dirección</dt>
-              <dd>Calle Fundadores 105, 68127 Oaxaca de Juárez, Oaxaca</dd>
+              <dd data-setting="address">Calle Fundadores 105, 68127 Oaxaca de Juárez, Oaxaca</dd>
             </div>
             <div>
               <dt>Horario</dt>
-              <dd>Miércoles a lunes, 13:00 - 19:00</dd>
+              <dd data-setting="hours">Miércoles a lunes, 13:00 - 19:00</dd>
             </div>
             <div>
               <dt>Correo</dt>
-              <dd><a href="mailto:hola@xadanienoaxaca.com">hola@xadanienoaxaca.com</a></dd>
+              <dd>
+                <a href="mailto:hola@xadanienoaxaca.com" data-setting="email" data-setting-href="emailHref">
+                  hola@xadanienoaxaca.com
+                </a>
+              </dd>
             </div>
           </dl>
         </div>
@@ -222,6 +228,7 @@
                 name="phone"
                 autocomplete="tel"
                 placeholder="951 672 4141"
+                data-setting-placeholder="phone"
                 minlength="8"
                 required
               />

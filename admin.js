@@ -2,6 +2,20 @@ const ADMIN_PASSWORD = "xadani2026";
 const RESERVATIONS_KEY = "xadaniReservations";
 const TABLES_KEY = "xadaniTables";
 const MENU_KEY = "xadaniMenuOverrides";
+const SETTINGS_KEY = "xadaniSiteSettings";
+
+const defaultSettings = {
+  businessName: "Xadani en Oaxaca",
+  domain: "xadanienoaxaca.com",
+  phone: "951 672 4141",
+  phoneHref: "+529516724141",
+  email: "hola@xadanienoaxaca.com",
+  address: "Calle Fundadores 105, 68127 Oaxaca de Juárez, Oaxaca",
+  hours: "Miércoles a lunes, 13:00 - 19:00",
+  contactIntro: "Reserva directo por WhatsApp o teléfono. Para grupos, comparte fecha, hora y número de personas.",
+  heroText:
+    "Maíz criollo, moles profundos, pesca fresca y mezcalería en una carta contemporánea pensada para compartirse sin prisa."
+};
 
 const defaultTables = [
   { id: "M1", capacity: 2, zone: "Ventana", status: "free", shape: "round", x: 8, y: 12 },
@@ -34,6 +48,8 @@ const resetTablesButton = document.querySelector("#reset-tables");
 const menuEditor = document.querySelector("#menu-editor");
 const menuList = document.querySelector("#menu-admin-list");
 const resetMenuButton = document.querySelector("#reset-menu");
+const settingsEditor = document.querySelector("#settings-editor");
+const resetSettingsButton = document.querySelector("#reset-settings");
 
 function readStorage(key, fallback) {
   try {
@@ -176,10 +192,24 @@ function renderMenuAdmin() {
     .join("");
 }
 
+function getSettings() {
+  return { ...defaultSettings, ...readStorage(SETTINGS_KEY, {}) };
+}
+
+function renderSettingsEditor() {
+  const settings = getSettings();
+  Object.entries(settings).forEach(([key, value]) => {
+    if (settingsEditor.elements[key]) {
+      settingsEditor.elements[key].value = value;
+    }
+  });
+}
+
 function renderAll() {
   renderReservations();
   renderTables();
   renderMenuAdmin();
+  renderSettingsEditor();
 }
 
 loginForm.addEventListener("submit", (event) => {
@@ -285,6 +315,30 @@ menuList.addEventListener("click", (event) => {
 resetMenuButton.addEventListener("click", () => {
   writeStorage(MENU_KEY, demoMenu);
   renderMenuAdmin();
+});
+
+settingsEditor.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const data = new FormData(settingsEditor);
+  const settings = {
+    businessName: data.get("businessName").trim(),
+    domain: data.get("domain").trim(),
+    phone: data.get("phone").trim(),
+    phoneHref: data.get("phoneHref").trim(),
+    email: data.get("email").trim(),
+    address: data.get("address").trim(),
+    hours: data.get("hours").trim(),
+    contactIntro: data.get("contactIntro").trim(),
+    heroText: data.get("heroText").trim()
+  };
+  writeStorage(SETTINGS_KEY, settings);
+  renderSettingsEditor();
+  alert("Datos guardados. Recarga el sitio público para ver los cambios.");
+});
+
+resetSettingsButton.addEventListener("click", () => {
+  writeStorage(SETTINGS_KEY, defaultSettings);
+  renderSettingsEditor();
 });
 
 if (sessionStorage.getItem("xadaniAdminUnlocked") === "true") {
