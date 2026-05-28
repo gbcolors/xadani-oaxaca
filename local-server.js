@@ -6,6 +6,7 @@ const crypto = require("node:crypto");
 const root = __dirname;
 const dataDir = path.join(root, "data");
 const port = Number(process.env.PORT || 3000);
+const sessions = new Map();
 
 const defaultSettings = {
   businessName: "Xadani en Oaxaca",
@@ -60,6 +61,33 @@ async function ensureData() {
       }
     })
   );
+  await ensureAdmin();
+}
+
+function hashPassword(password, salt = crypto.randomBytes(16).toString("hex")) {
+  const passwordHash = crypto
+    .pbkdf2Sync(password, salt, 150000, 64, "sha512")
+    .toString("hex");
+  return { salt, passwordHash };
+}
+
+async function ensureAdmin() {
+  const adminPath = path.join(dataDir, "admin.json");
+  try {
+    await fs.access(adminPath);
+  } catch {
+    await fs.writeFile(
+      adminPath,
+      JSON.stringify(
+        {
+          ...hashPassword(process.env.LOCAL_ADMIN_PASSWORD || "xadani2026"),
+          updatedAt: new Date().toISOString()
+        },
+        null,
+        2
+      )
+    );
+  }
 }
 
 async function readJson(fileName) {
@@ -93,7 +121,67 @@ function notFound(res) {
   sendJson(res, 404, { error: "Not found" });
 }
 
+async function requireAdmin(req, res) {
+  const token = req.headers["x-admin-token"] || "";
+  const session = sessions.get(token);
+
+  if (!session || session.expiresAt < Date.now()) {
+    if (token) sessions.delete(token);
+    sendJson(res, 401, { error: "Unauthorized" });
+    return false;
+  }
+
+  session.expiresAt = Date.now() + 1000 * 60 * 60 * 12;
+  return true;
+}
+
+async function verifyPassword(password) {
+  const admin = await readJson("admin.json");
+  const { passwordHash } = hashPassword(password, admin.salt);
+  return crypto.timingSafeEqual(Buffer.from(passwordHash, "hex"), Buffer.from(admin.passwordHash, "hex"));
+}
+
+async function handleAdmin(req, res, pathname) {
+  if (pathname === "/api/admin/login" && req.method === "POST") {
+    const body = await readBody(req);
+    if (!body.password || !(await verifyPassword(body.password))) {
+      return sendJson(res, 401, { error: "Unauthorized" });
+    }
+
+    const token = crypto.randomBytes(32).toString("hex");
+    sessions.set(token, {
+      createdAt: Date.now(),
+      expiresAt: Date.now() + 1000 * 60 * 60 * 12
+    });
+    return sendJson(res, 200, { token });
+  }
+
+  if (pathname === "/api/admin/password" && req.method === "PUT") {
+    if (!(await requireAdmin(req, res))) return;
+    const body = await readBody(req);
+    if (!body.currentPassword || !body.newPassword || body.newPassword.length < 10) {
+      return sendJson(res, 400, { error: "Password must be at least 10 characters" });
+    }
+    if (!(await verifyPassword(body.currentPassword))) {
+      return sendJson(res, 401, { error: "Unauthorized" });
+    }
+
+    await writeJson("admin.json", {
+      ...hashPassword(body.newPassword),
+      updatedAt: new Date().toISOString()
+    });
+    sessions.clear();
+    return sendJson(res, 200, { ok: true });
+  }
+
+  return notFound(res);
+}
+
 async function handleApi(req, res, pathname) {
+  if (pathname.startsWith("/api/admin/")) {
+    return handleAdmin(req, res, pathname);
+  }
+
   if (pathname === "/api/db/init" && req.method === "POST") {
     await ensureData();
     return sendJson(res, 200, { ok: true, mode: "local-json" });
@@ -104,6 +192,7 @@ async function handleApi(req, res, pathname) {
       return sendJson(res, 200, { settings: await readJson("settings.json") });
     }
     if (req.method === "PUT") {
+      if (!(await requireAdmin(req, res))) return;
       const body = await readBody(req);
       await writeJson("settings.json", body);
       return sendJson(res, 200, { ok: true });
@@ -115,6 +204,7 @@ async function handleApi(req, res, pathname) {
       return sendJson(res, 200, { tables: await readJson("tables.json") });
     }
     if (req.method === "PUT") {
+      if (!(await requireAdmin(req, res))) return;
       const body = await readBody(req);
       await writeJson("tables.json", body.tables || []);
       return sendJson(res, 200, { ok: true });
@@ -127,6 +217,7 @@ async function handleApi(req, res, pathname) {
       return sendJson(res, 200, { menu: menu.filter((item) => item.active !== false) });
     }
     if (req.method === "POST") {
+      if (!(await requireAdmin(req, res))) return;
       const body = await readBody(req);
       const item = {
         id: body.id || crypto.randomUUID(),
@@ -143,6 +234,7 @@ async function handleApi(req, res, pathname) {
       return sendJson(res, 200, { item });
     }
     if (req.method === "DELETE") {
+      if (!(await requireAdmin(req, res))) return;
       const body = await readBody(req);
       await writeJson(
         "menu.json",
@@ -155,6 +247,7 @@ async function handleApi(req, res, pathname) {
   if (pathname === "/api/reservations") {
     const reservations = await readJson("reservations.json");
     if (req.method === "GET") {
+      if (!(await requireAdmin(req, res))) return;
       return sendJson(res, 200, { reservations });
     }
     if (req.method === "POST") {
@@ -173,6 +266,7 @@ async function handleApi(req, res, pathname) {
       return sendJson(res, 200, { reservation });
     }
     if (req.method === "PATCH") {
+      if (!(await requireAdmin(req, res))) return;
       const body = await readBody(req);
       const reservation = reservations.find((item) => item.folio === body.folio);
       if (!reservation) return notFound(res);
@@ -195,7 +289,16 @@ async function serveStatic(req, res, pathname) {
   const cleanPath = pathname === "/" ? "/index.html" : decodeURIComponent(pathname);
   const filePath = path.resolve(root, `.${cleanPath}`);
 
-  if (!filePath.startsWith(root) || filePath.includes(`${path.sep}.git${path.sep}`)) {
+  const privatePaths = [
+    `${path.sep}.git${path.sep}`,
+    `${path.sep}data${path.sep}`,
+    `${path.sep}logs${path.sep}`,
+    `${path.sep}scripts${path.sep}`,
+    `${path.sep}lib${path.sep}`,
+    `${path.sep}api${path.sep}`
+  ];
+
+  if (!filePath.startsWith(root) || privatePaths.some((privatePath) => filePath.includes(privatePath))) {
     return notFound(res);
   }
 

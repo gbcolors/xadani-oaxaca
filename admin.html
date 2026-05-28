@@ -37,18 +37,16 @@
 
         <section class="login-panel" id="login-panel">
           <div>
-            <p class="eyebrow">Acceso demo</p>
+            <p class="eyebrow">Acceso privado</p>
             <h2>Entrar al panel</h2>
             <p>
-              Este panel funciona en el navegador. Para operación real multiusuario se debe conectar
-              una base de datos y login seguro. Si configuraste `ADMIN_API_TOKEN`, usa esa clave para
-              editar datos en la base.
+              Ingresa tu clave de administrador para gestionar reservas, menú, mesas y datos del restaurante.
             </p>
           </div>
           <form id="admin-login">
             <label>
               Clave
-              <input type="password" name="password" placeholder="xadani2026" required />
+              <input type="password" name="password" autocomplete="current-password" required />
             </label>
             <button class="button primary" type="submit">Entrar</button>
           </form>
@@ -210,9 +208,32 @@
               <button class="button primary" type="submit">Guardar cambios</button>
             </form>
             <p class="admin-note">
-              Estos ajustes se guardan en el navegador. Para que todo el equipo vea los mismos datos
-              desde cualquier computadora, el siguiente paso es conectar base de datos y login real.
+              Estos ajustes se guardan en el servidor provisional para que puedas verlos desde cualquier computadora.
             </p>
+          </section>
+
+          <section class="admin-card" id="seguridad">
+            <div class="card-heading">
+              <div>
+                <p class="eyebrow">Seguridad</p>
+                <h2>Cambiar contraseña</h2>
+              </div>
+            </div>
+            <form class="settings-editor" id="password-editor">
+              <label>
+                Contraseña actual
+                <input name="currentPassword" type="password" autocomplete="current-password" required />
+              </label>
+              <label>
+                Nueva contraseña
+                <input name="newPassword" type="password" autocomplete="new-password" minlength="10" required />
+              </label>
+              <label>
+                Confirmar nueva contraseña
+                <input name="confirmPassword" type="password" autocomplete="new-password" minlength="10" required />
+              </label>
+              <button class="button primary" type="submit">Actualizar contraseña</button>
+            </form>
           </section>
         </div>
       </section>

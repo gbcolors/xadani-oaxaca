@@ -1,4 +1,3 @@
-const ADMIN_PASSWORD = "xadani2026";
 const RESERVATIONS_KEY = "xadaniReservations";
 const TABLES_KEY = "xadaniTables";
 const MENU_KEY = "xadaniMenuOverrides";
@@ -53,6 +52,7 @@ const menuList = document.querySelector("#menu-admin-list");
 const resetMenuButton = document.querySelector("#reset-menu");
 const settingsEditor = document.querySelector("#settings-editor");
 const resetSettingsButton = document.querySelector("#reset-settings");
+const passwordEditor = document.querySelector("#password-editor");
 
 let reservationsCache = [];
 let tablesCache = [];
@@ -87,6 +87,22 @@ async function apiRequest(path, options = {}) {
   return response.json();
 }
 
+async function adminLogin(password) {
+  const response = await fetch("/api/admin/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ password })
+  });
+
+  if (!response.ok) {
+    throw new Error("Unauthorized");
+  }
+
+  return response.json();
+}
+
 function formatPrice(value) {
   return new Intl.NumberFormat("es-MX", {
     style: "currency",
@@ -101,7 +117,8 @@ async function loadReservations() {
     reservationsCache = data.reservations || [];
     writeStorage(RESERVATIONS_KEY, reservationsCache);
   } catch {
-    reservationsCache = readStorage(RESERVATIONS_KEY, []);
+    lockAdmin();
+    reservationsCache = [];
   }
 }
 
@@ -315,8 +332,8 @@ async function renderAll() {
   renderSettingsEditor(settings);
 }
 
-function unlockAdmin(password) {
-  adminToken = password || adminToken || ADMIN_PASSWORD;
+function unlockAdmin(token) {
+  adminToken = token || adminToken;
   sessionStorage.setItem("xadaniAdminUnlocked", "true");
   sessionStorage.setItem("xadaniAdminToken", adminToken);
   loginPanel.hidden = true;
@@ -334,11 +351,38 @@ function lockAdmin() {
 loginForm.addEventListener("submit", (event) => {
   event.preventDefault();
   const password = new FormData(loginForm).get("password");
-  if (password === ADMIN_PASSWORD || password.length >= 12) {
-    unlockAdmin(password);
-    loginForm.reset();
-  } else {
-    alert("Clave incorrecta. Para demo usa: xadani2026");
+  adminLogin(password)
+    .then(({ token }) => {
+      unlockAdmin(token);
+      loginForm.reset();
+    })
+    .catch(() => {
+      alert("Clave incorrecta.");
+    });
+});
+
+passwordEditor.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const data = new FormData(passwordEditor);
+  const currentPassword = data.get("currentPassword");
+  const newPassword = data.get("newPassword");
+  const confirmPassword = data.get("confirmPassword");
+
+  if (newPassword !== confirmPassword) {
+    alert("La nueva contraseña no coincide.");
+    return;
+  }
+
+  try {
+    await apiRequest("/api/admin/password", {
+      method: "PUT",
+      body: JSON.stringify({ currentPassword, newPassword })
+    });
+    alert("Contraseña actualizada. Vuelve a iniciar sesión.");
+    passwordEditor.reset();
+    lockAdmin();
+  } catch {
+    alert("No se pudo actualizar la contraseña.");
   }
 });
 
