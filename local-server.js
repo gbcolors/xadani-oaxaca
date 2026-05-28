@@ -314,8 +314,10 @@ async function serveStatic(req, res, pathname) {
   try {
     const content = await fs.readFile(filePath);
     const ext = path.extname(filePath).toLowerCase();
+    const noStoreTypes = new Set([".html", ".css", ".js"]);
     res.writeHead(200, {
-      "Content-Type": mimeTypes[ext] || "application/octet-stream"
+      "Content-Type": mimeTypes[ext] || "application/octet-stream",
+      "Cache-Control": noStoreTypes.has(ext) ? "no-store" : "public, max-age=3600"
     });
     res.end(content);
   } catch {

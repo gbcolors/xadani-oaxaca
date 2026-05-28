@@ -277,7 +277,7 @@ function applySiteSettings() {
   const settings = getSiteSettings();
   document.querySelectorAll("[data-setting]").forEach((element) => {
     const key = element.dataset.setting;
-    if (settings[key]) {
+    if (Object.prototype.hasOwnProperty.call(settings, key)) {
       element.textContent = settings[key];
     }
   });
