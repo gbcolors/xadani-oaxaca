@@ -178,9 +178,7 @@ h2 {
 }
 
 .login-panel {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.6fr);
-  gap: 26px;
+  max-width: 440px;
   padding: clamp(22px, 4vw, 36px);
 }
 

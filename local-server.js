@@ -74,12 +74,19 @@ function hashPassword(password, salt = crypto.randomBytes(16).toString("hex")) {
 async function ensureAdmin() {
   const adminPath = path.join(dataDir, "admin.json");
   try {
-    await fs.access(adminPath);
+    const current = JSON.parse(await fs.readFile(adminPath, "utf8"));
+    if (!current.username) {
+      await fs.writeFile(
+        adminPath,
+        JSON.stringify({ username: "admin", ...current }, null, 2)
+      );
+    }
   } catch {
     await fs.writeFile(
       adminPath,
       JSON.stringify(
         {
+          username: "admin",
           ...hashPassword(process.env.LOCAL_ADMIN_PASSWORD || "xadani2026"),
           updatedAt: new Date().toISOString()
         },
@@ -135,8 +142,9 @@ async function requireAdmin(req, res) {
   return true;
 }
 
-async function verifyPassword(password) {
+async function verifyPassword(username, password) {
   const admin = await readJson("admin.json");
+  if ((username || "").trim().toLowerCase() !== (admin.username || "admin")) return false;
   const { passwordHash } = hashPassword(password, admin.salt);
   return crypto.timingSafeEqual(Buffer.from(passwordHash, "hex"), Buffer.from(admin.passwordHash, "hex"));
 }
@@ -144,7 +152,7 @@ async function verifyPassword(password) {
 async function handleAdmin(req, res, pathname) {
   if (pathname === "/api/admin/login" && req.method === "POST") {
     const body = await readBody(req);
-    if (!body.password || !(await verifyPassword(body.password))) {
+    if (!body.username || !body.password || !(await verifyPassword(body.username, body.password))) {
       return sendJson(res, 401, { error: "Unauthorized" });
     }
 
@@ -162,11 +170,12 @@ async function handleAdmin(req, res, pathname) {
     if (!body.currentPassword || !body.newPassword || body.newPassword.length < 10) {
       return sendJson(res, 400, { error: "Password must be at least 10 characters" });
     }
-    if (!(await verifyPassword(body.currentPassword))) {
+    if (!(await verifyPassword("admin", body.currentPassword))) {
       return sendJson(res, 401, { error: "Unauthorized" });
     }
 
     await writeJson("admin.json", {
+      username: "admin",
       ...hashPassword(body.newPassword),
       updatedAt: new Date().toISOString()
     });

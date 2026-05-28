@@ -36,16 +36,13 @@
         </header>
 
         <section class="login-panel" id="login-panel">
-          <div>
-            <p class="eyebrow">Acceso privado</p>
-            <h2>Entrar al panel</h2>
-            <p>
-              Ingresa tu clave de administrador para gestionar reservas, menú, mesas y datos del restaurante.
-            </p>
-          </div>
           <form id="admin-login">
             <label>
-              Clave
+              Usuario
+              <input type="text" name="username" autocomplete="username" value="admin" required />
+            </label>
+            <label>
+              Password
               <input type="password" name="password" autocomplete="current-password" required />
             </label>
             <button class="button primary" type="submit">Entrar</button>
