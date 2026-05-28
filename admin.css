@@ -41,6 +41,14 @@ textarea {
   grid-template-columns: 260px minmax(0, 1fr);
 }
 
+.admin-shell.locked {
+  display: grid;
+  grid-template-columns: 1fr;
+  place-items: center;
+  padding: 18px;
+  background: var(--black);
+}
+
 .admin-sidebar {
   position: sticky;
   top: 0;
@@ -101,6 +109,11 @@ textarea {
 
 .admin-content {
   padding: clamp(20px, 4vw, 48px);
+}
+
+.admin-shell.locked .admin-content {
+  width: min(440px, 100%);
+  padding: 0;
 }
 
 .admin-header,

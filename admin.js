@@ -40,6 +40,9 @@ const demoMenu = [
 
 const loginPanel = document.querySelector("#login-panel");
 const adminApp = document.querySelector("#admin-app");
+const adminShell = document.querySelector("#admin-shell");
+const adminSidebar = document.querySelector("#admin-sidebar");
+const adminHeader = document.querySelector("#admin-header");
 const loginForm = document.querySelector("#admin-login");
 const lockButton = document.querySelector("#lock-admin");
 const reservationTable = document.querySelector("#reservation-table");
@@ -379,6 +382,9 @@ function unlockAdmin(token) {
   adminToken = token || adminToken;
   sessionStorage.setItem("xadaniAdminUnlocked", "true");
   sessionStorage.setItem("xadaniAdminToken", adminToken);
+  adminShell.classList.remove("locked");
+  adminSidebar.hidden = false;
+  adminHeader.hidden = false;
   loginPanel.hidden = true;
   adminApp.hidden = false;
   renderAll();
@@ -387,6 +393,9 @@ function unlockAdmin(token) {
 function lockAdmin() {
   sessionStorage.removeItem("xadaniAdminUnlocked");
   sessionStorage.removeItem("xadaniAdminToken");
+  adminShell.classList.add("locked");
+  adminSidebar.hidden = true;
+  adminHeader.hidden = true;
   loginPanel.hidden = false;
   adminApp.hidden = true;
 }
