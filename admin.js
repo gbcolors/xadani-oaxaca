@@ -50,6 +50,8 @@ const resetTablesButton = document.querySelector("#reset-tables");
 const menuEditor = document.querySelector("#menu-editor");
 const menuList = document.querySelector("#menu-admin-list");
 const resetMenuButton = document.querySelector("#reset-menu");
+const menuSubmitButton = document.querySelector("#menu-submit");
+const cancelMenuEditButton = document.querySelector("#cancel-menu-edit");
 const settingsEditor = document.querySelector("#settings-editor");
 const resetSettingsButton = document.querySelector("#reset-settings");
 const passwordEditor = document.querySelector("#password-editor");
@@ -174,6 +176,16 @@ async function addMenuItem(item) {
   writeStorage(MENU_KEY, menuCache);
 }
 
+async function updateMenuItem(item) {
+  const data = await apiRequest("/api/menu", {
+    method: "PUT",
+    body: JSON.stringify(item)
+  });
+  const index = menuCache.findIndex((row) => String(row.id) === String(item.id));
+  if (index >= 0) menuCache[index] = data.item;
+  writeStorage(MENU_KEY, menuCache);
+}
+
 async function deleteMenuItem(id) {
   await apiRequest("/api/menu", {
     method: "DELETE",
@@ -288,11 +300,33 @@ function renderMenuAdmin() {
             <p>${item.category} · ${item.description}</p>
           </div>
           <span>${formatPrice(item.price)}</span>
-          <button class="button" type="button" data-delete-menu="${item.id}">Eliminar</button>
+          <div class="button-row">
+            <button class="button" type="button" data-edit-menu="${item.id}">Editar</button>
+            <button class="button" type="button" data-delete-menu="${item.id}">Eliminar</button>
+          </div>
         </article>
       `
     )
     .join("");
+}
+
+function clearMenuEditor() {
+  menuEditor.reset();
+  menuEditor.elements.id.value = "";
+  menuSubmitButton.textContent = "Agregar platillo";
+  cancelMenuEditButton.hidden = true;
+}
+
+function fillMenuEditor(item) {
+  menuEditor.elements.id.value = item.id;
+  menuEditor.elements.category.value = item.category;
+  menuEditor.elements.name.value = item.name;
+  menuEditor.elements.price.value = item.price;
+  menuEditor.elements.description.value = item.description;
+  menuEditor.elements.image.value = item.image || "";
+  menuSubmitButton.textContent = "Guardar cambios";
+  cancelMenuEditButton.hidden = false;
+  menuEditor.scrollIntoView({ behavior: "smooth", block: "center" });
 }
 
 function renderSettingsEditor(settings) {
@@ -453,15 +487,22 @@ menuEditor.addEventListener("submit", async (event) => {
   event.preventDefault();
   const data = new FormData(menuEditor);
   try {
-    await addMenuItem({
+    const item = {
+      id: data.get("id"),
       category: data.get("category"),
       name: data.get("name").trim(),
       price: Number(data.get("price")),
       description: data.get("description").trim(),
-      image: "",
+      image: data.get("image").trim(),
       tags: ["Nuevo"]
-    });
-    menuEditor.reset();
+    };
+    if (item.id) {
+      await updateMenuItem(item);
+    } else {
+      delete item.id;
+      await addMenuItem(item);
+    }
+    clearMenuEditor();
     renderMenuAdmin();
   } catch {
     alert("No se pudo guardar el platillo en el servidor. Vuelve a iniciar sesión.");
@@ -469,6 +510,13 @@ menuEditor.addEventListener("submit", async (event) => {
 });
 
 menuList.addEventListener("click", async (event) => {
+  const editButton = event.target.closest("[data-edit-menu]");
+  if (editButton) {
+    const item = menuCache.find((row) => String(row.id) === String(editButton.dataset.editMenu));
+    if (item) fillMenuEditor(item);
+    return;
+  }
+
   const button = event.target.closest("[data-delete-menu]");
   if (!button) return;
   try {
@@ -478,6 +526,8 @@ menuList.addEventListener("click", async (event) => {
     alert("No se pudo eliminar el platillo en el servidor.");
   }
 });
+
+cancelMenuEditButton.addEventListener("click", clearMenuEditor);
 
 resetMenuButton.addEventListener("click", () => {
   menuCache = demoMenu.map((item, index) => ({ ...item, id: `demo-${index}` }));

@@ -43,6 +43,33 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ item: mapMenu(result.rows[0]) });
     }
 
+    if (req.method === "PUT") {
+      requireAdmin(req);
+      const item = req.body || {};
+      const result = await query(
+        `update menu_items
+         set category = $2,
+             name = $3,
+             description = $4,
+             price = $5,
+             image = $6,
+             tags = $7,
+             updated_at = now()
+         where id = $1
+         returning *`,
+        [
+          item.id,
+          item.category,
+          item.name,
+          item.description,
+          Number(item.price),
+          item.image || "",
+          item.tags || []
+        ]
+      );
+      return res.status(200).json({ item: mapMenu(result.rows[0]) });
+    }
+
     if (req.method === "DELETE") {
       requireAdmin(req);
       const { id } = req.body || {};
@@ -50,7 +77,7 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ ok: true });
     }
 
-    res.setHeader("Allow", "GET, POST, DELETE");
+    res.setHeader("Allow", "GET, POST, PUT, DELETE");
     return res.status(405).json({ error: "Method not allowed" });
   } catch (error) {
     return sendError(res, error);

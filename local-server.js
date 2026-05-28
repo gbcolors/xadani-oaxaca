@@ -242,6 +242,24 @@ async function handleApi(req, res, pathname) {
       await writeJson("menu.json", menu);
       return sendJson(res, 200, { item });
     }
+    if (req.method === "PUT") {
+      if (!(await requireAdmin(req, res))) return;
+      const body = await readBody(req);
+      const index = menu.findIndex((item) => String(item.id) === String(body.id));
+      if (index < 0) return notFound(res);
+      menu[index] = {
+        ...menu[index],
+        category: body.category,
+        name: body.name,
+        description: body.description,
+        price: Number(body.price || 0),
+        image: body.image || "",
+        tags: body.tags || menu[index].tags || [],
+        active: body.active !== false
+      };
+      await writeJson("menu.json", menu);
+      return sendJson(res, 200, { item: menu[index] });
+    }
     if (req.method === "DELETE") {
       if (!(await requireAdmin(req, res))) return;
       const body = await readBody(req);
