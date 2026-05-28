@@ -300,6 +300,18 @@ function applySiteSettings() {
   });
 }
 
+function resolveImageUrl(imageUrl) {
+  if (!imageUrl) {
+    return "https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=900&q=80";
+  }
+
+  if (imageUrl.startsWith("http") || imageUrl.startsWith("data:")) {
+    return imageUrl;
+  }
+
+  return `${apiBase}${imageUrl}`;
+}
+
 function renderMenu(category) {
   const menuOverrides = getLocalMenuItems(category);
   const visibleItems = [...menuItems[category], ...menuOverrides];
@@ -334,9 +346,7 @@ function getLocalMenuItems(category) {
         description: item.description,
         price: Number(item.price),
         tags: ["Nuevo"],
-        image:
-          item.image ||
-          "https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=900&q=80"
+        image: resolveImageUrl(item.image)
       }));
     const remoteRows = remoteMenuItems
       .filter((item) => item.category === category)
@@ -345,9 +355,7 @@ function getLocalMenuItems(category) {
         description: item.description,
         price: Number(item.price),
         tags: item.tags?.length ? item.tags : ["Nuevo"],
-        image:
-          item.image ||
-          "https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=900&q=80"
+        image: resolveImageUrl(item.image)
       }));
     return [...remoteRows, ...localRows];
   } catch {
