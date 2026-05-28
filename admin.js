@@ -124,18 +124,13 @@ async function loadReservations() {
 }
 
 async function saveReservationPatch(folio, patch) {
+  const data = await apiRequest("/api/reservations", {
+    method: "PATCH",
+    body: JSON.stringify({ folio, ...patch })
+  });
   const reservation = reservationsCache.find((item) => item.folio === folio);
-  if (reservation) Object.assign(reservation, patch);
+  if (reservation) Object.assign(reservation, data.reservation || patch);
   writeStorage(RESERVATIONS_KEY, reservationsCache);
-
-  try {
-    await apiRequest("/api/reservations", {
-      method: "PATCH",
-      body: JSON.stringify({ folio, ...patch })
-    });
-  } catch {
-    // Local fallback remains available when DATABASE_URL is not configured.
-  }
 }
 
 async function loadTables() {
@@ -149,16 +144,12 @@ async function loadTables() {
 }
 
 async function saveTables(tables) {
+  await apiRequest("/api/tables", {
+    method: "PUT",
+    body: JSON.stringify({ tables })
+  });
   tablesCache = tables;
   writeStorage(TABLES_KEY, tables);
-  try {
-    await apiRequest("/api/tables", {
-      method: "PUT",
-      body: JSON.stringify({ tables })
-    });
-  } catch {
-    // Local fallback.
-  }
 }
 
 async function loadMenu() {
@@ -175,29 +166,21 @@ async function loadMenu() {
 }
 
 async function addMenuItem(item) {
-  try {
-    const data = await apiRequest("/api/menu", {
-      method: "POST",
-      body: JSON.stringify(item)
-    });
-    menuCache.push(data.item);
-  } catch {
-    menuCache.push({ ...item, id: Date.now() });
-  }
+  const data = await apiRequest("/api/menu", {
+    method: "POST",
+    body: JSON.stringify(item)
+  });
+  menuCache.push(data.item);
   writeStorage(MENU_KEY, menuCache);
 }
 
 async function deleteMenuItem(id) {
+  await apiRequest("/api/menu", {
+    method: "DELETE",
+    body: JSON.stringify({ id })
+  });
   menuCache = menuCache.filter((item) => String(item.id) !== String(id));
   writeStorage(MENU_KEY, menuCache);
-  try {
-    await apiRequest("/api/menu", {
-      method: "DELETE",
-      body: JSON.stringify({ id })
-    });
-  } catch {
-    // Local fallback.
-  }
 }
 
 async function loadSettings() {
@@ -212,15 +195,11 @@ async function loadSettings() {
 }
 
 async function saveSettings(settings) {
+  await apiRequest("/api/settings", {
+    method: "PUT",
+    body: JSON.stringify(settings)
+  });
   writeStorage(SETTINGS_KEY, settings);
-  try {
-    await apiRequest("/api/settings", {
-      method: "PUT",
-      body: JSON.stringify(settings)
-    });
-  } catch {
-    // Local fallback.
-  }
 }
 
 function updateMetrics() {
@@ -393,8 +372,13 @@ statusFilter.addEventListener("change", renderReservations);
 
 reservationTable.addEventListener("change", async (event) => {
   if (!event.target.matches(".status-select")) return;
-  await saveReservationPatch(event.target.dataset.folio, { status: event.target.value });
-  renderReservations();
+  try {
+    await saveReservationPatch(event.target.dataset.folio, { status: event.target.value });
+    renderReservations();
+  } catch {
+    alert("No se pudo actualizar la reserva. Vuelve a iniciar sesión.");
+    renderReservations();
+  }
 });
 
 seedButton.addEventListener("click", async () => {
@@ -413,16 +397,15 @@ seedButton.addEventListener("click", async () => {
     createdAt: new Date().toISOString()
   };
 
-  reservationsCache.unshift(reservation);
-  writeStorage(RESERVATIONS_KEY, reservationsCache);
-
   try {
-    await apiRequest("/api/reservations", {
+    const data = await apiRequest("/api/reservations", {
       method: "POST",
       body: JSON.stringify(reservation)
     });
+    reservationsCache.unshift(data.reservation || reservation);
+    writeStorage(RESERVATIONS_KEY, reservationsCache);
   } catch {
-    // Local fallback.
+    alert("No se pudo guardar la reserva demo en el servidor.");
   }
 
   renderReservations();
@@ -446,42 +429,61 @@ floorPlan.addEventListener("click", async (event) => {
   if (!tableButton) return;
   const table = tablesCache.find((item) => item.id === tableButton.dataset.table);
   const statuses = ["free", "reserved", "occupied", "blocked"];
+  const previousStatus = table.status;
   table.status = statuses[(statuses.indexOf(table.status) + 1) % statuses.length];
-  await saveTables(tablesCache);
+  try {
+    await saveTables(tablesCache);
+  } catch {
+    table.status = previousStatus;
+    alert("No se pudo guardar el plano en el servidor. Vuelve a iniciar sesión.");
+  }
   renderTables();
 });
 
 resetTablesButton.addEventListener("click", async () => {
-  await saveTables(defaultTables);
-  renderTables();
+  try {
+    await saveTables(defaultTables);
+    renderTables();
+  } catch {
+    alert("No se pudo restaurar el plano en el servidor.");
+  }
 });
 
 menuEditor.addEventListener("submit", async (event) => {
   event.preventDefault();
   const data = new FormData(menuEditor);
-  await addMenuItem({
-    category: data.get("category"),
-    name: data.get("name").trim(),
-    price: Number(data.get("price")),
-    description: data.get("description").trim(),
-    image: "",
-    tags: ["Nuevo"]
-  });
-  menuEditor.reset();
-  renderMenuAdmin();
+  try {
+    await addMenuItem({
+      category: data.get("category"),
+      name: data.get("name").trim(),
+      price: Number(data.get("price")),
+      description: data.get("description").trim(),
+      image: "",
+      tags: ["Nuevo"]
+    });
+    menuEditor.reset();
+    renderMenuAdmin();
+  } catch {
+    alert("No se pudo guardar el platillo en el servidor. Vuelve a iniciar sesión.");
+  }
 });
 
 menuList.addEventListener("click", async (event) => {
   const button = event.target.closest("[data-delete-menu]");
   if (!button) return;
-  await deleteMenuItem(button.dataset.deleteMenu);
-  renderMenuAdmin();
+  try {
+    await deleteMenuItem(button.dataset.deleteMenu);
+    renderMenuAdmin();
+  } catch {
+    alert("No se pudo eliminar el platillo en el servidor.");
+  }
 });
 
 resetMenuButton.addEventListener("click", () => {
   menuCache = demoMenu.map((item, index) => ({ ...item, id: `demo-${index}` }));
   writeStorage(MENU_KEY, menuCache);
   renderMenuAdmin();
+  alert("Menú demo restaurado solo en esta vista. Agrega platillos manualmente para guardarlos globalmente.");
 });
 
 settingsEditor.addEventListener("submit", async (event) => {
@@ -498,14 +500,22 @@ settingsEditor.addEventListener("submit", async (event) => {
     contactIntro: data.get("contactIntro").trim(),
     heroText: data.get("heroText").trim()
   };
-  await saveSettings(settings);
-  renderSettingsEditor(settings);
-  alert("Datos guardados. Recarga el sitio público para ver los cambios.");
+  try {
+    await saveSettings(settings);
+    renderSettingsEditor(settings);
+    alert("Datos guardados globalmente. Recarga el sitio público para ver los cambios.");
+  } catch {
+    alert("No se pudo guardar globalmente. Vuelve a iniciar sesión.");
+  }
 });
 
 resetSettingsButton.addEventListener("click", async () => {
-  await saveSettings(defaultSettings);
-  renderSettingsEditor(defaultSettings);
+  try {
+    await saveSettings(defaultSettings);
+    renderSettingsEditor(defaultSettings);
+  } catch {
+    alert("No se pudieron restaurar los datos globales.");
+  }
 });
 
 if (sessionStorage.getItem("xadaniAdminUnlocked") === "true") {
