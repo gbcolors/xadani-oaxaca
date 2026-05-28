@@ -5,6 +5,7 @@ const crypto = require("node:crypto");
 
 const root = __dirname;
 const dataDir = path.join(root, "data");
+const uploadsDir = path.join(root, "uploads");
 const port = Number(process.env.PORT || 3000);
 const sessions = new Map();
 
@@ -51,6 +52,7 @@ const mimeTypes = {
 
 async function ensureData() {
   await fs.mkdir(dataDir, { recursive: true });
+  await fs.mkdir(uploadsDir, { recursive: true });
   await Promise.all(
     Object.entries(defaultFiles).map(async ([fileName, value]) => {
       const filePath = path.join(dataDir, fileName);
@@ -62,6 +64,28 @@ async function ensureData() {
     })
   );
   await ensureAdmin();
+}
+
+function parseDataUrl(dataUrl) {
+  const match = /^data:(image\/(?:png|jpeg|jpg|webp|gif));base64,([a-z0-9+/=]+)$/i.exec(dataUrl || "");
+  if (!match) {
+    const error = new Error("Unsupported image format");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const extensionByMime = {
+    "image/png": "png",
+    "image/jpeg": "jpg",
+    "image/jpg": "jpg",
+    "image/webp": "webp",
+    "image/gif": "gif"
+  };
+
+  return {
+    extension: extensionByMime[match[1].toLowerCase()],
+    buffer: Buffer.from(match[2], "base64")
+  };
 }
 
 function hashPassword(password, salt = crypto.randomBytes(16).toString("hex")) {
@@ -194,6 +218,30 @@ async function handleApi(req, res, pathname) {
   if (pathname === "/api/db/init" && req.method === "POST") {
     await ensureData();
     return sendJson(res, 200, { ok: true, mode: "local-json" });
+  }
+
+  if (pathname === "/api/uploads" && req.method === "POST") {
+    if (!(await requireAdmin(req, res))) return;
+    const body = await readBody(req);
+    const parsed = parseDataUrl(body.dataUrl);
+
+    if (parsed.buffer.length > 5 * 1024 * 1024) {
+      return sendJson(res, 413, { error: "Image is too large" });
+    }
+
+    const safeBase = String(body.fileName || "imagen")
+      .replace(/\.[^.]+$/, "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/gi, "-")
+      .replace(/^-|-$/g, "")
+      .toLowerCase()
+      .slice(0, 48) || "imagen";
+    const fileName = `${Date.now()}-${safeBase}.${parsed.extension}`;
+    const filePath = path.join(uploadsDir, fileName);
+    await fs.writeFile(filePath, parsed.buffer);
+
+    return sendJson(res, 200, { url: `/uploads/${fileName}` });
   }
 
   if (pathname === "/api/settings") {

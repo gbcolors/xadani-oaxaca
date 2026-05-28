@@ -3,3 +3,6 @@ logs/
 node_modules/
 .env
 .env.local
+
+uploads/*
+!uploads/.gitkeep

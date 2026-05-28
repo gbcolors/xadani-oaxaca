@@ -195,6 +195,32 @@ async function deleteMenuItem(id) {
   writeStorage(MENU_KEY, menuCache);
 }
 
+function fileToDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+}
+
+async function uploadImage(file) {
+  if (!file) return "";
+  if (file.size > 5 * 1024 * 1024) {
+    throw new Error("Image is too large");
+  }
+
+  const dataUrl = await fileToDataUrl(file);
+  const data = await apiRequest("/api/uploads", {
+    method: "POST",
+    body: JSON.stringify({
+      fileName: file.name,
+      dataUrl
+    })
+  });
+  return data.url;
+}
+
 async function loadSettings() {
   try {
     const data = await apiRequest("/api/settings");
@@ -324,6 +350,7 @@ function fillMenuEditor(item) {
   menuEditor.elements.price.value = item.price;
   menuEditor.elements.description.value = item.description;
   menuEditor.elements.image.value = item.image || "";
+  menuEditor.elements.imageFile.value = "";
   menuSubmitButton.textContent = "Guardar cambios";
   cancelMenuEditButton.hidden = false;
   menuEditor.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -487,13 +514,14 @@ menuEditor.addEventListener("submit", async (event) => {
   event.preventDefault();
   const data = new FormData(menuEditor);
   try {
+    const uploadedImage = await uploadImage(menuEditor.elements.imageFile.files[0]);
     const item = {
       id: data.get("id"),
       category: data.get("category"),
       name: data.get("name").trim(),
       price: Number(data.get("price")),
       description: data.get("description").trim(),
-      image: data.get("image").trim(),
+      image: uploadedImage || data.get("image").trim(),
       tags: ["Nuevo"]
     };
     if (item.id) {
