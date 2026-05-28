@@ -4,6 +4,8 @@ const MENU_KEY = "xadaniMenuOverrides";
 const SETTINGS_KEY = "xadaniSiteSettings";
 
 let adminToken = sessionStorage.getItem("xadaniAdminToken") || "";
+const provisionalApiBase = "https://spell-jenny-commissioner-remain.trycloudflare.com";
+const apiBase = location.hostname === "xadanienoaxaca.com" ? provisionalApiBase : "";
 
 const defaultSettings = {
   businessName: "Xadani en Oaxaca",
@@ -73,7 +75,7 @@ function writeStorage(key, value) {
 }
 
 async function apiRequest(path, options = {}) {
-  const response = await fetch(path, {
+  const response = await fetch(`${apiBase}${path}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",
@@ -91,7 +93,7 @@ async function apiRequest(path, options = {}) {
 
 async function adminLogin(password) {
   const username = loginForm.elements.username.value.trim();
-  const response = await fetch("/api/admin/login", {
+  const response = await fetch(`${apiBase}/api/admin/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
