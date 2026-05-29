@@ -314,7 +314,8 @@ function resolveImageUrl(imageUrl) {
 
 function renderMenu(category) {
   const menuOverrides = getLocalMenuItems(category);
-  const visibleItems = [...menuItems[category], ...menuOverrides];
+  const hasRemoteCategory = remoteMenuItems.some((item) => item.category === category);
+  const visibleItems = hasRemoteCategory ? menuOverrides : [...menuItems[category], ...menuOverrides];
   grid.innerHTML = visibleItems
     .map(
       (item) => `
