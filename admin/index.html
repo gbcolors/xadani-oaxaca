@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Admin Xadani | Reservas y mesas</title>
     <meta name="robots" content="noindex" />
-    <link rel="stylesheet" href="admin.css" />
+    <link rel="stylesheet" href="/admin.css" />
   </head>
   <body>
     <main class="admin-shell locked" id="admin-shell">
       <aside class="admin-sidebar" id="admin-sidebar" hidden>
-        <a class="admin-brand" href="index.html">
-          <img src="assets/xadani-logo.png" alt="" />
+        <a class="admin-brand" href="/">
+          <img src="/assets/xadani-logo.png" alt="" />
           <span>
             <strong>Xadani</strong>
             <small>Admin</small>
@@ -20,9 +20,10 @@
         <nav aria-label="Panel admin">
           <a href="#reservas">Reservas</a>
           <a href="#mesas">Plano de mesas</a>
+          <a href="#walkins">Walk-ins</a>
           <a href="#menu-admin">Menú</a>
           <a href="#ajustes">Ajustes</a>
-          <a href="index.html">Ver sitio</a>
+          <a href="/">Ver sitio</a>
         </nav>
       </aside>
 
@@ -36,6 +37,7 @@
         </header>
 
         <section class="login-panel" id="login-panel">
+          <img class="login-logo" src="/assets/xadani-logo.png" alt="Xadani en Oaxaca" />
           <form id="admin-login">
             <label>
               Usuario
@@ -102,6 +104,7 @@
                     <th>Hora</th>
                     <th>Personas</th>
                     <th>Pago</th>
+                    <th>Mesa</th>
                     <th>Estado</th>
                   </tr>
                 </thead>
@@ -118,7 +121,119 @@
               </div>
               <button class="button" type="button" id="reset-tables">Restaurar plano</button>
             </div>
+            <form class="table-editor" id="table-editor">
+              <input name="originalId" type="hidden" />
+              <label>
+                Mesa
+                <input name="id" type="text" placeholder="M1" required />
+              </label>
+              <label>
+                Pax
+                <select name="capacity" required>
+                  <option value="1">1 pax</option>
+                  <option value="2">2 pax</option>
+                  <option value="3">3 pax</option>
+                  <option value="4">4 pax</option>
+                  <option value="5">5 pax</option>
+                  <option value="6">6 pax</option>
+                  <option value="7">7 pax</option>
+                  <option value="8">8 pax</option>
+                  <option value="9">9 pax</option>
+                  <option value="10">10 pax</option>
+                </select>
+              </label>
+              <label>
+                Forma
+                <select name="shape">
+                  <option value="square">Cuadrada</option>
+                  <option value="round">Redonda</option>
+                </select>
+              </label>
+              <label>
+                Zona
+                <input name="zone" type="text" placeholder="Salon" required />
+              </label>
+              <label>
+                Estado
+                <select name="status">
+                  <option value="free">Libre</option>
+                  <option value="reserved">Reservada</option>
+                  <option value="occupied">Ocupada</option>
+                  <option value="blocked">Bloqueada</option>
+                </select>
+              </label>
+              <label>
+                X %
+                <input name="x" type="number" min="0" max="92" required />
+              </label>
+              <label>
+                Y %
+                <input name="y" type="number" min="0" max="90" required />
+              </label>
+              <div class="button-row wide">
+                <button class="button primary" type="submit" id="table-submit">Guardar mesa</button>
+                <button class="button" type="button" id="cancel-table-edit" hidden>Cancelar</button>
+              </div>
+            </form>
             <div class="floor-plan" id="floor-plan"></div>
+            <div class="table-admin-list" id="table-admin-list"></div>
+          </section>
+
+          <section class="admin-card" id="walkins">
+            <div class="card-heading">
+              <div>
+                <p class="eyebrow">Walk-in</p>
+                <h2>Comensales sin reserva</h2>
+              </div>
+            </div>
+            <form class="walkin-editor" id="walkin-editor">
+              <label>
+                Nombre
+                <input name="name" type="text" placeholder="Comensal" required />
+              </label>
+              <label>
+                Personas
+                <select name="guests" required>
+                  <option value="1">1 pax</option>
+                  <option value="2">2 pax</option>
+                  <option value="3">3 pax</option>
+                  <option value="4">4 pax</option>
+                  <option value="5">5 pax</option>
+                  <option value="6">6 pax</option>
+                  <option value="7">7 pax</option>
+                  <option value="8">8 pax</option>
+                  <option value="9">9 pax</option>
+                  <option value="10">10 pax</option>
+                </select>
+              </label>
+              <label>
+                Mesa
+                <select name="tableId" id="walkin-table-select" required></select>
+              </label>
+              <label>
+                Fecha
+                <input name="arrivalDate" type="date" required />
+              </label>
+              <label>
+                Hora
+                <input name="arrivalTime" type="time" required />
+              </label>
+              <button class="button primary" type="submit">Sentar walk-in</button>
+            </form>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Comensal</th>
+                    <th>Mesa</th>
+                    <th>Personas</th>
+                    <th>Llegada</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="walkin-table"></tbody>
+              </table>
+            </div>
           </section>
 
           <section class="admin-card" id="menu-admin">
@@ -262,6 +377,6 @@
       </section>
     </main>
 
-    <script src="admin.js?v=20260529-editable-categories"></script>
+    <script src="/admin.js?v=20260529-table-admin"></script>
   </body>
 </html>

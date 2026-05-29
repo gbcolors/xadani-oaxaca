@@ -193,6 +193,17 @@ h2 {
 .login-panel {
   max-width: 440px;
   padding: clamp(22px, 4vw, 36px);
+  text-align: center;
+}
+
+.login-logo {
+  width: min(220px, 72vw);
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  margin: 0 auto 18px;
+  display: block;
+  border-radius: 8px;
+  background: var(--cream);
 }
 
 .login-panel p {
@@ -202,6 +213,8 @@ h2 {
 
 .login-panel form,
 .filters,
+.table-editor,
+.walkin-editor,
 .category-editor,
 .menu-editor,
 .settings-editor {
@@ -328,6 +341,7 @@ th {
   text-align: center;
   background: var(--cream);
   box-shadow: 0 10px 24px rgba(42, 27, 24, 0.12);
+  cursor: pointer;
 }
 
 .table-node.round {
@@ -360,6 +374,8 @@ th {
 }
 
 .menu-editor,
+.table-editor,
+.walkin-editor,
 .category-editor,
 .settings-editor {
   grid-template-columns: 180px minmax(0, 1fr) 130px;
@@ -371,6 +387,8 @@ th {
 }
 
 .settings-editor .wide,
+.table-editor .wide,
+.walkin-editor .wide,
 .category-editor .wide,
 .menu-editor .wide {
   grid-column: 1 / -1;
@@ -394,6 +412,7 @@ th {
 }
 
 .menu-row,
+.table-row,
 .category-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 110px auto;
@@ -404,6 +423,7 @@ th {
 }
 
 .menu-row p,
+.table-row p,
 .category-row p {
   margin: 4px 0 0;
   color: var(--muted);
@@ -414,6 +434,8 @@ th {
   .login-panel,
   .metric-grid,
   .filters,
+  .table-editor,
+  .walkin-editor,
   .category-editor,
   .menu-editor,
   .settings-editor {

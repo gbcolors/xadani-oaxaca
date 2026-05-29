@@ -1,5 +1,6 @@
 const RESERVATIONS_KEY = "xadaniReservations";
 const TABLES_KEY = "xadaniTables";
+const WALKINS_KEY = "xadaniWalkins";
 const MENU_KEY = "xadaniMenuOverrides";
 const SETTINGS_KEY = "xadaniSiteSettings";
 
@@ -70,6 +71,13 @@ const seedButton = document.querySelector("#seed-reservation");
 const exportButton = document.querySelector("#export-reservations");
 const floorPlan = document.querySelector("#floor-plan");
 const resetTablesButton = document.querySelector("#reset-tables");
+const tableEditor = document.querySelector("#table-editor");
+const tableList = document.querySelector("#table-admin-list");
+const tableSubmitButton = document.querySelector("#table-submit");
+const cancelTableEditButton = document.querySelector("#cancel-table-edit");
+const walkinEditor = document.querySelector("#walkin-editor");
+const walkinTable = document.querySelector("#walkin-table");
+const walkinTableSelect = document.querySelector("#walkin-table-select");
 const menuEditor = document.querySelector("#menu-editor");
 const menuList = document.querySelector("#menu-admin-list");
 const categoryEditor = document.querySelector("#category-editor");
@@ -86,6 +94,7 @@ const passwordEditor = document.querySelector("#password-editor");
 
 let reservationsCache = [];
 let tablesCache = [];
+let walkinsCache = [];
 let menuCache = [];
 let categoryCache = [...defaultCategories];
 
@@ -181,6 +190,50 @@ async function saveTables(tables) {
   });
   tablesCache = tables;
   writeStorage(TABLES_KEY, tables);
+}
+
+async function saveTable(table) {
+  await apiRequest("/api/tables", {
+    method: "PUT",
+    body: JSON.stringify(table)
+  });
+  await loadTables();
+}
+
+async function deleteTable(id) {
+  await apiRequest("/api/tables", {
+    method: "DELETE",
+    body: JSON.stringify({ id })
+  });
+  await loadTables();
+}
+
+async function loadWalkins() {
+  try {
+    const data = await apiRequest("/api/walkins");
+    walkinsCache = data.walkins || [];
+    writeStorage(WALKINS_KEY, walkinsCache);
+  } catch {
+    walkinsCache = readStorage(WALKINS_KEY, []);
+  }
+}
+
+async function addWalkin(walkin) {
+  const data = await apiRequest("/api/walkins", {
+    method: "POST",
+    body: JSON.stringify(walkin)
+  });
+  walkinsCache.unshift(data.walkin);
+  await loadTables();
+}
+
+async function closeWalkin(id) {
+  await apiRequest("/api/walkins", {
+    method: "PATCH",
+    body: JSON.stringify({ id, status: "closed" })
+  });
+  walkinsCache = walkinsCache.filter((walkin) => String(walkin.id) !== String(id));
+  await loadTables();
 }
 
 async function loadMenu() {
@@ -319,6 +372,12 @@ function renderReservations() {
   });
 
   updateMetrics();
+  const tableOptions = [
+    `<option value="">Sin mesa</option>`,
+    ...tablesCache.map(
+      (table) => `<option value="${table.id}">${table.id} · ${table.capacity} pax · ${table.status}</option>`
+    )
+  ].join("");
 
   reservationTable.innerHTML = visibleReservations
     .map(
@@ -339,6 +398,11 @@ function renderReservations() {
             <small>${reservation.paymentStatus || "not_required"}</small>
           </td>
           <td>
+            <select class="table-select" data-folio-table="${reservation.folio}">
+              ${tableOptions.replace(`value="${reservation.tableId}"`, `value="${reservation.tableId}" selected`)}
+            </select>
+          </td>
+          <td>
             <select class="status-select" data-folio="${reservation.folio}">
               ${["pending", "confirmed", "seated", "completed", "cancelled"]
                 .map((status) => `<option value="${status}" ${reservation.status === status ? "selected" : ""}>${status}</option>`)
@@ -351,7 +415,7 @@ function renderReservations() {
     .join("");
 
   if (!visibleReservations.length) {
-    reservationTable.innerHTML = `<tr><td colspan="6">No hay reservas para mostrar.</td></tr>`;
+    reservationTable.innerHTML = `<tr><td colspan="7">No hay reservas para mostrar.</td></tr>`;
   }
 }
 
@@ -359,7 +423,7 @@ function renderTables() {
   floorPlan.innerHTML = tablesCache
     .map(
       (table) => `
-        <button class="table-node ${table.shape} ${table.status}" type="button" data-table="${table.id}"
+        <button class="table-node ${table.shape} ${table.status}" type="button" data-table-edit="${table.id}"
           style="left: ${table.x}%; top: ${table.y}%;">
           <span>
             <strong>${table.id}</strong>
@@ -371,6 +435,76 @@ function renderTables() {
       `
     )
     .join("");
+
+  tableList.innerHTML = tablesCache
+    .map(
+      (table) => `
+        <article class="table-row">
+          <div>
+            <strong>${table.id}</strong>
+            <p>${table.zone} · ${table.capacity} pax · ${table.shape} · ${table.status}</p>
+          </div>
+          <div class="button-row">
+            <button class="button" type="button" data-edit-table="${table.id}">Editar</button>
+            <button class="button" type="button" data-delete-table="${table.id}">Eliminar</button>
+          </div>
+        </article>
+      `
+    )
+    .join("");
+
+  const freeTables = tablesCache.filter((table) => table.status === "free");
+  walkinTableSelect.innerHTML = freeTables.length
+    ? freeTables
+        .map((table) => `<option value="${table.id}">${table.id} · ${table.capacity} pax · ${table.zone}</option>`)
+        .join("")
+    : `<option value="">Sin mesas libres</option>`;
+}
+
+function renderWalkins() {
+  walkinTable.innerHTML = walkinsCache
+    .map(
+      (walkin) => `
+        <tr>
+          <td><strong>${walkin.name}</strong></td>
+          <td>${walkin.tableId}</td>
+          <td>${walkin.guests}</td>
+          <td>${new Date(walkin.arrivalAt).toLocaleString("es-MX")}</td>
+          <td><button class="button" type="button" data-close-walkin="${walkin.id}">Liberar mesa</button></td>
+        </tr>
+      `
+    )
+    .join("");
+
+  if (!walkinsCache.length) {
+    walkinTable.innerHTML = `<tr><td colspan="5">No hay walk-ins activos.</td></tr>`;
+  }
+}
+
+function clearTableEditor() {
+  tableEditor.reset();
+  tableEditor.elements.originalId.value = "";
+  tableEditor.elements.id.value = "";
+  tableEditor.elements.capacity.value = "2";
+  tableEditor.elements.shape.value = "square";
+  tableEditor.elements.status.value = "free";
+  tableEditor.elements.x.value = "10";
+  tableEditor.elements.y.value = "10";
+  tableSubmitButton.textContent = "Guardar mesa";
+  cancelTableEditButton.hidden = true;
+}
+
+function fillTableEditor(table) {
+  tableEditor.elements.originalId.value = table.id;
+  tableEditor.elements.id.value = table.id;
+  tableEditor.elements.capacity.value = String(table.capacity);
+  tableEditor.elements.shape.value = table.shape;
+  tableEditor.elements.zone.value = table.zone;
+  tableEditor.elements.status.value = table.status;
+  tableEditor.elements.x.value = table.x;
+  tableEditor.elements.y.value = table.y;
+  tableSubmitButton.textContent = "Guardar cambios";
+  cancelTableEditButton.hidden = false;
 }
 
 function renderMenuAdmin() {
@@ -469,10 +603,13 @@ function renderSettingsEditor(settings) {
 }
 
 async function renderAll() {
-  await Promise.all([loadReservations(), loadTables(), loadMenu()]);
+  await Promise.all([loadReservations(), loadTables(), loadWalkins(), loadMenu()]);
   const settings = await loadSettings();
   renderReservations();
   renderTables();
+  renderWalkins();
+  clearTableEditor();
+  setWalkinDefaults();
   renderCategoryAdmin();
   renderMenuAdmin();
   clearCategoryEditor();
@@ -544,13 +681,122 @@ searchInput.addEventListener("input", renderReservations);
 statusFilter.addEventListener("change", renderReservations);
 
 reservationTable.addEventListener("change", async (event) => {
+  if (!event.target.matches(".table-select")) return;
+  try {
+    await saveReservationPatch(event.target.dataset.folioTable, { tableId: event.target.value });
+    await loadTables();
+    renderReservations();
+    renderTables();
+  } catch {
+    alert("No se pudo cambiar la mesa de la reserva.");
+    renderReservations();
+  }
+});
+
+reservationTable.addEventListener("change", async (event) => {
   if (!event.target.matches(".status-select")) return;
   try {
     await saveReservationPatch(event.target.dataset.folio, { status: event.target.value });
+    await loadTables();
     renderReservations();
+    renderTables();
   } catch {
     alert("No se pudo actualizar la reserva. Vuelve a iniciar sesión.");
     renderReservations();
+  }
+});
+
+floorPlan.addEventListener("click", (event) => {
+  const tableButton = event.target.closest("[data-table-edit]");
+  if (!tableButton) return;
+  const table = tablesCache.find((item) => item.id === tableButton.dataset.tableEdit);
+  if (table) fillTableEditor(table);
+});
+
+tableEditor.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const data = new FormData(tableEditor);
+  const table = {
+    originalId: data.get("originalId"),
+    id: data.get("id").trim(),
+    capacity: Number(data.get("capacity")),
+    zone: data.get("zone").trim(),
+    status: data.get("status"),
+    shape: data.get("shape"),
+    x: Number(data.get("x")),
+    y: Number(data.get("y"))
+  };
+
+  try {
+    await saveTable(table);
+    renderTables();
+    renderReservations();
+    clearTableEditor();
+  } catch {
+    alert("No se pudo guardar la mesa.");
+  }
+});
+
+tableList.addEventListener("click", async (event) => {
+  const editButton = event.target.closest("[data-edit-table]");
+  if (editButton) {
+    const table = tablesCache.find((item) => item.id === editButton.dataset.editTable);
+    if (table) fillTableEditor(table);
+    return;
+  }
+
+  const deleteButton = event.target.closest("[data-delete-table]");
+  if (!deleteButton) return;
+  if (!confirm("Eliminar esta mesa quitará su asignación de reservas activas.")) return;
+
+  try {
+    await deleteTable(deleteButton.dataset.deleteTable);
+    renderTables();
+    renderReservations();
+  } catch {
+    alert("No se pudo eliminar la mesa.");
+  }
+});
+
+cancelTableEditButton.addEventListener("click", clearTableEditor);
+
+function setWalkinDefaults() {
+  const now = new Date();
+  walkinEditor.elements.arrivalDate.value = now.toISOString().slice(0, 10);
+  walkinEditor.elements.arrivalTime.value = now.toTimeString().slice(0, 5);
+}
+
+walkinEditor.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const data = new FormData(walkinEditor);
+  const arrivalAt = new Date(`${data.get("arrivalDate")}T${data.get("arrivalTime")}`).toISOString();
+
+  try {
+    await addWalkin({
+      name: data.get("name").trim(),
+      guests: Number(data.get("guests")),
+      tableId: data.get("tableId"),
+      arrivalAt
+    });
+    walkinEditor.reset();
+    setWalkinDefaults();
+    renderWalkins();
+    renderTables();
+  } catch {
+    alert("No se pudo sentar el walk-in. Revisa que la mesa esté libre.");
+  }
+});
+
+walkinTable.addEventListener("click", async (event) => {
+  const button = event.target.closest("[data-close-walkin]");
+  if (!button) return;
+
+  try {
+    await closeWalkin(button.dataset.closeWalkin);
+    renderWalkins();
+    renderTables();
+  } catch {
+    alert("No se pudo liberar la mesa.");
   }
 });
 

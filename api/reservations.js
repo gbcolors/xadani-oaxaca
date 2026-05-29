@@ -20,6 +20,28 @@ function mapReservation(row) {
   };
 }
 
+async function findAvailableTable(guests) {
+  const result = await query(
+    `select id from tables
+     where status = 'free' and capacity >= $1
+     order by capacity asc, id asc
+     limit 1`,
+    [Math.min(10, Math.max(1, Number(guests || 1)))]
+  );
+  return result.rows[0]?.id || null;
+}
+
+async function setTableStatusForReservation(tableId, status) {
+  if (!tableId) return;
+  const tableStatus = status === "seated" ? "occupied" : "reserved";
+  await query("update tables set status = $2, updated_at = now() where id = $1", [tableId, tableStatus]);
+}
+
+async function releaseTable(tableId) {
+  if (!tableId) return;
+  await query("update tables set status = 'free', updated_at = now() where id = $1", [tableId]);
+}
+
 module.exports = async function handler(req, res) {
   try {
     await initializeDatabase();
@@ -32,11 +54,12 @@ module.exports = async function handler(req, res) {
 
     if (req.method === "POST") {
       const reservation = req.body || {};
+      const tableId = reservation.tableId || (await findAvailableTable(reservation.guests));
       const result = await query(
         `insert into reservations
          (folio, name, phone, email, guests, reservation_time, restrictions,
-          payment_type, payment_label, payment_total, payment_status, status)
-         values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+          payment_type, payment_label, payment_total, payment_status, status, table_id)
+         values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
          on conflict (folio)
          do update set
            name = excluded.name,
@@ -49,6 +72,7 @@ module.exports = async function handler(req, res) {
            payment_label = excluded.payment_label,
            payment_total = excluded.payment_total,
            payment_status = excluded.payment_status,
+           table_id = excluded.table_id,
            updated_at = now()
          returning *`,
         [
@@ -63,10 +87,12 @@ module.exports = async function handler(req, res) {
           reservation.paymentLabel || "Reserva sin cargo",
           Number(reservation.paymentTotal || 0),
           reservation.paymentStatus || "not_required",
-          reservation.status || "pending"
+          reservation.status || "pending",
+          tableId
         ]
       );
 
+      await setTableStatusForReservation(result.rows[0].table_id, result.rows[0].status);
       return res.status(200).json({ reservation: mapReservation(result.rows[0]) });
     }
 
@@ -78,16 +104,30 @@ module.exports = async function handler(req, res) {
         return res.status(400).json({ error: "Missing folio" });
       }
 
+      const current = await query("select table_id from reservations where folio = $1", [folio]);
+      const previousTableId = current.rows[0]?.table_id || null;
+      const nextTableId = Object.prototype.hasOwnProperty.call(req.body || {}, "tableId") ? tableId || null : previousTableId;
+
       const result = await query(
         `update reservations
          set status = coalesce($2, status),
              payment_status = coalesce($3, payment_status),
-             table_id = coalesce($4, table_id),
+             table_id = $4,
              updated_at = now()
          where folio = $1
          returning *`,
-        [folio, status || null, paymentStatus || null, tableId || null]
+        [folio, status || null, paymentStatus || null, nextTableId]
       );
+
+      if (previousTableId && previousTableId !== nextTableId) {
+        await releaseTable(previousTableId);
+      }
+
+      if (["completed", "cancelled"].includes(result.rows[0].status)) {
+        await releaseTable(result.rows[0].table_id);
+      } else {
+        await setTableStatusForReservation(result.rows[0].table_id, result.rows[0].status);
+      }
 
       return res.status(200).json({ reservation: mapReservation(result.rows[0]) });
     }
