@@ -5,7 +5,8 @@ const SETTINGS_KEY = "xadaniSiteSettings";
 
 let adminToken = sessionStorage.getItem("xadaniAdminToken") || "";
 const provisionalApiBase = "https://spell-jenny-commissioner-remain.trycloudflare.com";
-const apiBase = location.hostname === "xadanienoaxaca.com" ? provisionalApiBase : "";
+const publicHosts = ["xadanienoaxaca.com", "www.xadanienoaxaca.com"];
+const apiBase = publicHosts.includes(location.hostname) ? provisionalApiBase : "";
 
 const defaultSettings = {
   businessName: "Xadani en Oaxaca",

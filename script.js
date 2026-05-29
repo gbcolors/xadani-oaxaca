@@ -181,7 +181,8 @@ const reservationSubmit = document.querySelector("#reservation-submit");
 
 const checkoutEndpoint = "/api/create-checkout-session";
 const provisionalApiBase = "https://spell-jenny-commissioner-remain.trycloudflare.com";
-const apiBase = location.hostname === "xadanienoaxaca.com" ? provisionalApiBase : "";
+const publicHosts = ["xadanienoaxaca.com", "www.xadanienoaxaca.com"];
+const apiBase = publicHosts.includes(location.hostname) ? provisionalApiBase : "";
 let remoteMenuItems = [];
 const defaultSiteSettings = {
   businessName: "Xadani en Oaxaca",
