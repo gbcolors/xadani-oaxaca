@@ -13,15 +13,31 @@ function mapMenu(row) {
   };
 }
 
+function mapCategory(row) {
+  return {
+    slug: row.slug,
+    group: row.group_name,
+    name: row.name,
+    active: row.active,
+    sortOrder: row.sort_order
+  };
+}
+
 module.exports = async function handler(req, res) {
   try {
     await initializeDatabase();
 
     if (req.method === "GET") {
-      const result = await query(
+      const menuResult = await query(
         "select * from menu_items where active = true order by category, sort_order, id"
       );
-      return res.status(200).json({ menu: result.rows.map(mapMenu) });
+      const categoryResult = await query(
+        "select * from menu_categories where active = true order by sort_order, group_name, name"
+      );
+      return res.status(200).json({
+        categories: categoryResult.rows.map(mapCategory),
+        menu: menuResult.rows.map(mapMenu)
+      });
     }
 
     if (req.method === "POST") {

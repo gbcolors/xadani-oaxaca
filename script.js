@@ -165,8 +165,44 @@ const menuItems = {
   ]
 };
 
+const defaultMenuCategories = [
+  { slug: "entradas-frias", group: "ENTRADAS", name: "FRIAS" },
+  { slug: "entradas-cocteles", group: "ENTRADAS", name: "COCTELES" },
+  { slug: "entradas-ensaladas", group: "ENTRADAS", name: "ENSALADAS" },
+  { slug: "entradas-calientes", group: "ENTRADAS", name: "CALIENTES" },
+  { slug: "entradas-caldos", group: "ENTRADAS", name: "CALDOS" },
+  { slug: "entradas-sopas", group: "ENTRADAS", name: "SOPAS" },
+  { slug: "entradas-consomes", group: "ENTRADAS", name: "CONSOMES" },
+  { slug: "fuertes-pesca-del-dia", group: "FUERTES", name: "PESCA DEL DÍA" },
+  { slug: "fuertes-especiales-istmenos", group: "FUERTES", name: "ESPECIALES ISTMEÑOS" },
+  { slug: "fuertes-camarones", group: "FUERTES", name: "CAMARONES" },
+  { slug: "fuertes-para-compartir", group: "FUERTES", name: "PARA COMPARTIR" },
+  { slug: "fuertes-extras", group: "FUERTES", name: "EXTRAS" },
+  { slug: "postres", group: "POSTRES", name: "POSTRES" },
+  { slug: "bebidas-con-alcohol", group: "BEBIDAS", name: "CON ALCOHOL" },
+  { slug: "bebidas-sin-alcohol", group: "BEBIDAS", name: "SIN ALCOHOL" }
+];
+
+const fallbackMenuItems = {
+  "entradas-frias": [menuItems.frias[0]],
+  "entradas-cocteles": [menuItems.frias[3]],
+  "entradas-ensaladas": [menuItems.frias[1]],
+  "entradas-calientes": [menuItems.calientes[0]],
+  "entradas-caldos": [menuItems.calientes[1]],
+  "entradas-sopas": [menuItems.calientes[2]],
+  "entradas-consomes": [menuItems.calientes[3]],
+  "fuertes-pesca-del-dia": [menuItems.fuertes[1]],
+  "fuertes-especiales-istmenos": [menuItems.fuertes[0]],
+  "fuertes-camarones": [menuItems.frias[2]],
+  "fuertes-para-compartir": [menuItems.fuertes[3]],
+  "fuertes-extras": [menuItems.fuertes[4]],
+  postres: [menuItems.postres[0]],
+  "bebidas-con-alcohol": [menuItems.bebidas[0]],
+  "bebidas-sin-alcohol": [menuItems.bebidas[2]]
+};
+
 const grid = document.querySelector("#menu-grid");
-const tabs = document.querySelectorAll(".tab");
+const menuTabs = document.querySelector("#menu-tabs");
 const navToggle = document.querySelector(".nav-toggle");
 const siteNav = document.querySelector("#site-nav");
 const reservationModal = document.querySelector("#reservation-modal");
@@ -183,6 +219,7 @@ const checkoutEndpoint = "/api/create-checkout-session";
 const localFileApiBase = "http://127.0.0.1:3000";
 const apiBase = location.protocol === "file:" ? localFileApiBase : "";
 let remoteMenuItems = [];
+let menuCategories = [...defaultMenuCategories];
 const defaultSiteSettings = {
   businessName: "Xadani en Oaxaca",
   domain: "xadanienoaxaca.com",
@@ -270,8 +307,10 @@ async function loadRemoteMenu() {
   try {
     const data = await apiJson("/api/menu");
     remoteMenuItems = data.menu || [];
+    menuCategories = data.categories?.length ? data.categories : [...defaultMenuCategories];
   } catch {
     remoteMenuItems = [];
+    menuCategories = [...defaultMenuCategories];
   }
 }
 
@@ -315,8 +354,10 @@ function resolveImageUrl(imageUrl) {
 function renderMenu(category) {
   const menuOverrides = getLocalMenuItems(category);
   const hasRemoteCategory = remoteMenuItems.some((item) => item.category === category);
-  const visibleItems = hasRemoteCategory ? menuOverrides : [...menuItems[category], ...menuOverrides];
-  grid.innerHTML = visibleItems
+  const fallbackItems = fallbackMenuItems[category] || [];
+  const visibleItems = hasRemoteCategory ? menuOverrides : [...fallbackItems, ...menuOverrides];
+  grid.innerHTML = visibleItems.length
+    ? visibleItems
     .map(
       (item) => `
         <article class="dish-card">
@@ -334,7 +375,8 @@ function renderMenu(category) {
         </article>
       `
     )
-    .join("");
+    .join("")
+    : `<p class="empty-menu">Aun no hay platillos en esta categoria.</p>`;
 }
 
 function getLocalMenuItems(category) {
@@ -364,16 +406,46 @@ function getLocalMenuItems(category) {
   }
 }
 
-tabs.forEach((tab) => {
-  tab.addEventListener("click", () => {
-    tabs.forEach((item) => {
-      item.classList.remove("active");
-      item.setAttribute("aria-selected", "false");
-    });
-    tab.classList.add("active");
-    tab.setAttribute("aria-selected", "true");
-    renderMenu(tab.dataset.category);
+function renderMenuTabs(activeCategory = menuCategories[0]?.slug || "entradas-frias") {
+  const groups = menuCategories.reduce((acc, category) => {
+    if (!acc.has(category.group)) acc.set(category.group, []);
+    acc.get(category.group).push(category);
+    return acc;
+  }, new Map());
+
+  menuTabs.innerHTML = Array.from(groups.entries())
+    .map(
+      ([group, categories]) => `
+        <div class="menu-tab-group">
+          <span>${group}</span>
+          <div>
+            ${categories
+              .map(
+                (category) => `
+                  <button class="tab ${category.slug === activeCategory ? "active" : ""}" type="button" role="tab"
+                    aria-selected="${category.slug === activeCategory}" data-category="${category.slug}">
+                    ${category.name}
+                  </button>
+                `
+              )
+              .join("")}
+          </div>
+        </div>
+      `
+    )
+    .join("");
+}
+
+menuTabs.addEventListener("click", (event) => {
+  const tab = event.target.closest(".tab");
+  if (!tab) return;
+  menuTabs.querySelectorAll(".tab").forEach((item) => {
+    item.classList.remove("active");
+    item.setAttribute("aria-selected", "false");
   });
+  tab.classList.add("active");
+  tab.setAttribute("aria-selected", "true");
+  renderMenu(tab.dataset.category);
 });
 
 navToggle.addEventListener("click", () => {
@@ -526,10 +598,12 @@ if (stripeStatus === "success" || stripeStatus === "cancel") {
 }
 
 applySiteSettings();
-renderMenu("calientes");
+renderMenuTabs();
+renderMenu(menuCategories[0]?.slug || "entradas-frias");
 
 Promise.all([loadRemoteSettings(), loadRemoteMenu()]).then(() => {
   applySiteSettings();
-  const activeTab = document.querySelector(".tab.active");
-  renderMenu(activeTab?.dataset.category || "calientes");
+  const activeCategory = menuCategories[0]?.slug || "entradas-frias";
+  renderMenuTabs(activeCategory);
+  renderMenu(activeCategory);
 });

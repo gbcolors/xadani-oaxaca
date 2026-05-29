@@ -42,6 +42,16 @@ create table if not exists menu_items (
   updated_at timestamptz default now()
 );
 
+create table if not exists menu_categories (
+  slug text primary key,
+  group_name text not null,
+  name text not null,
+  active boolean default true,
+  sort_order integer default 0,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
 create table if not exists app_settings (
   key text primary key,
   value text not null,

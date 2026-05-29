@@ -31,11 +31,29 @@ const defaultTables = [
 ];
 
 const demoMenu = [
-  { category: "calientes", name: "Tetela de requesón y hoja santa", price: 145, description: "Masa azul, requesón fresco y salsa de chile pasilla mixe." },
-  { category: "frias", name: "Aguachile de pesca local", price: 235, description: "Chile de agua, pepino, cebolla morada y limón criollo." },
-  { category: "fuertes", name: "Mole negro con guajolote", price: 365, description: "Receta de la casa con arroz y ajonjolí tostado." },
+  { category: "entradas-frias", name: "Aguachile de pesca local", price: 235, description: "Chile de agua, pepino, cebolla morada y limón criollo." },
+  { category: "entradas-calientes", name: "Tetela de requesón y hoja santa", price: 145, description: "Masa azul, requesón fresco y salsa de chile pasilla mixe." },
+  { category: "fuertes-pesca-del-dia", name: "Pesca del día con coloradito", price: 390, description: "Filete a la plancha, coloradito y verduras tatemadas." },
   { category: "postres", name: "Nicuatole con frutos rojos", price: 135, description: "Postre tradicional de maíz con compota de temporada." },
-  { category: "bebidas", name: "Coctel de mezcal con hoja santa", price: 190, description: "Mezcal joven, hoja santa, limón y agave." }
+  { category: "bebidas-con-alcohol", name: "Coctel de mezcal con hoja santa", price: 190, description: "Mezcal joven, hoja santa, limón y agave." }
+];
+
+const defaultCategories = [
+  { slug: "entradas-frias", group: "ENTRADAS", name: "FRIAS", sortOrder: 0 },
+  { slug: "entradas-cocteles", group: "ENTRADAS", name: "COCTELES", sortOrder: 1 },
+  { slug: "entradas-ensaladas", group: "ENTRADAS", name: "ENSALADAS", sortOrder: 2 },
+  { slug: "entradas-calientes", group: "ENTRADAS", name: "CALIENTES", sortOrder: 3 },
+  { slug: "entradas-caldos", group: "ENTRADAS", name: "CALDOS", sortOrder: 4 },
+  { slug: "entradas-sopas", group: "ENTRADAS", name: "SOPAS", sortOrder: 5 },
+  { slug: "entradas-consomes", group: "ENTRADAS", name: "CONSOMES", sortOrder: 6 },
+  { slug: "fuertes-pesca-del-dia", group: "FUERTES", name: "PESCA DEL DÍA", sortOrder: 7 },
+  { slug: "fuertes-especiales-istmenos", group: "FUERTES", name: "ESPECIALES ISTMEÑOS", sortOrder: 8 },
+  { slug: "fuertes-camarones", group: "FUERTES", name: "CAMARONES", sortOrder: 9 },
+  { slug: "fuertes-para-compartir", group: "FUERTES", name: "PARA COMPARTIR", sortOrder: 10 },
+  { slug: "fuertes-extras", group: "FUERTES", name: "EXTRAS", sortOrder: 11 },
+  { slug: "postres", group: "POSTRES", name: "POSTRES", sortOrder: 12 },
+  { slug: "bebidas-con-alcohol", group: "BEBIDAS", name: "CON ALCOHOL", sortOrder: 13 },
+  { slug: "bebidas-sin-alcohol", group: "BEBIDAS", name: "SIN ALCOHOL", sortOrder: 14 }
 ];
 
 const loginPanel = document.querySelector("#login-panel");
@@ -54,6 +72,11 @@ const floorPlan = document.querySelector("#floor-plan");
 const resetTablesButton = document.querySelector("#reset-tables");
 const menuEditor = document.querySelector("#menu-editor");
 const menuList = document.querySelector("#menu-admin-list");
+const categoryEditor = document.querySelector("#category-editor");
+const categoryList = document.querySelector("#category-admin-list");
+const categorySubmitButton = document.querySelector("#category-submit");
+const cancelCategoryEditButton = document.querySelector("#cancel-category-edit");
+const menuCategorySelect = document.querySelector("#menu-category-select");
 const resetMenuButton = document.querySelector("#reset-menu");
 const menuSubmitButton = document.querySelector("#menu-submit");
 const cancelMenuEditButton = document.querySelector("#cancel-menu-edit");
@@ -64,6 +87,7 @@ const passwordEditor = document.querySelector("#password-editor");
 let reservationsCache = [];
 let tablesCache = [];
 let menuCache = [];
+let categoryCache = [...defaultCategories];
 
 function readStorage(key, fallback) {
   try {
@@ -162,14 +186,42 @@ async function saveTables(tables) {
 async function loadMenu() {
   try {
     const data = await apiRequest("/api/menu");
+    categoryCache = data.categories?.length ? data.categories : [...defaultCategories];
     menuCache = (data.menu || []).map((item, index) => ({ ...item, id: item.id || `api-${index}` }));
     writeStorage(MENU_KEY, menuCache);
   } catch {
+    categoryCache = [...defaultCategories];
     menuCache = readStorage(MENU_KEY, demoMenu).map((item, index) => ({
       ...item,
       id: item.id || `local-${index}`
     }));
   }
+}
+
+async function addCategory(category) {
+  const data = await apiRequest("/api/menu/categories", {
+    method: "POST",
+    body: JSON.stringify(category)
+  });
+  categoryCache.push(data.category);
+}
+
+async function updateCategory(category) {
+  const data = await apiRequest("/api/menu/categories", {
+    method: "PUT",
+    body: JSON.stringify(category)
+  });
+  const index = categoryCache.findIndex((row) => row.slug === category.slug);
+  if (index >= 0) categoryCache[index] = data.category;
+}
+
+async function deleteCategory(slug) {
+  await apiRequest("/api/menu/categories", {
+    method: "DELETE",
+    body: JSON.stringify({ slug })
+  });
+  categoryCache = categoryCache.filter((category) => category.slug !== slug);
+  menuCache = menuCache.filter((item) => item.category !== slug);
 }
 
 async function addMenuItem(item) {
@@ -322,13 +374,17 @@ function renderTables() {
 }
 
 function renderMenuAdmin() {
+  const categoryLabels = Object.fromEntries(
+    categoryCache.map((category) => [category.slug, `${category.group} / ${category.name}`])
+  );
+
   menuList.innerHTML = menuCache
     .map(
       (item) => `
         <article class="menu-row">
           <div>
             <strong>${item.name}</strong>
-            <p>${item.category} · ${item.description}</p>
+            <p>${categoryLabels[item.category] || item.category} · ${item.description}</p>
           </div>
           <span>${formatPrice(item.price)}</span>
           <div class="button-row">
@@ -341,11 +397,54 @@ function renderMenuAdmin() {
     .join("");
 }
 
+function renderCategoryAdmin() {
+  const sortedCategories = [...categoryCache].sort((a, b) => Number(a.sortOrder || 0) - Number(b.sortOrder || 0));
+  menuCategorySelect.innerHTML = sortedCategories
+    .map((category) => `<option value="${category.slug}">${category.group} / ${category.name}</option>`)
+    .join("");
+
+  categoryList.innerHTML = sortedCategories
+    .map(
+      (category) => `
+        <article class="category-row">
+          <div>
+            <strong>${category.group}</strong>
+            <p>${category.name}</p>
+          </div>
+          <span>${Number(category.sortOrder || 0)}</span>
+          <div class="button-row">
+            <button class="button" type="button" data-edit-category="${category.slug}">Editar</button>
+            <button class="button" type="button" data-delete-category="${category.slug}">Eliminar</button>
+          </div>
+        </article>
+      `
+    )
+    .join("");
+}
+
 function clearMenuEditor() {
   menuEditor.reset();
   menuEditor.elements.id.value = "";
   menuSubmitButton.textContent = "Agregar platillo";
   cancelMenuEditButton.hidden = true;
+}
+
+function clearCategoryEditor() {
+  categoryEditor.reset();
+  categoryEditor.elements.slug.value = "";
+  categoryEditor.elements.sortOrder.value = categoryCache.length;
+  categorySubmitButton.textContent = "Agregar categoría";
+  cancelCategoryEditButton.hidden = true;
+}
+
+function fillCategoryEditor(category) {
+  categoryEditor.elements.slug.value = category.slug;
+  categoryEditor.elements.group.value = category.group;
+  categoryEditor.elements.name.value = category.name;
+  categoryEditor.elements.sortOrder.value = category.sortOrder || 0;
+  categorySubmitButton.textContent = "Guardar categoría";
+  cancelCategoryEditButton.hidden = false;
+  categoryEditor.scrollIntoView({ behavior: "smooth", block: "center" });
 }
 
 function fillMenuEditor(item) {
@@ -374,7 +473,9 @@ async function renderAll() {
   const settings = await loadSettings();
   renderReservations();
   renderTables();
+  renderCategoryAdmin();
   renderMenuAdmin();
+  clearCategoryEditor();
   renderSettingsEditor(settings);
 }
 
@@ -512,6 +613,54 @@ floorPlan.addEventListener("click", async (event) => {
   renderTables();
 });
 
+categoryEditor.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const data = new FormData(categoryEditor);
+  const category = {
+    slug: data.get("slug"),
+    group: data.get("group").trim(),
+    name: data.get("name").trim(),
+    sortOrder: Number(data.get("sortOrder"))
+  };
+
+  try {
+    if (category.slug) {
+      await updateCategory(category);
+    } else {
+      delete category.slug;
+      await addCategory(category);
+    }
+    renderCategoryAdmin();
+    clearCategoryEditor();
+  } catch {
+    alert("No se pudo guardar la categoría en el servidor.");
+  }
+});
+
+categoryList.addEventListener("click", async (event) => {
+  const editButton = event.target.closest("[data-edit-category]");
+  if (editButton) {
+    const category = categoryCache.find((row) => row.slug === editButton.dataset.editCategory);
+    if (category) fillCategoryEditor(category);
+    return;
+  }
+
+  const deleteButton = event.target.closest("[data-delete-category]");
+  if (!deleteButton) return;
+  if (!confirm("Eliminar esta categoría también ocultará sus platillos.")) return;
+
+  try {
+    await deleteCategory(deleteButton.dataset.deleteCategory);
+    renderCategoryAdmin();
+    renderMenuAdmin();
+    clearCategoryEditor();
+  } catch {
+    alert("No se pudo eliminar la categoría en el servidor.");
+  }
+});
+
+cancelCategoryEditButton.addEventListener("click", clearCategoryEditor);
+
 resetTablesButton.addEventListener("click", async () => {
   try {
     await saveTables(defaultTables);
@@ -568,11 +717,19 @@ menuList.addEventListener("click", async (event) => {
 
 cancelMenuEditButton.addEventListener("click", clearMenuEditor);
 
-resetMenuButton.addEventListener("click", () => {
-  menuCache = demoMenu.map((item, index) => ({ ...item, id: `demo-${index}` }));
-  writeStorage(MENU_KEY, menuCache);
-  renderMenuAdmin();
-  alert("Menú demo restaurado solo en esta vista. Agrega platillos manualmente para guardarlos globalmente.");
+resetMenuButton.addEventListener("click", async () => {
+  if (!confirm("Restaurar el menú demo ocultará las categorías y platillos actuales.")) return;
+
+  try {
+    await apiRequest("/api/menu/reset", { method: "POST" });
+    await loadMenu();
+    renderCategoryAdmin();
+    renderMenuAdmin();
+    clearCategoryEditor();
+    clearMenuEditor();
+  } catch {
+    alert("No se pudo restaurar el menú demo en el servidor.");
+  }
 });
 
 settingsEditor.addEventListener("submit", async (event) => {

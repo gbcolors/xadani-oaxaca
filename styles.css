@@ -314,10 +314,30 @@ h3 {
 }
 
 .menu-tabs {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 26px;
+}
+
+.menu-tab-group {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+}
+
+.menu-tab-group > span {
+  padding-top: 12px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.menu-tab-group > div {
   display: flex;
   gap: 8px;
-  margin-bottom: 26px;
-  padding-bottom: 8px;
+  padding-bottom: 4px;
   overflow-x: auto;
 }
 
@@ -356,8 +376,14 @@ h3 {
 
 .dish-image {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 1 / 1;
   object-fit: cover;
+}
+
+.empty-menu {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--muted);
 }
 
 .dish-content {
@@ -410,13 +436,13 @@ h3 {
 
 .gallery-grid {
   display: grid;
-  grid-auto-rows: 240px;
-  grid-template-columns: 1.2fr 0.8fr 0.8fr;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
 }
 
 .gallery-grid figure {
   position: relative;
+  aspect-ratio: 1 / 1;
   min-height: 220px;
   margin: 0;
   overflow: hidden;
@@ -425,11 +451,11 @@ h3 {
 }
 
 .gallery-grid .wide {
-  grid-column: span 2;
+  grid-column: span 1;
 }
 
 .gallery-grid .tall {
-  grid-row: span 2;
+  grid-row: span 1;
 }
 
 .gallery-grid img {
@@ -804,6 +830,14 @@ dd {
 @media (max-width: 720px) {
   .site-header {
     align-items: flex-start;
+  }
+
+  .menu-tab-group {
+    grid-template-columns: 1fr;
+  }
+
+  .menu-tab-group > span {
+    padding-top: 0;
   }
 
   .nav-toggle {

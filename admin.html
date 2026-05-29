@@ -129,17 +129,31 @@
               </div>
               <button class="button" type="button" id="reset-menu">Restaurar menú demo</button>
             </div>
+            <form class="category-editor" id="category-editor">
+              <input name="slug" type="hidden" />
+              <label>
+                Sección
+                <input name="group" type="text" placeholder="ENTRADAS" required />
+              </label>
+              <label>
+                Categoría
+                <input name="name" type="text" placeholder="FRIAS" required />
+              </label>
+              <label>
+                Orden
+                <input name="sortOrder" type="number" min="0" value="0" required />
+              </label>
+              <div class="button-row">
+                <button class="button primary" type="submit" id="category-submit">Agregar categoría</button>
+                <button class="button" type="button" id="cancel-category-edit" hidden>Cancelar</button>
+              </div>
+            </form>
+            <div class="category-admin-list" id="category-admin-list"></div>
             <form class="menu-editor" id="menu-editor">
               <input name="id" type="hidden" />
               <label>
                 Categoría
-                <select name="category">
-                  <option value="calientes">Entradas calientes</option>
-                  <option value="frias">Entradas frías</option>
-                  <option value="fuertes">Fuertes</option>
-                  <option value="postres">Postres</option>
-                  <option value="bebidas">Bebidas</option>
-                </select>
+                <select name="category" id="menu-category-select"></select>
               </label>
               <label>
                 Platillo
@@ -248,6 +262,6 @@
       </section>
     </main>
 
-    <script src="admin.js?v=20260529-neon-api"></script>
+    <script src="admin.js?v=20260529-editable-categories"></script>
   </body>
 </html>

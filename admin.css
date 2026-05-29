@@ -202,6 +202,7 @@ h2 {
 
 .login-panel form,
 .filters,
+.category-editor,
 .menu-editor,
 .settings-editor {
   display: grid;
@@ -359,6 +360,7 @@ th {
 }
 
 .menu-editor,
+.category-editor,
 .settings-editor {
   grid-template-columns: 180px minmax(0, 1fr) 130px;
   margin-bottom: 18px;
@@ -369,6 +371,7 @@ th {
 }
 
 .settings-editor .wide,
+.category-editor .wide,
 .menu-editor .wide {
   grid-column: 1 / -1;
 }
@@ -384,7 +387,14 @@ th {
   gap: 10px;
 }
 
-.menu-row {
+.category-admin-list {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.menu-row,
+.category-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 110px auto;
   gap: 12px;
@@ -393,7 +403,8 @@ th {
   padding-top: 12px;
 }
 
-.menu-row p {
+.menu-row p,
+.category-row p {
   margin: 4px 0 0;
   color: var(--muted);
 }
@@ -403,6 +414,7 @@ th {
   .login-panel,
   .metric-grid,
   .filters,
+  .category-editor,
   .menu-editor,
   .settings-editor {
     grid-template-columns: 1fr;
