@@ -1010,6 +1010,4 @@ resetSettingsButton.addEventListener("click", async () => {
   }
 });
 
-if (sessionStorage.getItem("xadaniAdminUnlocked") === "true") {
-  unlockAdmin(adminToken);
-}
+lockAdmin();
