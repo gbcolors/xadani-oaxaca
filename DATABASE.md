@@ -1,11 +1,11 @@
 # Base de datos
 
-El sitio usa Postgres mediante `DATABASE_URL`. Puede ser Amazon RDS PostgreSQL, Aurora PostgreSQL, Neon, Supabase, Railway o Vercel Postgres. Tambien acepta `POSTGRES_URL`, `POSTGRES_PRISMA_URL` o `POSTGRES_URL_NON_POOLING` si Vercel/Neon las inyecta automaticamente.
+El sitio usa Postgres mediante `DATABASE_URL`. Puede ser Neon, Vercel Postgres, Amazon RDS PostgreSQL, Aurora PostgreSQL, Supabase o Railway. Tambien acepta `POSTGRES_URL`, `POSTGRES_PRISMA_URL` o `POSTGRES_URL_NON_POOLING` si Vercel/Neon las inyecta automaticamente.
 
 ## Variables necesarias
 
 ```bash
-DATABASE_URL=postgresql://aws_user:aws_password@your-rds-endpoint.amazonaws.com:5432/xadani?sslmode=require
+DATABASE_URL=postgresql://user:password@ep-example.us-east-1.aws.neon.tech/xadani?sslmode=require
 ADMIN_API_TOKEN=una-clave-larga-para-el-panel
 STRIPE_SECRET_KEY=sk_test_o_sk_live
 PUBLIC_SITE_URL=https://xadanienoaxaca.com
@@ -18,13 +18,13 @@ Para AWS, usa una base **Amazon RDS PostgreSQL** o **Aurora PostgreSQL compatibl
 El formato correcto para Vercel es:
 
 ```bash
-DATABASE_URL=postgresql://USUARIO:CONTRASENA@ENDPOINT_RDS:5432/NOMBRE_BASE?sslmode=require
+DATABASE_URL=postgresql://USUARIO:CONTRASENA@HOST_NEON/NOMBRE_BASE?sslmode=require
 ```
 
 Ejemplo:
 
 ```bash
-DATABASE_URL=postgresql://xadani_admin:password_seguro@xadani-db.abc123.us-east-1.rds.amazonaws.com:5432/xadani?sslmode=require
+DATABASE_URL=postgresql://xadani_owner:password_seguro@ep-example.us-east-1.aws.neon.tech/xadani?sslmode=require
 ```
 
 Notas importantes:

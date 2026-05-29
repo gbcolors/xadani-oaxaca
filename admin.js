@@ -4,9 +4,8 @@ const MENU_KEY = "xadaniMenuOverrides";
 const SETTINGS_KEY = "xadaniSiteSettings";
 
 let adminToken = sessionStorage.getItem("xadaniAdminToken") || "";
-const provisionalApiBase = "https://spell-jenny-commissioner-remain.trycloudflare.com";
-const publicHosts = ["xadanienoaxaca.com", "www.xadanienoaxaca.com"];
-const apiBase = publicHosts.includes(location.hostname) ? provisionalApiBase : "";
+const localFileApiBase = "http://127.0.0.1:3000";
+const apiBase = location.protocol === "file:" ? localFileApiBase : "";
 
 const defaultSettings = {
   businessName: "Xadani en Oaxaca",

@@ -180,9 +180,8 @@ const paymentPreview = document.querySelector("#payment-preview");
 const reservationSubmit = document.querySelector("#reservation-submit");
 
 const checkoutEndpoint = "/api/create-checkout-session";
-const provisionalApiBase = "https://spell-jenny-commissioner-remain.trycloudflare.com";
-const publicHosts = ["xadanienoaxaca.com", "www.xadanienoaxaca.com"];
-const apiBase = publicHosts.includes(location.hostname) ? provisionalApiBase : "";
+const localFileApiBase = "http://127.0.0.1:3000";
+const apiBase = location.protocol === "file:" ? localFileApiBase : "";
 let remoteMenuItems = [];
 const defaultSiteSettings = {
   businessName: "Xadani en Oaxaca",
@@ -465,7 +464,7 @@ reservationForm.addEventListener("submit", (event) => {
     reservationSubmit.disabled = true;
     reservationSubmit.textContent = "Preparando pago...";
 
-    fetch(checkoutEndpoint, {
+    fetch(`${apiBase}${checkoutEndpoint}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

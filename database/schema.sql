@@ -47,3 +47,10 @@ create table if not exists app_settings (
   value text not null,
   updated_at timestamptz default now()
 );
+
+create table if not exists admin_users (
+  username text primary key,
+  salt text not null,
+  password_hash text not null,
+  updated_at timestamptz default now()
+);
