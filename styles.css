@@ -523,7 +523,7 @@ h3 {
   color: var(--cream);
   background:
     linear-gradient(110deg, rgba(42, 27, 24, 0.94), rgba(42, 27, 24, 0.66)),
-    url("https://images.unsplash.com/photo-1592861956120-e524fc739696?auto=format&fit=crop&w=1700&q=80") center/cover;
+    url("assets/xadani-hero-portada.jpg") center/cover;
 }
 
 .contact-copy {

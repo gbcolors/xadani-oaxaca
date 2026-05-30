@@ -368,7 +368,7 @@ function applySiteSettings() {
 
 function resolveImageUrl(imageUrl) {
   if (!imageUrl) {
-    return "https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=900&q=80";
+    return "assets/xadani-hero-portada.jpg";
   }
 
   if (imageUrl.startsWith("http") || imageUrl.startsWith("data:")) {
@@ -446,22 +446,12 @@ function renderMenuTabs(activeCategory = menuCategories[0]?.slug || "entradas-fr
 }
 
 function renderGallery() {
-  const rows = galleryItems.length
-    ? galleryItems
-    : [
-        {
-          title: "Como iniciamos",
-          caption: "Cocina familiar, horno y recetas del Istmo.",
-          image: "https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&w=1200&q=82"
-        },
-        {
-          title: "Nuestra cocina",
-          caption: "Producto fresco, adobos y preparación al momento.",
-          image: "https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=1200&q=82"
-        }
-      ];
+  if (!galleryItems.length) {
+    galleryGrid.innerHTML = `<p class="empty-menu">La biblioteca aun no tiene fotografias publicadas.</p>`;
+    return;
+  }
 
-  galleryGrid.innerHTML = rows
+  galleryGrid.innerHTML = galleryItems
     .map(
       (item) => `
         <figure>

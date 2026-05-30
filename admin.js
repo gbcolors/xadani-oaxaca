@@ -390,13 +390,42 @@ function fileToDataUrl(file) {
   });
 }
 
+function imageToDataUrl(file, maxSize = 1600, quality = 0.82) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => {
+      const scale = Math.min(1, maxSize / Math.max(image.naturalWidth, image.naturalHeight));
+      const width = Math.max(1, Math.round(image.naturalWidth * scale));
+      const height = Math.max(1, Math.round(image.naturalHeight * scale));
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const context = canvas.getContext("2d");
+      context.drawImage(image, 0, 0, width, height);
+      URL.revokeObjectURL(image.src);
+      resolve(canvas.toDataURL("image/jpeg", quality));
+    };
+    image.onerror = () => {
+      URL.revokeObjectURL(image.src);
+      reject(new Error("Invalid image"));
+    };
+    image.src = URL.createObjectURL(file);
+  });
+}
+
 async function uploadImage(file) {
   if (!file) return "";
-  if (file.size > 5 * 1024 * 1024) {
+  if (file.size > 12 * 1024 * 1024) {
     throw new Error("Image is too large");
   }
 
-  const dataUrl = await fileToDataUrl(file);
+  let dataUrl = await imageToDataUrl(file);
+  if (dataUrl.length > 3.8 * 1024 * 1024) {
+    dataUrl = await imageToDataUrl(file, 1200, 0.74);
+  }
+  if (dataUrl.length > 3.8 * 1024 * 1024) {
+    dataUrl = await fileToDataUrl(file);
+  }
   const data = await apiRequest("/api/uploads", {
     method: "POST",
     body: JSON.stringify({
@@ -1200,8 +1229,11 @@ libraryBulkUploader.addEventListener("submit", async (event) => {
 
   libraryBulkStatus.textContent = `Subiendo 0 de ${files.length}...`;
 
-  try {
-    for (const [index, file] of files.entries()) {
+  let uploadedCount = 0;
+  let failedCount = 0;
+
+  for (const [index, file] of files.entries()) {
+    try {
       const uploadedImage = await uploadImage(file);
       await saveLibraryItem({
         title: titleFromFileName(file.name) || `Foto ${libraryCache.length + 1}`,
@@ -1210,17 +1242,21 @@ libraryBulkUploader.addEventListener("submit", async (event) => {
         caption,
         image: uploadedImage
       });
-      libraryBulkStatus.textContent = `Subiendo ${index + 1} de ${files.length}...`;
+      uploadedCount += 1;
+    } catch {
+      failedCount += 1;
     }
 
-    libraryBulkUploader.reset();
-    renderLibraryAdmin();
-    renderLibraryImageOptions();
-    libraryBulkStatus.textContent = `${files.length} foto${files.length === 1 ? "" : "s"} subida${files.length === 1 ? "" : "s"}.`;
-  } catch {
-    libraryBulkStatus.textContent = "";
-    alert("No se pudieron subir todas las fotos. Revisa el tamaño de los archivos e intenta de nuevo.");
+    libraryBulkStatus.textContent = `Procesadas ${index + 1} de ${files.length}...`;
   }
+
+  libraryBulkUploader.reset();
+  renderLibraryAdmin();
+  renderLibraryImageOptions();
+  libraryBulkStatus.textContent =
+    failedCount > 0
+      ? `${uploadedCount} subida${uploadedCount === 1 ? "" : "s"}; ${failedCount} no se pudieron cargar.`
+      : `${uploadedCount} foto${uploadedCount === 1 ? "" : "s"} subida${uploadedCount === 1 ? "" : "s"}.`;
 });
 
 libraryList.addEventListener("click", async (event) => {
