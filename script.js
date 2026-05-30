@@ -203,6 +203,12 @@ const grid = document.querySelector("#menu-grid");
 const menuTabs = document.querySelector("#menu-tabs");
 const galleryGrid = document.querySelector("#gallery-grid");
 const experienceGrid = document.querySelector("#experience-grid");
+const photoLightbox = document.querySelector("#photo-lightbox");
+const lightboxImage = document.querySelector("#lightbox-image");
+const lightboxKicker = document.querySelector("#lightbox-kicker");
+const lightboxTitle = document.querySelector("#lightbox-title");
+const lightboxDescription = document.querySelector("#lightbox-description");
+const lightboxMeta = document.querySelector("#lightbox-meta");
 const navToggle = document.querySelector(".nav-toggle");
 const siteNav = document.querySelector("#site-nav");
 const reservationModal = document.querySelector("#reservation-modal");
@@ -222,6 +228,7 @@ let remoteMenuItems = [];
 let menuCategories = [...defaultMenuCategories];
 let galleryItems = [];
 let experiences = [];
+let activeMenuItems = [];
 const defaultSiteSettings = {
   businessName: "Xadani en Oaxaca",
   domain: "xadanienoaxaca.com",
@@ -243,6 +250,47 @@ function formatPrice(price) {
     currency: "MXN",
     maximumFractionDigits: 0
   }).format(price);
+}
+
+function escapeHtml(value = "") {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function isCameraFileName(value = "") {
+  return /^img[\s_-]*\d+/i.test(String(value).trim());
+}
+
+function displayGalleryTitle(item, index) {
+  if (!item?.title || isCameraFileName(item.title)) {
+    return `Fotografía ${index + 1}`;
+  }
+  return item.title;
+}
+
+function openPhotoLightbox({ image, title, description, meta, kicker }) {
+  if (!photoLightbox || !image) return;
+  lightboxImage.src = image;
+  lightboxImage.alt = title || "Fotografía Xadani";
+  lightboxKicker.textContent = kicker || "Xadani";
+  lightboxTitle.textContent = title || "Fotografía Xadani";
+  lightboxDescription.textContent = description || "Cocina, platillos e instalaciones de Xadani en Oaxaca.";
+  lightboxMeta.textContent = meta || "";
+  photoLightbox.classList.add("open");
+  photoLightbox.setAttribute("aria-hidden", "false");
+  document.body.classList.add("lightbox-open");
+}
+
+function closePhotoLightbox() {
+  if (!photoLightbox) return;
+  photoLightbox.classList.remove("open");
+  photoLightbox.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("lightbox-open");
+  lightboxImage.src = "";
 }
 
 function getSelectedPayment() {
@@ -381,20 +429,21 @@ function resolveImageUrl(imageUrl) {
 function renderMenu(category) {
   const categorySlugs = mainCategoryMap[category] || [category];
   const visibleItems = getLocalMenuItems(categorySlugs);
+  activeMenuItems = visibleItems;
   grid.innerHTML = visibleItems.length
     ? visibleItems
     .map(
-      (item) => `
-        <article class="dish-card">
-          <img class="dish-image" src="${item.image}" alt="${item.name}" loading="lazy">
+      (item, index) => `
+        <article class="dish-card" data-menu-photo="${index}" tabindex="0">
+          <img class="dish-image" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" loading="lazy">
           <div class="dish-content">
             <div class="dish-top">
-              <h3>${item.name}</h3>
+              <h3>${escapeHtml(item.name)}</h3>
               <span class="price">${formatPrice(item.price)}</span>
             </div>
-            <p>${item.description}</p>
+            <p>${escapeHtml(item.description)}</p>
             <div class="tags">
-              ${item.tags.map((tag) => `<span class="tag">${tag}</span>`).join("")}
+              ${item.tags.map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("")}
             </div>
           </div>
         </article>
@@ -453,10 +502,10 @@ function renderGallery() {
 
   galleryGrid.innerHTML = galleryItems
     .map(
-      (item) => `
-        <figure>
-          <img src="${resolveImageUrl(item.image)}" alt="${item.title}" loading="lazy" />
-          <figcaption><strong>${item.title}</strong><span>${item.caption || ""}</span></figcaption>
+      (item, index) => `
+        <figure data-gallery-photo="${index}" tabindex="0">
+          <img src="${escapeHtml(resolveImageUrl(item.image))}" alt="${escapeHtml(displayGalleryTitle(item, index))}" loading="lazy" />
+          <figcaption>Ver foto</figcaption>
         </figure>
       `
     )
@@ -498,6 +547,63 @@ menuTabs.addEventListener("click", (event) => {
   tab.classList.add("active");
   tab.setAttribute("aria-selected", "true");
   renderMenu(tab.dataset.category);
+});
+
+grid.addEventListener("click", (event) => {
+  const card = event.target.closest("[data-menu-photo]");
+  if (!card) return;
+  const item = activeMenuItems[Number(card.dataset.menuPhoto)];
+  if (!item) return;
+  openPhotoLightbox({
+    image: item.image,
+    title: item.name,
+    description: item.description,
+    meta: `${formatPrice(item.price)}${item.tags?.length ? ` · ${item.tags.join(" · ")}` : ""}`,
+    kicker: "Menú Xadani"
+  });
+});
+
+grid.addEventListener("keydown", (event) => {
+  if (event.key !== "Enter" && event.key !== " ") return;
+  const card = event.target.closest("[data-menu-photo]");
+  if (!card) return;
+  event.preventDefault();
+  card.click();
+});
+
+galleryGrid.addEventListener("click", (event) => {
+  const card = event.target.closest("[data-gallery-photo]");
+  if (!card) return;
+  const index = Number(card.dataset.galleryPhoto);
+  const item = galleryItems[index];
+  if (!item) return;
+  openPhotoLightbox({
+    image: resolveImageUrl(item.image),
+    title: displayGalleryTitle(item, index),
+    description: item.caption || "Una mirada a los platillos, el horno y los momentos de mesa en Xadani.",
+    meta: item.type ? item.type : "Fotografía",
+    kicker: "Biblioteca"
+  });
+});
+
+galleryGrid.addEventListener("keydown", (event) => {
+  if (event.key !== "Enter" && event.key !== " ") return;
+  const card = event.target.closest("[data-gallery-photo]");
+  if (!card) return;
+  event.preventDefault();
+  card.click();
+});
+
+photoLightbox?.addEventListener("click", (event) => {
+  if (event.target.closest("[data-close-lightbox]")) {
+    closePhotoLightbox();
+  }
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    closePhotoLightbox();
+  }
 });
 
 navToggle.addEventListener("click", () => {
@@ -618,7 +724,7 @@ reservationForm.addEventListener("submit", (event) => {
           reservation.folio
         } por ${formatPrice(
           reservation.paymentTotal
-        )}. Falta configurar Stripe en el servidor para cobrar este prepago.`;
+        )}. No pudimos iniciar el pago en este momento; confirmaremos la reserva por telefono.`;
         reservationForm.reset();
         reservationSubmit.disabled = false;
         updatePaymentPreview();

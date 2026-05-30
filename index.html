@@ -19,7 +19,7 @@
       property="og:image"
       content="https://xadanienoaxaca.com/assets/xadani-hero-portada.jpg"
     />
-    <link rel="stylesheet" href="styles.css?v=20260530-no-demo-gallery" />
+    <link rel="stylesheet" href="styles.css?v=20260530-gallery-lightbox" />
   </head>
   <body>
     <header class="site-header">
@@ -119,7 +119,7 @@
         <div class="section-heading">
           <p class="eyebrow">Experiencias y eventos</p>
           <h2>Próximas experiencias</h2>
-          <p>Eventos, comidas especiales o experiencia permanente. Cada anuncio puede reservarse o configurarse para prepago.</p>
+          <p>Eventos, comidas especiales y experiencias de temporada para disfrutar la cocina de Xadani.</p>
         </div>
         <div class="experience-grid" id="experience-grid"></div>
       </section>
@@ -128,7 +128,7 @@
         <div class="section-heading">
           <p class="eyebrow">Biblioteca</p>
           <h2>Fotografías del concepto</h2>
-          <p>Platillos, instalaciones, cocina y momentos de Xadani. Esta biblioteca se administra desde el panel.</p>
+          <p>Platillos, instalaciones, cocina y momentos de Xadani servidos con el sabor de Oaxaca.</p>
         </div>
         <div class="gallery-grid" id="gallery-grid"></div>
       </section>
@@ -304,7 +304,21 @@
       <span>© 2026</span>
     </footer>
 
+    <div class="photo-lightbox" id="photo-lightbox" aria-hidden="true">
+      <button class="lightbox-backdrop" type="button" data-close-lightbox aria-label="Cerrar vista"></button>
+      <article class="lightbox-panel" role="dialog" aria-modal="true" aria-labelledby="lightbox-title">
+        <button class="lightbox-close" type="button" data-close-lightbox aria-label="Cerrar">×</button>
+        <img id="lightbox-image" src="" alt="" />
+        <div class="lightbox-copy">
+          <p class="eyebrow" id="lightbox-kicker">Xadani</p>
+          <h2 id="lightbox-title">Detalle</h2>
+          <p id="lightbox-description"></p>
+          <p class="lightbox-meta" id="lightbox-meta"></p>
+        </div>
+      </article>
+    </div>
+
     <a class="mobile-reserve" href="#reservas">Reservar</a>
-    <script src="script.js?v=20260530-no-demo-gallery"></script>
+    <script src="script.js?v=20260530-gallery-lightbox"></script>
   </body>
 </html>
