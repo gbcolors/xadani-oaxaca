@@ -227,6 +227,7 @@ h2 {
 .walkin-editor,
 .experience-editor,
 .library-editor,
+.library-bulk-uploader,
 .category-editor,
 .menu-editor,
 .settings-editor {
@@ -390,6 +391,7 @@ th {
 .walkin-editor,
 .experience-editor,
 .library-editor,
+.library-bulk-uploader,
 .category-editor,
 .settings-editor {
   grid-template-columns: 180px minmax(0, 1fr) 130px;
@@ -405,6 +407,7 @@ th {
 .walkin-editor .wide,
 .experience-editor .wide,
 .library-editor .wide,
+.library-bulk-uploader .wide,
 .category-editor .wide,
 .menu-editor .wide {
   grid-column: 1 / -1;
@@ -444,6 +447,18 @@ th {
   padding-top: 12px;
 }
 
+.library-row {
+  grid-template-columns: 76px minmax(0, 1fr) 80px auto;
+}
+
+.library-thumb {
+  width: 76px;
+  aspect-ratio: 1 / 1;
+  border-radius: 8px;
+  object-fit: cover;
+  background: var(--cream);
+}
+
 .menu-row p,
 .table-row p,
 .category-row p {
@@ -460,6 +475,7 @@ th {
   .walkin-editor,
   .experience-editor,
   .library-editor,
+  .library-bulk-uploader,
   .category-editor,
   .menu-editor,
   .settings-editor {

@@ -289,6 +289,12 @@
                 <input name="image" type="url" placeholder="https://..." />
               </label>
               <label class="wide">
+                Usar imagen de biblioteca
+                <select name="libraryImage" id="menu-library-image">
+                  <option value="">Seleccionar foto guardada...</option>
+                </select>
+              </label>
+              <label class="wide">
                 Subir imagen
                 <input name="imageFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif" />
               </label>
@@ -325,6 +331,12 @@
               <label>Botón <input name="ctaLabel" type="text" value="Reservar" /></label>
               <label class="wide">Descripción <textarea name="description" rows="3" required></textarea></label>
               <label class="wide">Imagen URL <input name="image" type="url" placeholder="https://..." /></label>
+              <label class="wide">
+                Usar imagen de biblioteca
+                <select name="libraryImage" id="experience-library-image">
+                  <option value="">Seleccionar foto guardada...</option>
+                </select>
+              </label>
               <label class="wide">Subir imagen <input name="imageFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif" /></label>
               <div class="wide button-row">
                 <button class="button primary" type="submit" id="experience-submit">Guardar experiencia</button>
@@ -341,6 +353,24 @@
                 <h2>Biblioteca</h2>
               </div>
             </div>
+            <form class="library-bulk-uploader" id="library-bulk-uploader">
+              <label class="wide">
+                Subir varias fotos
+                <input name="imageFiles" type="file" accept="image/png,image/jpeg,image/webp,image/gif" multiple />
+              </label>
+              <label>
+                Tipo
+                <input name="type" type="text" placeholder="platillo, instalaciones, cocina" />
+              </label>
+              <label class="wide">
+                Pie de foto general
+                <textarea name="caption" rows="2" placeholder="Opcional para todas las fotos"></textarea>
+              </label>
+              <div class="wide button-row">
+                <button class="button primary" type="submit">Subir fotos</button>
+                <span class="admin-note" id="library-bulk-status"></span>
+              </div>
+            </form>
             <form class="library-editor" id="library-editor">
               <input name="id" type="hidden" />
               <label>Título <input name="title" type="text" required /></label>
@@ -436,6 +466,6 @@
       </section>
     </main>
 
-    <script src="/admin.js?v=20260530-reorg"></script>
+    <script src="/admin.js?v=20260530-library-bulk"></script>
   </body>
 </html>

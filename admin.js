@@ -94,6 +94,8 @@ const settingsEditor = document.querySelector("#settings-editor");
 const resetSettingsButton = document.querySelector("#reset-settings");
 const passwordEditor = document.querySelector("#password-editor");
 const libraryEditor = document.querySelector("#library-editor");
+const libraryBulkUploader = document.querySelector("#library-bulk-uploader");
+const libraryBulkStatus = document.querySelector("#library-bulk-status");
 const libraryList = document.querySelector("#library-admin-list");
 const librarySubmitButton = document.querySelector("#library-submit");
 const cancelLibraryEditButton = document.querySelector("#cancel-library-edit");
@@ -335,6 +337,7 @@ async function saveLibraryItem(item) {
   const index = libraryCache.findIndex((row) => String(row.id) === String(data.item.id));
   if (index >= 0) libraryCache[index] = data.item;
   else libraryCache.push(data.item);
+  writeStorage(LIBRARY_KEY, libraryCache);
 }
 
 async function deleteLibraryItem(id) {
@@ -343,6 +346,7 @@ async function deleteLibraryItem(id) {
     body: JSON.stringify({ id })
   });
   libraryCache = libraryCache.filter((item) => String(item.id) !== String(id));
+  writeStorage(LIBRARY_KEY, libraryCache);
 }
 
 async function loadExperiences() {
@@ -363,6 +367,7 @@ async function saveExperienceItem(item) {
   const index = experienceCache.findIndex((row) => String(row.id) === String(data.item.id));
   if (index >= 0) experienceCache[index] = data.item;
   else experienceCache.push(data.item);
+  writeStorage(EXPERIENCES_KEY, experienceCache);
 }
 
 async function deleteExperienceItem(id) {
@@ -371,6 +376,7 @@ async function deleteExperienceItem(id) {
     body: JSON.stringify({ id })
   });
   experienceCache = experienceCache.filter((item) => String(item.id) !== String(id));
+  writeStorage(EXPERIENCES_KEY, experienceCache);
 }
 
 function fileToDataUrl(file) {
@@ -397,6 +403,25 @@ async function uploadImage(file) {
     })
   });
   return data.url;
+}
+
+function titleFromFileName(fileName) {
+  return fileName
+    .replace(/\.[^.]+$/, "")
+    .replace(/[-_]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function findLibraryImageId(imageUrl) {
+  const match = libraryCache.find((item) => item.image && item.image === imageUrl);
+  return match ? String(match.id) : "";
+}
+
+function getLibraryImageById(id) {
+  if (!id) return "";
+  const match = libraryCache.find((item) => String(item.id) === String(id));
+  return match?.image || "";
 }
 
 async function loadSettings() {
@@ -656,6 +681,7 @@ function fillMenuEditor(item) {
   menuEditor.elements.price.value = item.price;
   menuEditor.elements.description.value = item.description;
   menuEditor.elements.image.value = item.image || "";
+  menuEditor.elements.libraryImage.value = findLibraryImageId(item.image || "");
   menuEditor.elements.imageFile.value = "";
   menuSubmitButton.textContent = "Guardar cambios";
   cancelMenuEditButton.hidden = false;
@@ -666,7 +692,8 @@ function renderLibraryAdmin() {
   libraryList.innerHTML = libraryCache
     .map(
       (item) => `
-        <article class="menu-row">
+        <article class="menu-row library-row">
+          <img class="library-thumb" src="${item.image}" alt="${item.title}" loading="lazy" />
           <div>
             <strong>${item.title}</strong>
             <p>${item.type || "foto"} · ${item.caption || ""}</p>
@@ -680,6 +707,21 @@ function renderLibraryAdmin() {
       `
     )
     .join("");
+}
+
+function renderLibraryImageOptions() {
+  const options = [
+    `<option value="">Seleccionar foto guardada...</option>`,
+    ...libraryCache.map((item) => `<option value="${item.id}">${item.title} · ${item.type || "foto"}</option>`)
+  ].join("");
+
+  if (menuEditor.elements.libraryImage) {
+    menuEditor.elements.libraryImage.innerHTML = options;
+  }
+
+  if (experienceEditor.elements.libraryImage) {
+    experienceEditor.elements.libraryImage.innerHTML = options;
+  }
 }
 
 function clearLibraryEditor() {
@@ -741,6 +783,7 @@ function fillExperienceEditor(item) {
   experienceEditor.elements.paymentType.value = item.paymentType || "experience";
   experienceEditor.elements.ctaLabel.value = item.ctaLabel || "Reservar";
   experienceEditor.elements.image.value = item.image || "";
+  experienceEditor.elements.libraryImage.value = findLibraryImageId(item.image || "");
   experienceEditor.elements.imageFile.value = "";
   experienceSubmitButton.textContent = "Guardar cambios";
   cancelExperienceEditButton.hidden = false;
@@ -765,6 +808,7 @@ async function renderAll() {
   renderCategoryAdmin();
   renderMenuAdmin();
   renderLibraryAdmin();
+  renderLibraryImageOptions();
   renderExperienceAdmin();
   clearLibraryEditor();
   clearExperienceEditor();
@@ -1077,13 +1121,14 @@ menuEditor.addEventListener("submit", async (event) => {
   const data = new FormData(menuEditor);
   try {
     const uploadedImage = await uploadImage(menuEditor.elements.imageFile.files[0]);
+    const libraryImage = getLibraryImageById(data.get("libraryImage"));
     const item = {
       id: data.get("id"),
       category: data.get("category"),
       name: data.get("name").trim(),
       price: Number(data.get("price")),
       description: data.get("description").trim(),
-      image: uploadedImage || data.get("image").trim(),
+      image: uploadedImage || libraryImage || data.get("image").trim(),
       tags: ["Nuevo"]
     };
     if (item.id) {
@@ -1133,9 +1178,46 @@ libraryEditor.addEventListener("submit", async (event) => {
       image: uploadedImage || data.get("image").trim()
     });
     renderLibraryAdmin();
+    renderLibraryImageOptions();
     clearLibraryEditor();
   } catch {
     alert("No se pudo guardar la foto.");
+  }
+});
+
+libraryBulkUploader.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const files = [...libraryBulkUploader.elements.imageFiles.files];
+  const type = libraryBulkUploader.elements.type.value.trim();
+  const caption = libraryBulkUploader.elements.caption.value.trim();
+
+  if (!files.length) {
+    libraryBulkStatus.textContent = "Selecciona una o varias fotos.";
+    return;
+  }
+
+  libraryBulkStatus.textContent = `Subiendo 0 de ${files.length}...`;
+
+  try {
+    for (const [index, file] of files.entries()) {
+      const uploadedImage = await uploadImage(file);
+      await saveLibraryItem({
+        title: titleFromFileName(file.name) || `Foto ${libraryCache.length + 1}`,
+        type,
+        sortOrder: libraryCache.length,
+        caption,
+        image: uploadedImage
+      });
+      libraryBulkStatus.textContent = `Subiendo ${index + 1} de ${files.length}...`;
+    }
+
+    libraryBulkUploader.reset();
+    renderLibraryAdmin();
+    renderLibraryImageOptions();
+    libraryBulkStatus.textContent = `${files.length} foto${files.length === 1 ? "" : "s"} subida${files.length === 1 ? "" : "s"}.`;
+  } catch {
+    libraryBulkStatus.textContent = "";
+    alert("No se pudieron subir todas las fotos. Revisa el tamaño de los archivos e intenta de nuevo.");
   }
 });
 
@@ -1151,6 +1233,7 @@ libraryList.addEventListener("click", async (event) => {
   try {
     await deleteLibraryItem(deleteButton.dataset.deleteLibrary);
     renderLibraryAdmin();
+    renderLibraryImageOptions();
   } catch {
     alert("No se pudo eliminar la foto.");
   }
@@ -1163,6 +1246,7 @@ experienceEditor.addEventListener("submit", async (event) => {
   const data = new FormData(experienceEditor);
   try {
     const uploadedImage = await uploadImage(experienceEditor.elements.imageFile.files[0]);
+    const libraryImage = getLibraryImageById(data.get("libraryImage"));
     await saveExperienceItem({
       id: data.get("id"),
       title: data.get("title").trim(),
@@ -1172,7 +1256,7 @@ experienceEditor.addEventListener("submit", async (event) => {
       price: Number(data.get("price")),
       paymentType: data.get("paymentType"),
       ctaLabel: data.get("ctaLabel").trim(),
-      image: uploadedImage || data.get("image").trim()
+      image: uploadedImage || libraryImage || data.get("image").trim()
     });
     renderExperienceAdmin();
     clearExperienceEditor();
