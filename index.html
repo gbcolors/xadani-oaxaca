@@ -20,7 +20,7 @@
       content="https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=1600&q=80"
     />
     <link rel="preconnect" href="https://images.unsplash.com" />
-    <link rel="stylesheet" href="styles.css?v=20260530-reorg" />
+    <link rel="stylesheet" href="styles.css?v=20260530-home-reorder" />
   </head>
   <body>
     <header class="site-header">
@@ -38,9 +38,9 @@
       </button>
       <nav id="site-nav" class="site-nav" aria-label="Navegación principal">
         <a href="#inicio">Inicio</a>
-        <a href="#reservas">Reservas</a>
         <a href="#menu">Menú</a>
         <a href="#experiencias">Experiencias</a>
+        <a href="#reservas">Reservas</a>
         <a href="#biblioteca">Biblioteca</a>
         <a href="#contacto">Contacto</a>
       </nav>
@@ -82,7 +82,7 @@
           <a href="https://www.facebook.com/XadanienOaxaca/" target="_blank" rel="noopener">
             <span class="social-icon">f</span> Facebook
           </a>
-          <a href="https://share.google/C5J90ehjHyg3jdsg1" target="_blank" rel="noopener">
+          <a href="https://maps.app.goo.gl/NjqWFZrMUX8hjMTv5" target="_blank" rel="noopener">
             <span class="social-icon">G</span> Perfil de Google
           </a>
           <a href="https://www.tripadvisor.com/" target="_blank" rel="noopener">
@@ -103,6 +103,64 @@
         <div>
           <span>Concepto</span>
           <strong>Restaurante familiar para compartir</strong>
+        </div>
+      </section>
+
+      <section id="menu" class="section menu-section">
+        <div class="section-heading">
+          <p class="eyebrow">Carta visual</p>
+          <h2>Menú</h2>
+          <p>Explora por categoría principal: entradas, fuertes, especiales, menú istmeño y bebidas.</p>
+        </div>
+        <div class="menu-tabs" id="menu-tabs" role="tablist" aria-label="Categorías del menú"></div>
+        <div id="menu-grid" class="menu-grid" aria-live="polite"></div>
+      </section>
+
+      <section id="experiencias" class="section experiences-section">
+        <div class="section-heading">
+          <p class="eyebrow">Experiencias y eventos</p>
+          <h2>Próximas experiencias</h2>
+          <p>Eventos, comidas especiales o experiencia permanente. Cada anuncio puede reservarse o configurarse para prepago.</p>
+        </div>
+        <div class="experience-grid" id="experience-grid"></div>
+      </section>
+
+      <section id="biblioteca" class="section gallery-section">
+        <div class="section-heading">
+          <p class="eyebrow">Biblioteca</p>
+          <h2>Fotografías del concepto</h2>
+          <p>Platillos, instalaciones, cocina y momentos de Xadani. Esta biblioteca se administra desde el panel.</p>
+        </div>
+        <div class="gallery-grid" id="gallery-grid"></div>
+      </section>
+
+      <section class="section reviews-section" aria-label="Opiniones de comensales">
+        <div class="section-heading">
+          <p class="eyebrow">Opiniones</p>
+          <h2>Lo que más disfrutan nuestros comensales</h2>
+          <p>Comentarios destacados sobre nuestros platillos, el servicio familiar y la experiencia de reservar.</p>
+        </div>
+        <div class="review-grid">
+          <article class="review-card">
+            <span class="stars" aria-label="5 de 5 estrellas">★★★★★</span>
+            <p>“Los sabores del Istmo se sienten cuidados, con platillos abundantes y una cocina muy de casa.”</p>
+            <strong>Comensal de Xadani</strong>
+          </article>
+          <article class="review-card">
+            <span class="stars" aria-label="5 de 5 estrellas">★★★★★</span>
+            <p>“Excelente opción para ir en familia: mariscos, entradas para compartir y atención cálida.”</p>
+            <strong>Comensal de Xadani</strong>
+          </article>
+          <article class="review-card">
+            <span class="stars" aria-label="5 de 5 estrellas">★★★★★</span>
+            <p>“Reservar fue sencillo y la experiencia completa se siente auténtica, oaxaqueña y muy bien servida.”</p>
+            <strong>Comensal de Xadani</strong>
+          </article>
+        </div>
+        <div class="review-actions">
+          <a class="button secondary" href="https://maps.app.goo.gl/NjqWFZrMUX8hjMTv5" target="_blank" rel="noopener">
+            Ver reseñas en Google Maps
+          </a>
         </div>
       </section>
 
@@ -188,34 +246,6 @@
         </section>
       </section>
 
-      <section id="menu" class="section menu-section">
-        <div class="section-heading">
-          <p class="eyebrow">Carta visual</p>
-          <h2>Menú</h2>
-          <p>Explora por categoría principal: entradas, fuertes, especiales, menú istmeño y bebidas.</p>
-        </div>
-        <div class="menu-tabs" id="menu-tabs" role="tablist" aria-label="Categorías del menú"></div>
-        <div id="menu-grid" class="menu-grid" aria-live="polite"></div>
-      </section>
-
-      <section id="experiencias" class="section experiences-section">
-        <div class="section-heading">
-          <p class="eyebrow">Experiencias y eventos</p>
-          <h2>Próximas experiencias</h2>
-          <p>Eventos, comidas especiales o experiencia permanente. Cada anuncio puede reservarse o configurarse para prepago.</p>
-        </div>
-        <div class="experience-grid" id="experience-grid"></div>
-      </section>
-
-      <section id="biblioteca" class="section gallery-section">
-        <div class="section-heading">
-          <p class="eyebrow">Biblioteca</p>
-          <h2>Fotografías del concepto</h2>
-          <p>Platillos, instalaciones, cocina y momentos de Xadani. Esta biblioteca se administra desde el panel.</p>
-        </div>
-        <div class="gallery-grid" id="gallery-grid"></div>
-      </section>
-
       <section id="contacto" class="contact-section">
         <div class="contact-copy">
           <p class="eyebrow">Contacto y ubicación</p>
@@ -228,7 +258,7 @@
             <a class="button secondary" href="tel:+529516724141" data-setting-href="phoneHref">
               Llamar <span data-setting="phone">951 672 4141</span>
             </a>
-            <a class="button secondary" href="https://share.google/C5J90ehjHyg3jdsg1" target="_blank" rel="noopener">Cómo llegar</a>
+            <a class="button secondary" href="https://maps.app.goo.gl/NjqWFZrMUX8hjMTv5" target="_blank" rel="noopener">Cómo llegar</a>
           </div>
         </div>
         <div class="contact-panel">
@@ -271,6 +301,6 @@
     </footer>
 
     <a class="mobile-reserve" href="#reservas">Reservar</a>
-    <script src="script.js?v=20260530-reorg"></script>
+    <script src="script.js?v=20260530-home-reorder"></script>
   </body>
 </html>
