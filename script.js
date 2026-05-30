@@ -227,9 +227,11 @@ const defaultSiteSettings = {
   domain: "xadanienoaxaca.com",
   phone: "951 672 4141",
   phoneHref: "+529516724141",
+  whatsapp: "951 672 4141",
+  whatsappHref: "https://wa.me/9516724141",
   email: "hola@xadanienoaxaca.com",
   address: "Calle Fundadores 105, 68127 Oaxaca de Juárez, Oaxaca",
-  hours: "Miércoles a lunes, 13:00 - 19:00",
+  hours: "Martes a domingo, 12:00 - 19:30",
   contactIntro: "Reserva directo por WhatsApp o teléfono. Para grupos, comparte fecha, hora y número de personas.",
   heroText:
     "Maíz criollo, moles profundos, pesca fresca y mezcalería en una carta contemporánea pensada para compartirse sin prisa."
@@ -346,6 +348,11 @@ function applySiteSettings() {
     const key = element.dataset.settingHref;
     if (key === "phoneHref" && settings.phoneHref) {
       element.href = `tel:${settings.phoneHref}`;
+    }
+    if (key === "whatsappHref" && settings.whatsappHref) {
+      element.href = settings.whatsappHref.startsWith("http")
+        ? settings.whatsappHref
+        : `https://wa.me/${settings.whatsappHref.replace(/\D/g, "")}`;
     }
     if (key === "emailHref" && settings.email) {
       element.href = `mailto:${settings.email}`;

@@ -15,9 +15,11 @@ const defaultSettings = {
   domain: "xadanienoaxaca.com",
   phone: "951 672 4141",
   phoneHref: "+529516724141",
+  whatsapp: "951 672 4141",
+  whatsappHref: "https://wa.me/9516724141",
   email: "hola@xadanienoaxaca.com",
   address: "Calle Fundadores 105, 68127 Oaxaca de Juárez, Oaxaca",
-  hours: "Miércoles a lunes, 13:00 - 19:00",
+  hours: "Martes a domingo, 12:00 - 19:30",
   contactIntro:
     "Reserva directo por WhatsApp o teléfono. Para grupos, comparte fecha, hora y número de personas.",
   heroText:
@@ -1307,6 +1309,8 @@ settingsEditor.addEventListener("submit", async (event) => {
     domain: data.get("domain").trim(),
     phone: data.get("phone").trim(),
     phoneHref: data.get("phoneHref").trim(),
+    whatsapp: data.get("whatsapp").trim(),
+    whatsappHref: data.get("whatsappHref").trim(),
     email: data.get("email").trim(),
     address: data.get("address").trim(),
     hours: data.get("hours").trim(),
