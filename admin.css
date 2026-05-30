@@ -225,6 +225,8 @@ h2 {
 .filters,
 .table-editor,
 .walkin-editor,
+.experience-editor,
+.library-editor,
 .category-editor,
 .menu-editor,
 .settings-editor {
@@ -386,6 +388,8 @@ th {
 .menu-editor,
 .table-editor,
 .walkin-editor,
+.experience-editor,
+.library-editor,
 .category-editor,
 .settings-editor {
   grid-template-columns: 180px minmax(0, 1fr) 130px;
@@ -399,6 +403,8 @@ th {
 .settings-editor .wide,
 .table-editor .wide,
 .walkin-editor .wide,
+.experience-editor .wide,
+.library-editor .wide,
 .category-editor .wide,
 .menu-editor .wide {
   grid-column: 1 / -1;
@@ -411,6 +417,12 @@ th {
 }
 
 .menu-admin-list {
+  display: grid;
+  gap: 10px;
+}
+
+.experience-admin-list,
+.library-admin-list {
   display: grid;
   gap: 10px;
 }
@@ -446,6 +458,8 @@ th {
   .filters,
   .table-editor,
   .walkin-editor,
+  .experience-editor,
+  .library-editor,
   .category-editor,
   .menu-editor,
   .settings-editor {

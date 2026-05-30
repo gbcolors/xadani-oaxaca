@@ -166,22 +166,20 @@ const menuItems = {
 };
 
 const defaultMenuCategories = [
-  { slug: "entradas-frias", group: "ENTRADAS", name: "FRIAS" },
-  { slug: "entradas-cocteles", group: "ENTRADAS", name: "COCTELES" },
-  { slug: "entradas-ensaladas", group: "ENTRADAS", name: "ENSALADAS" },
-  { slug: "entradas-calientes", group: "ENTRADAS", name: "CALIENTES" },
-  { slug: "entradas-caldos", group: "ENTRADAS", name: "CALDOS" },
-  { slug: "entradas-sopas", group: "ENTRADAS", name: "SOPAS" },
-  { slug: "entradas-consomes", group: "ENTRADAS", name: "CONSOMES" },
-  { slug: "fuertes-pesca-del-dia", group: "FUERTES", name: "PESCA DEL DÍA" },
-  { slug: "fuertes-especiales-istmenos", group: "FUERTES", name: "ESPECIALES ISTMEÑOS" },
-  { slug: "fuertes-camarones", group: "FUERTES", name: "CAMARONES" },
-  { slug: "fuertes-para-compartir", group: "FUERTES", name: "PARA COMPARTIR" },
-  { slug: "fuertes-extras", group: "FUERTES", name: "EXTRAS" },
-  { slug: "postres", group: "POSTRES", name: "POSTRES" },
-  { slug: "bebidas-con-alcohol", group: "BEBIDAS", name: "CON ALCOHOL" },
-  { slug: "bebidas-sin-alcohol", group: "BEBIDAS", name: "SIN ALCOHOL" }
+  { slug: "entradas", group: "MENU", name: "ENTRADAS" },
+  { slug: "fuertes", group: "MENU", name: "FUERTES" },
+  { slug: "especiales", group: "MENU", name: "ESPECIALES" },
+  { slug: "menu-istmeno", group: "MENU", name: "MENU ISTMEÑO" },
+  { slug: "bebidas", group: "MENU", name: "BEBIDAS" }
 ];
+
+const mainCategoryMap = {
+  entradas: ["entradas-frias", "entradas-cocteles", "entradas-ensaladas", "entradas-calientes", "entradas-caldos", "entradas-sopas", "entradas-consomes"],
+  fuertes: ["fuertes-pesca-del-dia", "fuertes-camarones", "fuertes-para-compartir"],
+  especiales: ["fuertes-especiales-istmenos", "fuertes-extras", "postres"],
+  "menu-istmeno": ["fuertes-especiales-istmenos"],
+  bebidas: ["bebidas-con-alcohol", "bebidas-sin-alcohol"]
+};
 
 const fallbackMenuItems = {
   "entradas-frias": [menuItems.frias[0]],
@@ -203,6 +201,8 @@ const fallbackMenuItems = {
 
 const grid = document.querySelector("#menu-grid");
 const menuTabs = document.querySelector("#menu-tabs");
+const galleryGrid = document.querySelector("#gallery-grid");
+const experienceGrid = document.querySelector("#experience-grid");
 const navToggle = document.querySelector(".nav-toggle");
 const siteNav = document.querySelector("#site-nav");
 const reservationModal = document.querySelector("#reservation-modal");
@@ -220,6 +220,8 @@ const localFileApiBase = "http://127.0.0.1:3000";
 const apiBase = location.protocol === "file:" ? localFileApiBase : "";
 let remoteMenuItems = [];
 let menuCategories = [...defaultMenuCategories];
+let galleryItems = [];
+let experiences = [];
 const defaultSiteSettings = {
   businessName: "Xadani en Oaxaca",
   domain: "xadanienoaxaca.com",
@@ -307,10 +309,28 @@ async function loadRemoteMenu() {
   try {
     const data = await apiJson("/api/menu");
     remoteMenuItems = data.menu || [];
-    menuCategories = data.categories?.length ? data.categories : [...defaultMenuCategories];
+    menuCategories = [...defaultMenuCategories];
   } catch {
     remoteMenuItems = [];
     menuCategories = [...defaultMenuCategories];
+  }
+}
+
+async function loadRemoteGallery() {
+  try {
+    const data = await apiJson("/api/gallery");
+    galleryItems = data.gallery || [];
+  } catch {
+    galleryItems = [];
+  }
+}
+
+async function loadRemoteExperiences() {
+  try {
+    const data = await apiJson("/api/experiences");
+    experiences = data.experiences || [];
+  } catch {
+    experiences = [];
   }
 }
 
@@ -352,10 +372,8 @@ function resolveImageUrl(imageUrl) {
 }
 
 function renderMenu(category) {
-  const menuOverrides = getLocalMenuItems(category);
-  const hasRemoteCategory = remoteMenuItems.some((item) => item.category === category);
-  const fallbackItems = fallbackMenuItems[category] || [];
-  const visibleItems = hasRemoteCategory ? menuOverrides : [...fallbackItems, ...menuOverrides];
+  const categorySlugs = mainCategoryMap[category] || [category];
+  const visibleItems = getLocalMenuItems(categorySlugs);
   grid.innerHTML = visibleItems.length
     ? visibleItems
     .map(
@@ -380,10 +398,11 @@ function renderMenu(category) {
 }
 
 function getLocalMenuItems(category) {
+  const categories = Array.isArray(category) ? category : [category];
   try {
     const rows = JSON.parse(localStorage.getItem("xadaniMenuOverrides")) || [];
     const localRows = (remoteMenuItems.length ? [] : rows)
-      .filter((item) => item.category === category)
+      .filter((item) => categories.includes(item.category))
       .map((item) => ({
         name: item.name,
         description: item.description,
@@ -392,7 +411,7 @@ function getLocalMenuItems(category) {
         image: resolveImageUrl(item.image)
       }));
     const remoteRows = remoteMenuItems
-      .filter((item) => item.category === category)
+      .filter((item) => categories.includes(item.category))
       .map((item) => ({
         name: item.name,
         description: item.description,
@@ -402,38 +421,74 @@ function getLocalMenuItems(category) {
       }));
     return [...remoteRows, ...localRows];
   } catch {
-    return remoteMenuItems.filter((item) => item.category === category);
+    return remoteMenuItems.filter((item) => categories.includes(item.category));
   }
 }
 
 function renderMenuTabs(activeCategory = menuCategories[0]?.slug || "entradas-frias") {
-  const groups = menuCategories.reduce((acc, category) => {
-    if (!acc.has(category.group)) acc.set(category.group, []);
-    acc.get(category.group).push(category);
-    return acc;
-  }, new Map());
-
-  menuTabs.innerHTML = Array.from(groups.entries())
+  menuTabs.innerHTML = menuCategories
     .map(
-      ([group, categories]) => `
-        <div class="menu-tab-group">
-          <span>${group}</span>
-          <div>
-            ${categories
-              .map(
-                (category) => `
-                  <button class="tab ${category.slug === activeCategory ? "active" : ""}" type="button" role="tab"
-                    aria-selected="${category.slug === activeCategory}" data-category="${category.slug}">
-                    ${category.name}
-                  </button>
-                `
-              )
-              .join("")}
-          </div>
-        </div>
+      (category) => `
+        <button class="tab ${category.slug === activeCategory ? "active" : ""}" type="button" role="tab"
+          aria-selected="${category.slug === activeCategory}" data-category="${category.slug}">
+          ${category.name}
+        </button>
       `
     )
     .join("");
+}
+
+function renderGallery() {
+  const rows = galleryItems.length
+    ? galleryItems
+    : [
+        {
+          title: "Como iniciamos",
+          caption: "Cocina familiar, horno y recetas del Istmo.",
+          image: "https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&w=1200&q=82"
+        },
+        {
+          title: "Nuestra cocina",
+          caption: "Producto fresco, adobos y preparación al momento.",
+          image: "https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=1200&q=82"
+        }
+      ];
+
+  galleryGrid.innerHTML = rows
+    .map(
+      (item) => `
+        <figure>
+          <img src="${resolveImageUrl(item.image)}" alt="${item.title}" loading="lazy" />
+          <figcaption><strong>${item.title}</strong><span>${item.caption || ""}</span></figcaption>
+        </figure>
+      `
+    )
+    .join("");
+}
+
+function renderExperiences() {
+  experienceGrid.innerHTML = (experiences.length ? experiences : [])
+    .map(
+      (item) => `
+        <article class="experience-card">
+          <img src="${resolveImageUrl(item.image)}" alt="${item.title}" loading="lazy" />
+          <div>
+            <span>${[item.eventDate, item.eventTime].filter(Boolean).join(" · ") || "Experiencia permanente"}</span>
+            <h3>${item.title}</h3>
+            <p>${item.description}</p>
+            ${Number(item.price || 0) > 0 ? `<strong>${formatPrice(item.price)}</strong>` : ""}
+            <button class="button primary" type="button" data-experience-reserve="${item.paymentType || "experience"}">
+              ${item.ctaLabel || "Reservar"}
+            </button>
+          </div>
+        </article>
+      `
+    )
+    .join("");
+
+  if (!experienceGrid.innerHTML) {
+    experienceGrid.innerHTML = `<p class="empty-menu">Pronto anunciaremos nuevas experiencias.</p>`;
+  }
 }
 
 menuTabs.addEventListener("click", (event) => {
@@ -462,9 +517,11 @@ siteNav.querySelectorAll("a").forEach((link) => {
 });
 
 function openReservationModal() {
-  reservationModal.classList.add("open");
-  reservationModal.setAttribute("aria-hidden", "false");
-  document.body.style.overflow = "hidden";
+  if (reservationModal) {
+    reservationModal.classList.add("open");
+    reservationModal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+  }
   reservationForm.hidden = false;
   reservationSuccess.hidden = true;
   updatePaymentPreview();
@@ -472,6 +529,7 @@ function openReservationModal() {
 }
 
 function closeReservationModal() {
+  if (!reservationModal) return;
   reservationModal.classList.remove("open");
   reservationModal.setAttribute("aria-hidden", "true");
   document.body.style.overflow = "";
@@ -506,7 +564,7 @@ closeReservationButtons.forEach((button) => {
 });
 
 document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && reservationModal.classList.contains("open")) {
+  if (event.key === "Escape" && reservationModal?.classList.contains("open")) {
     closeReservationModal();
   }
 });
@@ -583,6 +641,14 @@ reservationForm.addEventListener("submit", (event) => {
 reservationForm.elements.guests.addEventListener("input", updatePaymentPreview);
 paymentTypeInput.addEventListener("change", updatePaymentPreview);
 
+experienceGrid.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-experience-reserve]");
+  if (!button) return;
+  paymentTypeInput.value = button.dataset.experienceReserve || "experience";
+  document.querySelector("#reservas").scrollIntoView({ behavior: "smooth" });
+  updatePaymentPreview();
+});
+
 const stripeStatus = new URLSearchParams(window.location.search).get("stripe");
 if (stripeStatus === "success" || stripeStatus === "cancel") {
   const folio = new URLSearchParams(window.location.search).get("folio") || "";
@@ -598,12 +664,14 @@ if (stripeStatus === "success" || stripeStatus === "cancel") {
 }
 
 applySiteSettings();
-renderMenuTabs();
-renderMenu(menuCategories[0]?.slug || "entradas-frias");
+renderMenuTabs("entradas");
+renderMenu("entradas");
 
-Promise.all([loadRemoteSettings(), loadRemoteMenu()]).then(() => {
+Promise.all([loadRemoteSettings(), loadRemoteMenu(), loadRemoteGallery(), loadRemoteExperiences()]).then(() => {
   applySiteSettings();
-  const activeCategory = menuCategories[0]?.slug || "entradas-frias";
+  renderGallery();
+  renderExperiences();
+  const activeCategory = menuCategories[0]?.slug || "entradas";
   renderMenuTabs(activeCategory);
   renderMenu(activeCategory);
 });

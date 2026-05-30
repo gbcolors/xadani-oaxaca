@@ -792,6 +792,117 @@ dd {
   font-weight: 900;
 }
 
+.about-section,
+.experiences-section,
+.reservation-page {
+  background: var(--cream);
+}
+
+.social-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.social-links a {
+  display: inline-flex;
+  min-height: 46px;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0 16px;
+  background: #fff;
+  font-weight: 850;
+}
+
+.social-icon {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--leaf);
+  font-weight: 950;
+}
+
+.menu-tabs {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.gallery-grid figcaption {
+  display: grid;
+  gap: 3px;
+}
+
+.gallery-grid figcaption span {
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.experience-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.experience-card {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 8px 30px rgba(36, 23, 19, 0.08);
+}
+
+.experience-card img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+.experience-card > div {
+  display: grid;
+  gap: 10px;
+  padding: 18px;
+}
+
+.experience-card span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.reservation-inline {
+  position: static;
+  width: min(980px, 100%);
+  max-height: none;
+  transform: none;
+  box-shadow: var(--shadow);
+}
+
+.map-frame {
+  width: 100%;
+  min-height: 280px;
+  margin-top: 22px;
+  border: 0;
+  border-radius: 8px;
+}
+
+@media (max-width: 980px) {
+  .experience-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .social-links a {
+    width: 100%;
+  }
+}
+
 @media (max-width: 980px) {
   .hero {
     min-height: 760px;

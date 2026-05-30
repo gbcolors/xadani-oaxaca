@@ -66,6 +66,34 @@ create table if not exists menu_categories (
   updated_at timestamptz default now()
 );
 
+create table if not exists gallery_items (
+  id serial primary key,
+  title text not null,
+  caption text default '',
+  image text not null,
+  type text default 'concepto',
+  active boolean default true,
+  sort_order integer default 0,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+create table if not exists experiences (
+  id serial primary key,
+  title text not null,
+  description text not null,
+  image text,
+  event_date text,
+  event_time text,
+  price integer default 0,
+  payment_type text default 'experience',
+  cta_label text default 'Reservar',
+  active boolean default true,
+  sort_order integer default 0,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
 create table if not exists app_settings (
   key text primary key,
   value text not null,

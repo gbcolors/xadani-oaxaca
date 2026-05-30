@@ -3,6 +3,8 @@ const TABLES_KEY = "xadaniTables";
 const WALKINS_KEY = "xadaniWalkins";
 const MENU_KEY = "xadaniMenuOverrides";
 const SETTINGS_KEY = "xadaniSiteSettings";
+const LIBRARY_KEY = "xadaniLibrary";
+const EXPERIENCES_KEY = "xadaniExperiences";
 
 let adminToken = sessionStorage.getItem("xadaniAdminToken") || "";
 const localFileApiBase = "http://127.0.0.1:3000";
@@ -91,12 +93,22 @@ const cancelMenuEditButton = document.querySelector("#cancel-menu-edit");
 const settingsEditor = document.querySelector("#settings-editor");
 const resetSettingsButton = document.querySelector("#reset-settings");
 const passwordEditor = document.querySelector("#password-editor");
+const libraryEditor = document.querySelector("#library-editor");
+const libraryList = document.querySelector("#library-admin-list");
+const librarySubmitButton = document.querySelector("#library-submit");
+const cancelLibraryEditButton = document.querySelector("#cancel-library-edit");
+const experienceEditor = document.querySelector("#experience-editor");
+const experienceList = document.querySelector("#experience-admin-list");
+const experienceSubmitButton = document.querySelector("#experience-submit");
+const cancelExperienceEditButton = document.querySelector("#cancel-experience-edit");
 
 let reservationsCache = [];
 let tablesCache = [];
 let walkinsCache = [];
 let menuCache = [];
 let categoryCache = [...defaultCategories];
+let libraryCache = [];
+let experienceCache = [];
 
 function readStorage(key, fallback) {
   try {
@@ -303,6 +315,62 @@ async function deleteMenuItem(id) {
   });
   menuCache = menuCache.filter((item) => String(item.id) !== String(id));
   writeStorage(MENU_KEY, menuCache);
+}
+
+async function loadLibrary() {
+  try {
+    const data = await apiRequest("/api/gallery");
+    libraryCache = data.gallery || [];
+    writeStorage(LIBRARY_KEY, libraryCache);
+  } catch {
+    libraryCache = readStorage(LIBRARY_KEY, []);
+  }
+}
+
+async function saveLibraryItem(item) {
+  const data = await apiRequest("/api/gallery", {
+    method: item.id ? "PUT" : "POST",
+    body: JSON.stringify(item)
+  });
+  const index = libraryCache.findIndex((row) => String(row.id) === String(data.item.id));
+  if (index >= 0) libraryCache[index] = data.item;
+  else libraryCache.push(data.item);
+}
+
+async function deleteLibraryItem(id) {
+  await apiRequest("/api/gallery", {
+    method: "DELETE",
+    body: JSON.stringify({ id })
+  });
+  libraryCache = libraryCache.filter((item) => String(item.id) !== String(id));
+}
+
+async function loadExperiences() {
+  try {
+    const data = await apiRequest("/api/experiences");
+    experienceCache = data.experiences || [];
+    writeStorage(EXPERIENCES_KEY, experienceCache);
+  } catch {
+    experienceCache = readStorage(EXPERIENCES_KEY, []);
+  }
+}
+
+async function saveExperienceItem(item) {
+  const data = await apiRequest("/api/experiences", {
+    method: item.id ? "PUT" : "POST",
+    body: JSON.stringify(item)
+  });
+  const index = experienceCache.findIndex((row) => String(row.id) === String(data.item.id));
+  if (index >= 0) experienceCache[index] = data.item;
+  else experienceCache.push(data.item);
+}
+
+async function deleteExperienceItem(id) {
+  await apiRequest("/api/experiences", {
+    method: "DELETE",
+    body: JSON.stringify({ id })
+  });
+  experienceCache = experienceCache.filter((item) => String(item.id) !== String(id));
 }
 
 function fileToDataUrl(file) {
@@ -594,6 +662,90 @@ function fillMenuEditor(item) {
   menuEditor.scrollIntoView({ behavior: "smooth", block: "center" });
 }
 
+function renderLibraryAdmin() {
+  libraryList.innerHTML = libraryCache
+    .map(
+      (item) => `
+        <article class="menu-row">
+          <div>
+            <strong>${item.title}</strong>
+            <p>${item.type || "foto"} · ${item.caption || ""}</p>
+          </div>
+          <span>${Number(item.sortOrder || 0)}</span>
+          <div class="button-row">
+            <button class="button" type="button" data-edit-library="${item.id}">Editar</button>
+            <button class="button" type="button" data-delete-library="${item.id}">Eliminar</button>
+          </div>
+        </article>
+      `
+    )
+    .join("");
+}
+
+function clearLibraryEditor() {
+  libraryEditor.reset();
+  libraryEditor.elements.id.value = "";
+  libraryEditor.elements.sortOrder.value = libraryCache.length;
+  librarySubmitButton.textContent = "Guardar foto";
+  cancelLibraryEditButton.hidden = true;
+}
+
+function fillLibraryEditor(item) {
+  libraryEditor.elements.id.value = item.id;
+  libraryEditor.elements.title.value = item.title;
+  libraryEditor.elements.type.value = item.type || "";
+  libraryEditor.elements.sortOrder.value = item.sortOrder || 0;
+  libraryEditor.elements.caption.value = item.caption || "";
+  libraryEditor.elements.image.value = item.image || "";
+  libraryEditor.elements.imageFile.value = "";
+  librarySubmitButton.textContent = "Guardar cambios";
+  cancelLibraryEditButton.hidden = false;
+}
+
+function renderExperienceAdmin() {
+  experienceList.innerHTML = experienceCache
+    .map(
+      (item) => `
+        <article class="menu-row">
+          <div>
+            <strong>${item.title}</strong>
+            <p>${[item.eventDate, item.eventTime].filter(Boolean).join(" · ") || "permanente"} · ${item.description}</p>
+          </div>
+          <span>${formatPrice(item.price || 0)}</span>
+          <div class="button-row">
+            <button class="button" type="button" data-edit-experience="${item.id}">Editar</button>
+            <button class="button" type="button" data-delete-experience="${item.id}">Eliminar</button>
+          </div>
+        </article>
+      `
+    )
+    .join("");
+}
+
+function clearExperienceEditor() {
+  experienceEditor.reset();
+  experienceEditor.elements.id.value = "";
+  experienceEditor.elements.price.value = "0";
+  experienceEditor.elements.ctaLabel.value = "Reservar";
+  experienceSubmitButton.textContent = "Guardar experiencia";
+  cancelExperienceEditButton.hidden = true;
+}
+
+function fillExperienceEditor(item) {
+  experienceEditor.elements.id.value = item.id;
+  experienceEditor.elements.title.value = item.title;
+  experienceEditor.elements.description.value = item.description;
+  experienceEditor.elements.eventDate.value = item.eventDate || "";
+  experienceEditor.elements.eventTime.value = item.eventTime || "";
+  experienceEditor.elements.price.value = item.price || 0;
+  experienceEditor.elements.paymentType.value = item.paymentType || "experience";
+  experienceEditor.elements.ctaLabel.value = item.ctaLabel || "Reservar";
+  experienceEditor.elements.image.value = item.image || "";
+  experienceEditor.elements.imageFile.value = "";
+  experienceSubmitButton.textContent = "Guardar cambios";
+  cancelExperienceEditButton.hidden = false;
+}
+
 function renderSettingsEditor(settings) {
   Object.entries(settings).forEach(([key, value]) => {
     if (settingsEditor.elements[key]) {
@@ -603,7 +755,7 @@ function renderSettingsEditor(settings) {
 }
 
 async function renderAll() {
-  await Promise.all([loadReservations(), loadTables(), loadWalkins(), loadMenu()]);
+  await Promise.all([loadReservations(), loadTables(), loadWalkins(), loadMenu(), loadLibrary(), loadExperiences()]);
   const settings = await loadSettings();
   renderReservations();
   renderTables();
@@ -612,6 +764,10 @@ async function renderAll() {
   setWalkinDefaults();
   renderCategoryAdmin();
   renderMenuAdmin();
+  renderLibraryAdmin();
+  renderExperienceAdmin();
+  clearLibraryEditor();
+  clearExperienceEditor();
   clearCategoryEditor();
   renderSettingsEditor(settings);
 }
@@ -962,6 +1118,87 @@ menuList.addEventListener("click", async (event) => {
 });
 
 cancelMenuEditButton.addEventListener("click", clearMenuEditor);
+
+libraryEditor.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const data = new FormData(libraryEditor);
+  try {
+    const uploadedImage = await uploadImage(libraryEditor.elements.imageFile.files[0]);
+    await saveLibraryItem({
+      id: data.get("id"),
+      title: data.get("title").trim(),
+      type: data.get("type").trim(),
+      sortOrder: Number(data.get("sortOrder")),
+      caption: data.get("caption").trim(),
+      image: uploadedImage || data.get("image").trim()
+    });
+    renderLibraryAdmin();
+    clearLibraryEditor();
+  } catch {
+    alert("No se pudo guardar la foto.");
+  }
+});
+
+libraryList.addEventListener("click", async (event) => {
+  const editButton = event.target.closest("[data-edit-library]");
+  if (editButton) {
+    const item = libraryCache.find((row) => String(row.id) === String(editButton.dataset.editLibrary));
+    if (item) fillLibraryEditor(item);
+    return;
+  }
+  const deleteButton = event.target.closest("[data-delete-library]");
+  if (!deleteButton) return;
+  try {
+    await deleteLibraryItem(deleteButton.dataset.deleteLibrary);
+    renderLibraryAdmin();
+  } catch {
+    alert("No se pudo eliminar la foto.");
+  }
+});
+
+cancelLibraryEditButton.addEventListener("click", clearLibraryEditor);
+
+experienceEditor.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const data = new FormData(experienceEditor);
+  try {
+    const uploadedImage = await uploadImage(experienceEditor.elements.imageFile.files[0]);
+    await saveExperienceItem({
+      id: data.get("id"),
+      title: data.get("title").trim(),
+      description: data.get("description").trim(),
+      eventDate: data.get("eventDate"),
+      eventTime: data.get("eventTime"),
+      price: Number(data.get("price")),
+      paymentType: data.get("paymentType"),
+      ctaLabel: data.get("ctaLabel").trim(),
+      image: uploadedImage || data.get("image").trim()
+    });
+    renderExperienceAdmin();
+    clearExperienceEditor();
+  } catch {
+    alert("No se pudo guardar la experiencia.");
+  }
+});
+
+experienceList.addEventListener("click", async (event) => {
+  const editButton = event.target.closest("[data-edit-experience]");
+  if (editButton) {
+    const item = experienceCache.find((row) => String(row.id) === String(editButton.dataset.editExperience));
+    if (item) fillExperienceEditor(item);
+    return;
+  }
+  const deleteButton = event.target.closest("[data-delete-experience]");
+  if (!deleteButton) return;
+  try {
+    await deleteExperienceItem(deleteButton.dataset.deleteExperience);
+    renderExperienceAdmin();
+  } catch {
+    alert("No se pudo eliminar la experiencia.");
+  }
+});
+
+cancelExperienceEditButton.addEventListener("click", clearExperienceEditor);
 
 resetMenuButton.addEventListener("click", async () => {
   if (!confirm("Restaurar el menú demo ocultará las categorías y platillos actuales.")) return;

@@ -22,6 +22,8 @@
           <a href="#mesas">Plano de mesas</a>
           <a href="#walkins">Walk-ins</a>
           <a href="#menu-admin">Menú</a>
+          <a href="#experiencias-admin">Experiencias</a>
+          <a href="#biblioteca-admin">Biblioteca</a>
           <a href="#ajustes">Ajustes</a>
           <a href="/">Ver sitio</a>
         </nav>
@@ -298,6 +300,63 @@
             <div class="menu-admin-list" id="menu-admin-list"></div>
           </section>
 
+          <section class="admin-card" id="experiencias-admin">
+            <div class="card-heading">
+              <div>
+                <p class="eyebrow">Eventos</p>
+                <h2>Experiencias y eventos</h2>
+              </div>
+            </div>
+            <form class="experience-editor" id="experience-editor">
+              <input name="id" type="hidden" />
+              <label>Título <input name="title" type="text" required /></label>
+              <label>Fecha <input name="eventDate" type="date" /></label>
+              <label>Hora <input name="eventTime" type="time" /></label>
+              <label>Precio <input name="price" type="number" min="0" value="0" /></label>
+              <label>
+                Pago
+                <select name="paymentType">
+                  <option value="free">Reserva sin cargo</option>
+                  <option value="deposit">Anticipo</option>
+                  <option value="experience">Experiencia</option>
+                  <option value="event">Evento</option>
+                </select>
+              </label>
+              <label>Botón <input name="ctaLabel" type="text" value="Reservar" /></label>
+              <label class="wide">Descripción <textarea name="description" rows="3" required></textarea></label>
+              <label class="wide">Imagen URL <input name="image" type="url" placeholder="https://..." /></label>
+              <label class="wide">Subir imagen <input name="imageFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif" /></label>
+              <div class="wide button-row">
+                <button class="button primary" type="submit" id="experience-submit">Guardar experiencia</button>
+                <button class="button" type="button" id="cancel-experience-edit" hidden>Cancelar</button>
+              </div>
+            </form>
+            <div class="experience-admin-list" id="experience-admin-list"></div>
+          </section>
+
+          <section class="admin-card" id="biblioteca-admin">
+            <div class="card-heading">
+              <div>
+                <p class="eyebrow">Fotos</p>
+                <h2>Biblioteca</h2>
+              </div>
+            </div>
+            <form class="library-editor" id="library-editor">
+              <input name="id" type="hidden" />
+              <label>Título <input name="title" type="text" required /></label>
+              <label>Tipo <input name="type" type="text" placeholder="platillo, instalaciones, cocina" /></label>
+              <label>Orden <input name="sortOrder" type="number" min="0" value="0" /></label>
+              <label class="wide">Pie de foto <textarea name="caption" rows="3"></textarea></label>
+              <label class="wide">Imagen URL <input name="image" type="url" placeholder="https://..." /></label>
+              <label class="wide">Subir imagen <input name="imageFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif" /></label>
+              <div class="wide button-row">
+                <button class="button primary" type="submit" id="library-submit">Guardar foto</button>
+                <button class="button" type="button" id="cancel-library-edit" hidden>Cancelar</button>
+              </div>
+            </form>
+            <div class="library-admin-list" id="library-admin-list"></div>
+          </section>
+
           <section class="admin-card" id="ajustes">
             <div class="card-heading">
               <div>
@@ -377,6 +436,6 @@
       </section>
     </main>
 
-    <script src="/admin.js?v=20260529-table-admin"></script>
+    <script src="/admin.js?v=20260530-reorg"></script>
   </body>
 </html>

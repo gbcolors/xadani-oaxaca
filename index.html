@@ -3,15 +3,15 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Xadani en Oaxaca | Cocina oaxaqueña contemporánea</title>
+    <title>Xadani en Oaxaca | Cocina istmeña familiar</title>
     <meta
       name="description"
-      content="Xadani en Oaxaca: restaurante de cocina oaxaqueña contemporánea con menú visual, entradas, fuertes, postres, bebidas y reservaciones por WhatsApp."
+      content="Xadani en Oaxaca: restaurante familiar de cocina istmeña con reservas, menú visual, experiencias, eventos y biblioteca fotográfica."
     />
     <meta property="og:title" content="Xadani en Oaxaca" />
     <meta
       property="og:description"
-      content="Cocina oaxaqueña contemporánea, mezcalería y una carta visual con sabores de temporada."
+      content="Cocina familiar, horno, mar y sabores del Istmo en Oaxaca."
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://xadanienoaxaca.com" />
@@ -20,7 +20,7 @@
       content="https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=1600&q=80"
     />
     <link rel="preconnect" href="https://images.unsplash.com" />
-    <link rel="stylesheet" href="styles.css?v=20260529-logo-cleanup" />
+    <link rel="stylesheet" href="styles.css?v=20260530-reorg" />
   </head>
   <body>
     <header class="site-header">
@@ -37,11 +37,12 @@
         <span></span>
       </button>
       <nav id="site-nav" class="site-nav" aria-label="Navegación principal">
+        <a href="#inicio">Inicio</a>
+        <a href="#reservas">Reservas</a>
         <a href="#menu">Menú</a>
-        <a href="#galeria">Fotos</a>
-        <a href="#experiencia">Experiencia</a>
+        <a href="#experiencias">Experiencias</a>
+        <a href="#biblioteca">Biblioteca</a>
         <a href="#contacto">Contacto</a>
-        <button class="nav-cta" type="button" data-open-reservation>Reservar</button>
       </nav>
     </header>
 
@@ -49,105 +50,170 @@
       <section id="inicio" class="hero">
         <div class="hero-media" role="img" aria-label="Mesa con platillos oaxaqueños contemporáneos"></div>
         <div class="hero-content">
-          <p class="eyebrow">Cocina de raíz oaxaqueña</p>
+          <p class="eyebrow">Cocina familiar istmeña</p>
           <h1 data-setting="businessName">Xadani en Oaxaca</h1>
           <p data-setting="heroText">
-            Maíz criollo, moles profundos, pesca fresca y mezcalería en una carta contemporánea
-            pensada para compartirse sin prisa.
+            Especiales al horno, mariscos, sabores del Istmo y una mesa pensada para compartir
+            con calma en Oaxaca.
           </p>
           <div class="hero-actions">
-            <a class="button primary" href="#menu">Ver menú</a>
-            <button class="button secondary" type="button" data-open-reservation>Reservar mesa</button>
+            <a class="button primary" href="#reservas">Reservar</a>
+            <a class="button secondary" href="#menu">Ver menú</a>
           </div>
         </div>
         <aside class="hero-card" aria-label="Información rápida">
-          <span>Abierto hoy</span>
-          <strong>13:00 - 23:00</strong>
+          <span>Horario</span>
+          <strong data-setting="hours">Todos los días, 12:00 - 19:30</strong>
           <p>Centro Histórico, Oaxaca de Juárez</p>
         </aside>
       </section>
 
-      <section class="intro-band" aria-label="Especialidades">
+      <section class="section about-section" aria-label="Nosotros">
+        <div class="section-heading">
+          <p class="eyebrow">Nosotros</p>
+          <h2>Qué es Xadani en Oaxaca</h2>
+          <p>
+            Xadani nace como restaurante familiar: cocina de horno, recetas del Istmo, producto
+            fresco y platillos pensados para compartirse. Nuestra cocina cuenta cómo iniciamos,
+            lo que comemos en casa y lo que queremos servir con orgullo en Oaxaca.
+          </p>
+        </div>
+        <div class="social-links" aria-label="Redes y perfiles públicos">
+          <a href="https://www.facebook.com/XadanienOaxaca/" target="_blank" rel="noopener">
+            <span class="social-icon">f</span> Facebook
+          </a>
+          <a href="https://share.google/C5J90ehjHyg3jdsg1" target="_blank" rel="noopener">
+            <span class="social-icon">G</span> Perfil de Google
+          </a>
+          <a href="https://www.tripadvisor.com/" target="_blank" rel="noopener">
+            <span class="social-icon">T</span> Tripadvisor
+          </a>
+        </div>
+      </section>
+
+      <section class="intro-band" aria-label="Concepto">
         <div>
-          <span>Moles de temporada</span>
-          <strong>Negro, coloradito y chichilo</strong>
+          <span>Cómo iniciamos</span>
+          <strong>Cocina familiar, horno y recetas del Istmo</strong>
         </div>
         <div>
-          <span>Bar de mezcal</span>
-          <strong>Destilados artesanales</strong>
+          <span>Nuestra cocina</span>
+          <strong>Mar, tierra, nixtamal y aderezos de casa</strong>
         </div>
         <div>
-          <span>Producto local</span>
-          <strong>Quelites, maíz y pesca del día</strong>
+          <span>Concepto</span>
+          <strong>Restaurante familiar para compartir</strong>
         </div>
+      </section>
+
+      <section id="reservas" class="section reservation-page">
+        <div class="section-heading">
+          <p class="eyebrow">Reservas</p>
+          <h2>Reserva tu mesa</h2>
+          <p>Solicita tu mesa en línea. El sistema registra tu solicitud y asigna una mesa disponible.</p>
+        </div>
+        <section class="reservation-dialog reservation-inline" aria-labelledby="reservation-title">
+          <div class="reservation-copy">
+            <p class="eyebrow">Reservar</p>
+            <h2 id="reservation-title">Datos de la reserva</h2>
+            <p>Completa tus datos. Confirmaremos disponibilidad por teléfono.</p>
+          </div>
+          <form class="reservation-form" id="reservation-form">
+            <div class="form-grid">
+              <label>
+                Nombre
+                <input type="text" name="name" autocomplete="name" placeholder="Tu nombre" required />
+              </label>
+              <label>
+                Teléfono
+                <input type="tel" name="phone" autocomplete="tel" placeholder="951 672 4141" data-setting-placeholder="phone" minlength="8" required />
+              </label>
+              <label>
+                Email
+                <input type="email" name="email" autocomplete="email" placeholder="tu@email.com" required />
+              </label>
+              <label>
+                Cantidad de personas
+                <input type="number" name="guests" min="1" max="20" value="2" required />
+              </label>
+              <label>
+                Hora
+                <select name="time" required>
+                  <option value="">Selecciona una hora</option>
+                  <option>12:00</option>
+                  <option>12:30</option>
+                  <option>13:00</option>
+                  <option>13:30</option>
+                  <option>14:00</option>
+                  <option>14:30</option>
+                  <option>15:00</option>
+                  <option>15:30</option>
+                  <option>16:00</option>
+                  <option>16:30</option>
+                  <option>17:00</option>
+                  <option>17:30</option>
+                  <option>18:00</option>
+                  <option>18:30</option>
+                  <option>19:00</option>
+                  <option>19:30</option>
+                </select>
+              </label>
+              <label>
+                Modalidad
+                <select name="paymentType" id="payment-type" required>
+                  <option value="free" data-amount="0">Reserva sin cargo</option>
+                  <option value="deposit" data-amount="250">Anticipo $250 por persona</option>
+                  <option value="experience" data-amount="950">Experiencia Xadani $950 por persona</option>
+                  <option value="event" data-amount="5000">Evento privado $5,000</option>
+                </select>
+              </label>
+            </div>
+            <div class="payment-preview" id="payment-preview">
+              <span>Total a pagar</span>
+              <strong>$0 MXN</strong>
+              <p>La reserva sin cargo solo registra la solicitud. Los anticipos y experiencias redirigen a Stripe Checkout.</p>
+            </div>
+            <label>
+              Alergias o restricciones
+              <textarea name="restrictions" rows="4" placeholder="Ej. alergia a mariscos, vegetariano, celebración especial"></textarea>
+            </label>
+            <button class="button primary form-submit" type="submit" id="reservation-submit">Enviar solicitud</button>
+            <p class="form-note" id="payment-note">Para pagos se usa Stripe Checkout. No guardamos datos de tarjeta.</p>
+          </form>
+          <div class="reservation-success" id="reservation-success" hidden>
+            <span class="success-mark">✓</span>
+            <h3>Solicitud recibida</h3>
+            <p id="reservation-summary"></p>
+          </div>
+        </section>
       </section>
 
       <section id="menu" class="section menu-section">
         <div class="section-heading">
           <p class="eyebrow">Carta visual</p>
           <h2>Menú</h2>
-          <p>Explora por categoría. Los precios están en pesos mexicanos y pueden cambiar por temporada.</p>
+          <p>Explora por categoría principal: entradas, fuertes, especiales, menú istmeño y bebidas.</p>
         </div>
-
-        <div class="menu-tabs" id="menu-tabs" role="tablist" aria-label="Categorías del menú">
-        </div>
-
+        <div class="menu-tabs" id="menu-tabs" role="tablist" aria-label="Categorías del menú"></div>
         <div id="menu-grid" class="menu-grid" aria-live="polite"></div>
       </section>
 
-      <section id="galeria" class="section gallery-section">
+      <section id="experiencias" class="section experiences-section">
         <div class="section-heading">
-          <p class="eyebrow">Un vistazo</p>
-          <h2>Fotos</h2>
+          <p class="eyebrow">Experiencias y eventos</p>
+          <h2>Próximas experiencias</h2>
+          <p>Eventos, comidas especiales o experiencia permanente. Cada anuncio puede reservarse o configurarse para prepago.</p>
         </div>
-        <div class="gallery-grid">
-          <figure class="wide">
-            <img src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80" alt="Platillo fuerte con carne braseada" />
-            <figcaption>Cocina de fuego lento</figcaption>
-          </figure>
-          <figure>
-            <img src="https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=900&q=80" alt="Coctel fresco de mezcal" />
-            <figcaption>Mezcalería</figcaption>
-          </figure>
-          <figure>
-            <img src="https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=900&q=80" alt="Cocina preparando ingredientes frescos" />
-            <figcaption>Cocina abierta</figcaption>
-          </figure>
-          <figure class="tall">
-            <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=900&q=80" alt="Salón de restaurante cálido" />
-            <figcaption>Salón y terraza</figcaption>
-          </figure>
-        </div>
+        <div class="experience-grid" id="experience-grid"></div>
       </section>
 
-      <section id="experiencia" class="section split-section">
-        <div>
-          <p class="eyebrow">Para venir</p>
-          <h2>Comida, cena y sobremesa</h2>
-          <p>
-            Xadani recibe grupos pequeños, celebraciones y visitas de fin de semana. La reserva se
-            confirma por teléfono o WhatsApp para mantener el trato cercano y evitar formularios
-            innecesarios. Puedes dejar tus datos en la ventana de reserva y el equipo confirmará
-            disponibilidad por teléfono.
-          </p>
+      <section id="biblioteca" class="section gallery-section">
+        <div class="section-heading">
+          <p class="eyebrow">Biblioteca</p>
+          <h2>Fotografías del concepto</h2>
+          <p>Platillos, instalaciones, cocina y momentos de Xadani. Esta biblioteca se administra desde el panel.</p>
         </div>
-        <div class="experience-list">
-          <article>
-            <span>01</span>
-            <h3>Menú de temporada</h3>
-            <p>La carta cambia con producto local, moles disponibles y destilados invitados.</p>
-          </article>
-          <article>
-            <span>02</span>
-            <h3>Mesa recomendada</h3>
-            <p>Pregunta por terraza, barra de mezcal o salón principal al reservar.</p>
-          </article>
-          <article>
-            <span>03</span>
-            <h3>Eventos privados</h3>
-            <p>Menús para grupos con maridaje de mezcal, previa cotización.</p>
-          </article>
-        </div>
+        <div class="gallery-grid" id="gallery-grid"></div>
       </section>
 
       <section id="contacto" class="contact-section">
@@ -158,10 +224,11 @@
             Reserva directo por WhatsApp o teléfono. Para grupos, comparte fecha, hora y número de personas.
           </p>
           <div class="contact-actions">
-            <button class="button primary" type="button" data-open-reservation>Reservar mesa</button>
+            <a class="button primary" href="#reservas">Reservar mesa</a>
             <a class="button secondary" href="tel:+529516724141" data-setting-href="phoneHref">
               Llamar <span data-setting="phone">951 672 4141</span>
             </a>
+            <a class="button secondary" href="https://share.google/C5J90ehjHyg3jdsg1" target="_blank" rel="noopener">Cómo llegar</a>
           </div>
         </div>
         <div class="contact-panel">
@@ -172,7 +239,7 @@
             </div>
             <div>
               <dt>Horario</dt>
-              <dd data-setting="hours">Miércoles a lunes, 13:00 - 19:00</dd>
+              <dd data-setting="hours">Todos los días, 12:00 - 19:30</dd>
             </div>
             <div>
               <dt>Correo</dt>
@@ -183,109 +250,16 @@
               </dd>
             </div>
           </dl>
+          <iframe
+            class="map-frame"
+            title="Ubicación Xadani en Oaxaca"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            src="https://www.google.com/maps?q=Calle%20Fundadores%20105%2C%2068127%20Oaxaca%20de%20Ju%C3%A1rez%2C%20Oaxaca&output=embed"
+          ></iframe>
         </div>
       </section>
     </main>
-
-    <div class="reservation-modal" id="reservation-modal" aria-hidden="true">
-      <div class="reservation-backdrop" data-close-reservation></div>
-      <section
-        class="reservation-dialog"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="reservation-title"
-      >
-        <button class="modal-close" type="button" aria-label="Cerrar ventana de reserva" data-close-reservation>
-          ×
-        </button>
-        <div class="reservation-copy">
-          <p class="eyebrow">Reservar</p>
-          <h2 id="reservation-title">Reserva tu mesa</h2>
-          <p>
-            Completa los datos básicos. Esta solicitud queda registrada en el sitio y el equipo de
-            Xadani confirma disponibilidad por teléfono.
-          </p>
-        </div>
-        <form class="reservation-form" id="reservation-form">
-          <div class="form-grid">
-            <label>
-              Nombre
-              <input type="text" name="name" autocomplete="name" placeholder="Tu nombre" required />
-            </label>
-            <label>
-              Teléfono
-              <input
-                type="tel"
-                name="phone"
-                autocomplete="tel"
-                placeholder="951 672 4141"
-                data-setting-placeholder="phone"
-                minlength="8"
-                required
-              />
-            </label>
-            <label>
-              Email
-              <input type="email" name="email" autocomplete="email" placeholder="tu@email.com" required />
-            </label>
-            <label>
-              Cantidad de personas
-              <input type="number" name="guests" min="1" max="20" value="2" required />
-            </label>
-            <label>
-              Hora
-              <select name="time" required>
-                <option value="">Selecciona una hora</option>
-                <option>13:00</option>
-                <option>13:30</option>
-                <option>14:00</option>
-                <option>14:30</option>
-                <option>15:00</option>
-                <option>15:30</option>
-                <option>19:00</option>
-                <option>19:30</option>
-                <option>20:00</option>
-                <option>20:30</option>
-                <option>21:00</option>
-                <option>21:30</option>
-              </select>
-            </label>
-            <label>
-              Modalidad
-              <select name="paymentType" id="payment-type" required>
-                <option value="free" data-amount="0">Reserva sin cargo</option>
-                <option value="deposit" data-amount="250">Anticipo $250 por persona</option>
-                <option value="experience" data-amount="950">Experiencia Xadani $950 por persona</option>
-                <option value="event" data-amount="5000">Evento privado $5,000</option>
-              </select>
-            </label>
-          </div>
-          <div class="payment-preview" id="payment-preview">
-            <span>Total a pagar</span>
-            <strong>$0 MXN</strong>
-            <p>La reserva sin cargo solo registra la solicitud. Los anticipos y experiencias redirigen a Stripe Checkout.</p>
-          </div>
-          <label>
-            Alergias o restricciones
-            <textarea
-              name="restrictions"
-              rows="4"
-              placeholder="Ej. alergia a mariscos, vegetariano, sin gluten, celebración especial"
-            ></textarea>
-          </label>
-          <button class="button primary form-submit" type="submit" id="reservation-submit">Enviar solicitud</button>
-          <p class="form-note" id="payment-note">
-            Para pagos se usa Stripe Checkout. No guardamos datos de tarjeta en este sitio.
-          </p>
-        </form>
-        <div class="reservation-success" id="reservation-success" hidden>
-          <span class="success-mark">✓</span>
-          <h3>Solicitud recibida</h3>
-          <p id="reservation-summary"></p>
-          <button class="button secondary" type="button" data-close-reservation>Cerrar</button>
-        </div>
-      </section>
-    </div>
 
     <footer class="site-footer">
       <span class="footer-brand">
@@ -296,7 +270,7 @@
       <span>© 2026</span>
     </footer>
 
-    <button class="mobile-reserve" type="button" data-open-reservation>Reservar</button>
-    <script src="script.js?v=20260529-editable-categories"></script>
+    <a class="mobile-reserve" href="#reservas">Reservar</a>
+    <script src="script.js?v=20260530-reorg"></script>
   </body>
 </html>
