@@ -92,8 +92,8 @@ a {
 .site-nav {
   display: flex;
   align-items: center;
-  gap: clamp(10px, 1.4vw, 18px);
-  font-size: 13px;
+  gap: 20px;
+  font-size: 14px;
 }
 
 .site-nav a {
