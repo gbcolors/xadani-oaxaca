@@ -92,8 +92,8 @@ a {
 .site-nav {
   display: flex;
   align-items: center;
-  gap: 20px;
-  font-size: 14px;
+  gap: clamp(10px, 1.4vw, 18px);
+  font-size: 13px;
 }
 
 .site-nav a {
@@ -291,6 +291,40 @@ h3 {
   font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+}
+
+.concept-section {
+  background: rgba(255, 250, 240, 0.96);
+}
+
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.concept-grid article {
+  min-height: 100%;
+  padding: 26px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.concept-grid span {
+  display: block;
+  margin-bottom: 12px;
+  color: var(--clay);
+  font-size: 12px;
+  font-weight: 850;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.concept-grid p {
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.62;
 }
 
 .section {
@@ -1082,6 +1116,7 @@ dd {
   }
 
   .intro-band,
+  .concept-grid,
   .menu-grid,
   .split-section,
   .contact-section {
