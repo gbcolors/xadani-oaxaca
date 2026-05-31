@@ -219,6 +219,7 @@ const openReservationButtons = document.querySelectorAll("[data-open-reservation
 const closeReservationButtons = document.querySelectorAll("[data-close-reservation]");
 const paymentTypeInput = document.querySelector("#payment-type");
 const paymentPreview = document.querySelector("#payment-preview");
+const staleHeroTextPattern = /moles\s+profundos|Ma[ií]z\s+criollo/i;
 const reservationSubmit = document.querySelector("#reservation-submit");
 
 const checkoutEndpoint = "/api/create-checkout-session";
@@ -335,7 +336,7 @@ async function apiJson(path, options = {}) {
 function getSiteSettings() {
   try {
     const storedSettings = JSON.parse(localStorage.getItem("xadaniSiteSettings")) || {};
-    if (/moles profundos|Ma[ií]z criollo/i.test(storedSettings.heroText || "")) {
+    if (staleHeroTextPattern.test(storedSettings.heroText || "")) {
       storedSettings.heroText = defaultSiteSettings.heroText;
       localStorage.setItem("xadaniSiteSettings", JSON.stringify({ ...defaultSiteSettings, ...storedSettings }));
     }
@@ -352,7 +353,7 @@ async function loadRemoteSettings() {
   try {
     const data = await apiJson("/api/settings");
     const remoteSettings = data.settings || {};
-    if (/moles profundos|Ma[ií]z criollo/i.test(remoteSettings.heroText || "")) {
+    if (staleHeroTextPattern.test(remoteSettings.heroText || "")) {
       remoteSettings.heroText = defaultSiteSettings.heroText;
     }
     localStorage.setItem("xadaniSiteSettings", JSON.stringify({ ...defaultSiteSettings, ...remoteSettings }));
