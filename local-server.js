@@ -20,7 +20,7 @@ const defaultSettings = {
   contactIntro:
     "Reserva directo por WhatsApp o teléfono. Para grupos, comparte fecha, hora y número de personas.",
   heroText:
-    "Maíz criollo, moles profundos, pesca fresca y mezcalería en una carta contemporánea pensada para compartirse sin prisa."
+    "Cocina tradicional de Santa María Xadani, productos del mar, recetas autóctonas y sabores del Istmo servidos en la capital de Oaxaca."
 };
 
 const defaultTables = [

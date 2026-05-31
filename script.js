@@ -334,9 +334,14 @@ async function apiJson(path, options = {}) {
 
 function getSiteSettings() {
   try {
+    const storedSettings = JSON.parse(localStorage.getItem("xadaniSiteSettings")) || {};
+    if (/moles profundos|Ma[ií]z criollo/i.test(storedSettings.heroText || "")) {
+      storedSettings.heroText = defaultSiteSettings.heroText;
+      localStorage.setItem("xadaniSiteSettings", JSON.stringify({ ...defaultSiteSettings, ...storedSettings }));
+    }
     return {
       ...defaultSiteSettings,
-      ...(JSON.parse(localStorage.getItem("xadaniSiteSettings")) || {})
+      ...storedSettings
     };
   } catch {
     return defaultSiteSettings;
@@ -346,10 +351,11 @@ function getSiteSettings() {
 async function loadRemoteSettings() {
   try {
     const data = await apiJson("/api/settings");
-    localStorage.setItem(
-      "xadaniSiteSettings",
-      JSON.stringify({ ...defaultSiteSettings, ...(data.settings || {}) })
-    );
+    const remoteSettings = data.settings || {};
+    if (/moles profundos|Ma[ií]z criollo/i.test(remoteSettings.heroText || "")) {
+      remoteSettings.heroText = defaultSiteSettings.heroText;
+    }
+    localStorage.setItem("xadaniSiteSettings", JSON.stringify({ ...defaultSiteSettings, ...remoteSettings }));
   } catch {
     // Local settings remain available before DATABASE_URL is configured.
   }
