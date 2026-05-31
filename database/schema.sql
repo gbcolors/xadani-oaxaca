@@ -104,5 +104,7 @@ create table if not exists admin_users (
   username text primary key,
   salt text not null,
   password_hash text not null,
+  role text default 'owner',
+  recovery_email text default '',
   updated_at timestamptz default now()
 );

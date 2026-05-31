@@ -437,6 +437,10 @@ h3 {
   color: var(--cream);
 }
 
+.gallery-page {
+  min-height: calc(100vh - 86px);
+}
+
 .gallery-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));

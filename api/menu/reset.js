@@ -1,4 +1,4 @@
-const { initializeDatabase, requireAdmin, resetMenuStructure, sendError } = require("../../lib/db");
+const { initializeDatabase, requireAdminRole, resetMenuStructure, sendError } = require("../../lib/db");
 
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
@@ -8,7 +8,7 @@ module.exports = async function handler(req, res) {
 
   try {
     await initializeDatabase();
-    requireAdmin(req);
+    await requireAdminRole(req, ["owner"]);
     await resetMenuStructure();
     return res.status(200).json({ ok: true });
   } catch (error) {

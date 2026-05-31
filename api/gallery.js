@@ -1,4 +1,4 @@
-const { initializeDatabase, query, requireAdmin, sendError } = require("../lib/db");
+﻿const { initializeDatabase, query, requireAdminRole, sendError } = require("../lib/db");
 
 function mapItem(row) {
   return {
@@ -23,7 +23,7 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ gallery: result.rows.map(mapItem) });
     }
 
-    requireAdmin(req);
+    await requireAdminRole(req, ["owner"]);
 
     if (req.method === "POST") {
       const item = req.body || {};
@@ -72,3 +72,4 @@ module.exports = async function handler(req, res) {
     return sendError(res, error);
   }
 };
+

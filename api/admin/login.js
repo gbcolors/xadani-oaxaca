@@ -15,13 +15,13 @@ module.exports = async function handler(req, res) {
     await initializeDatabase();
 
     const { username, password } = req.body || {};
-    const isValid = await verifyAdminCredentials(username, password);
+    const user = await verifyAdminCredentials(username, password);
 
-    if (!isValid) {
+    if (!user) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
-    return res.status(200).json({ token: signAdminToken(username) });
+    return res.status(200).json({ token: signAdminToken(username), user });
   } catch (error) {
     return sendError(res, error);
   }

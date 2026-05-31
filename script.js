@@ -500,7 +500,7 @@ function renderGallery() {
     return;
   }
 
-  galleryGrid.innerHTML = galleryItems
+  galleryGrid.innerHTML = galleryItems.slice(0, 4)
     .map(
       (item, index) => `
         <figure data-gallery-photo="${index}" tabindex="0">

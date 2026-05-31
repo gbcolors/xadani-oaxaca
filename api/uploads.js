@@ -1,4 +1,4 @@
-const { requireAdmin, sendError } = require("../lib/db");
+﻿const { requireAdminRole, sendError } = require("../lib/db");
 
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
@@ -7,7 +7,7 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    requireAdmin(req);
+    await requireAdminRole(req, ["owner"]);
 
     const { dataUrl } = req.body || {};
     const match = /^data:image\/(?:png|jpeg|jpg|webp|gif);base64,[a-z0-9+/=]+$/i.exec(dataUrl || "");
@@ -25,3 +25,4 @@ module.exports = async function handler(req, res) {
     return sendError(res, error);
   }
 };
+

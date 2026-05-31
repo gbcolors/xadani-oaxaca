@@ -1,4 +1,4 @@
-const { initializeDatabase, query, requireAdmin, sendError } = require("../lib/db");
+﻿const { initializeDatabase, query, requireAdminRole, sendError } = require("../lib/db");
 
 module.exports = async function handler(req, res) {
   try {
@@ -11,7 +11,7 @@ module.exports = async function handler(req, res) {
     }
 
     if (req.method === "PUT") {
-      requireAdmin(req);
+      await requireAdminRole(req, ["owner"]);
       const settings = req.body || {};
 
       for (const [key, value] of Object.entries(settings)) {
@@ -33,3 +33,4 @@ module.exports = async function handler(req, res) {
     return sendError(res, error);
   }
 };
+

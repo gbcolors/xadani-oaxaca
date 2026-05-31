@@ -19,12 +19,13 @@
         </a>
         <nav aria-label="Panel admin">
           <a href="#reservas">Reservas</a>
+          <a href="#informes">Informes</a>
           <a href="#mesas">Plano de mesas</a>
           <a href="#walkins">Walk-ins</a>
-          <a href="#menu-admin">Menú</a>
-          <a href="#experiencias-admin">Experiencias</a>
-          <a href="#biblioteca-admin">Biblioteca</a>
-          <a href="#ajustes">Ajustes</a>
+          <a class="owner-only" href="#menu-admin">Menú</a>
+          <a class="owner-only" href="#experiencias-admin">Experiencias</a>
+          <a class="owner-only" href="#biblioteca-admin">Biblioteca</a>
+          <a class="owner-only" href="#ajustes">Ajustes</a>
           <a href="/">Ver sitio</a>
         </nav>
       </aside>
@@ -111,6 +112,57 @@
                   </tr>
                 </thead>
                 <tbody id="reservation-table"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="admin-card" id="informes">
+            <div class="card-heading">
+              <div>
+                <p class="eyebrow">Informes</p>
+                <h2>Comensales y reservas</h2>
+              </div>
+              <div class="button-row">
+                <button class="button" type="button" id="export-report-csv">CSV</button>
+                <button class="button" type="button" id="export-report-xls">XLS</button>
+                <button class="button" type="button" id="export-report-pdf">PDF</button>
+              </div>
+            </div>
+            <form class="report-filters" id="report-filters">
+              <label>
+                Periodo
+                <select name="period">
+                  <option value="day">Día</option>
+                  <option value="week">Semana</option>
+                  <option value="month">Mes</option>
+                  <option value="custom">Personalizado</option>
+                </select>
+              </label>
+              <label>
+                Desde
+                <input name="startDate" type="date" required />
+              </label>
+              <label>
+                Hasta
+                <input name="endDate" type="date" required />
+              </label>
+              <button class="button primary" type="submit">Actualizar informe</button>
+            </form>
+            <div class="report-summary" id="report-summary"></div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th>Tipo</th>
+                    <th>Comensal</th>
+                    <th>Personas</th>
+                    <th>Mesa</th>
+                    <th>Estado</th>
+                    <th>Pago</th>
+                  </tr>
+                </thead>
+                <tbody id="report-table"></tbody>
               </table>
             </div>
           </section>
@@ -238,7 +290,7 @@
             </div>
           </section>
 
-          <section class="admin-card" id="menu-admin">
+          <section class="admin-card owner-only" id="menu-admin">
             <div class="card-heading">
               <div>
                 <p class="eyebrow">Editor</p>
@@ -306,7 +358,7 @@
             <div class="menu-admin-list" id="menu-admin-list"></div>
           </section>
 
-          <section class="admin-card" id="experiencias-admin">
+          <section class="admin-card owner-only" id="experiencias-admin">
             <div class="card-heading">
               <div>
                 <p class="eyebrow">Eventos</p>
@@ -346,7 +398,7 @@
             <div class="experience-admin-list" id="experience-admin-list"></div>
           </section>
 
-          <section class="admin-card" id="biblioteca-admin">
+          <section class="admin-card owner-only" id="biblioteca-admin">
             <div class="card-heading">
               <div>
                 <p class="eyebrow">Fotos</p>
@@ -387,7 +439,7 @@
             <div class="library-admin-list" id="library-admin-list"></div>
           </section>
 
-          <section class="admin-card" id="ajustes">
+          <section class="admin-card owner-only" id="ajustes">
             <div class="card-heading">
               <div>
                 <p class="eyebrow">Contenido</p>
@@ -456,6 +508,10 @@
             </div>
             <form class="settings-editor" id="password-editor">
               <label>
+                Correo de recuperación
+                <input name="recoveryEmail" type="email" autocomplete="email" placeholder="correo@dominio.com" />
+              </label>
+              <label>
                 Contraseña actual
                 <input name="currentPassword" type="password" autocomplete="current-password" required />
               </label>
@@ -474,6 +530,6 @@
       </section>
     </main>
 
-    <script src="/admin.js?v=20260530-no-demo-gallery"></script>
+    <script src="/admin.js?v=20260530-roles-reports"></script>
   </body>
 </html>

@@ -3,7 +3,8 @@ const {
   initializeDatabase,
   requireAdmin,
   sendError,
-  updateAdminPassword
+  updateAdminPassword,
+  updateAdminRecoveryEmail
 } = require("../../lib/db");
 
 module.exports = async function handler(req, res) {
@@ -18,13 +19,23 @@ module.exports = async function handler(req, res) {
 
     const token = req.headers["x-admin-token"];
     const username = getAdminUsernameFromToken(token);
-    const { currentPassword, newPassword } = req.body || {};
+    const { currentPassword, newPassword, recoveryEmail } = req.body || {};
 
-    if (!currentPassword || !newPassword || String(newPassword).length < 8) {
+    if (newPassword || currentPassword) {
+      if (!currentPassword || !newPassword || String(newPassword).length < 8) {
+        return res.status(400).json({ error: "Invalid password" });
+      }
+      await updateAdminPassword(username, currentPassword, newPassword);
+    }
+
+    if (typeof recoveryEmail === "string") {
+      await updateAdminRecoveryEmail(username, recoveryEmail.trim());
+    }
+
+    if (!newPassword && typeof recoveryEmail !== "string") {
       return res.status(400).json({ error: "Invalid password" });
     }
 
-    await updateAdminPassword(username, currentPassword, newPassword);
     return res.status(200).json({ ok: true });
   } catch (error) {
     return sendError(res, error);

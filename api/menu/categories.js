@@ -1,4 +1,4 @@
-const { initializeDatabase, query, requireAdmin, sendError } = require("../../lib/db");
+﻿const { initializeDatabase, query, requireAdminRole, sendError } = require("../../lib/db");
 
 function slugify(value) {
   return String(value || "")
@@ -31,7 +31,7 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ categories: result.rows.map(mapCategory) });
     }
 
-    requireAdmin(req);
+    await requireAdminRole(req, ["owner"]);
 
     if (req.method === "POST") {
       const category = req.body || {};
@@ -98,3 +98,4 @@ module.exports = async function handler(req, res) {
     return sendError(res, error);
   }
 };
+

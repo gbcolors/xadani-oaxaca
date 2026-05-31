@@ -223,6 +223,7 @@ h2 {
 
 .login-panel form,
 .filters,
+.report-filters,
 .table-editor,
 .walkin-editor,
 .experience-editor,
@@ -285,6 +286,35 @@ textarea {
   font-size: 38px;
 }
 
+.report-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.report-summary article {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+  background: #fff;
+}
+
+.report-summary span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.report-summary strong {
+  display: block;
+  margin-top: 6px;
+  color: var(--leaf);
+  font-size: 24px;
+}
+
 .admin-card {
   padding: clamp(18px, 3vw, 28px);
 }
@@ -292,6 +322,11 @@ textarea {
 .filters {
   grid-template-columns: minmax(0, 1fr) 220px;
   margin-bottom: 16px;
+}
+
+.report-filters {
+  grid-template-columns: 180px 180px 180px auto;
+  align-items: end;
 }
 
 .table-wrap {
@@ -389,6 +424,7 @@ th {
 .menu-editor,
 .table-editor,
 .walkin-editor,
+.report-filters,
 .experience-editor,
 .library-editor,
 .library-bulk-uploader,
@@ -403,6 +439,7 @@ th {
 }
 
 .settings-editor .wide,
+.report-filters .wide,
 .table-editor .wide,
 .walkin-editor .wide,
 .experience-editor .wide,
@@ -471,6 +508,8 @@ th {
   .login-panel,
   .metric-grid,
   .filters,
+  .report-filters,
+  .report-summary,
   .table-editor,
   .walkin-editor,
   .experience-editor,

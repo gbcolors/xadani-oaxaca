@@ -73,6 +73,12 @@ const searchInput = document.querySelector("#reservation-search");
 const statusFilter = document.querySelector("#reservation-status-filter");
 const seedButton = document.querySelector("#seed-reservation");
 const exportButton = document.querySelector("#export-reservations");
+const reportFilters = document.querySelector("#report-filters");
+const reportSummary = document.querySelector("#report-summary");
+const reportTable = document.querySelector("#report-table");
+const exportReportCsvButton = document.querySelector("#export-report-csv");
+const exportReportXlsButton = document.querySelector("#export-report-xls");
+const exportReportPdfButton = document.querySelector("#export-report-pdf");
 const floorPlan = document.querySelector("#floor-plan");
 const resetTablesButton = document.querySelector("#reset-tables");
 const tableEditor = document.querySelector("#table-editor");
@@ -113,6 +119,8 @@ let menuCache = [];
 let categoryCache = [...defaultCategories];
 let libraryCache = [];
 let experienceCache = [];
+let reportCache = { summary: {}, rows: [] };
+let currentUser = JSON.parse(sessionStorage.getItem("xadaniAdminUser") || "null");
 
 function readStorage(key, fallback) {
   try {
@@ -166,6 +174,34 @@ function formatPrice(value) {
     currency: "MXN",
     maximumFractionDigits: 0
   }).format(Number(value || 0));
+}
+
+function toInputDate(date) {
+  return date.toISOString().slice(0, 10);
+}
+
+function setReportPeriod(period = "day") {
+  const now = new Date();
+  const start = new Date(now);
+  if (period === "week") start.setDate(now.getDate() - 6);
+  if (period === "month") start.setDate(1);
+  reportFilters.elements.startDate.value = toInputDate(start);
+  reportFilters.elements.endDate.value = toInputDate(now);
+}
+
+function downloadFile(fileName, content, mimeType) {
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = fileName;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+function csvEscape(value) {
+  const text = String(value ?? "");
+  return `"${text.replaceAll('"', '""')}"`;
 }
 
 async function loadReservations() {
@@ -359,6 +395,14 @@ async function loadExperiences() {
   } catch {
     experienceCache = readStorage(EXPERIENCES_KEY, []);
   }
+}
+
+async function loadReport() {
+  const params = new URLSearchParams({
+    start: reportFilters.elements.startDate.value,
+    end: reportFilters.elements.endDate.value
+  });
+  reportCache = await apiRequest(`/api/reports?${params.toString()}`);
 }
 
 async function saveExperienceItem(item) {
@@ -828,8 +872,98 @@ function renderSettingsEditor(settings) {
   });
 }
 
+function renderReport() {
+  const summary = reportCache.summary || {};
+  reportSummary.innerHTML = [
+    ["Registros", summary.records || 0],
+    ["Comensales", summary.guests || 0],
+    ["Reservas", summary.reservations || 0],
+    ["Walk-ins", summary.walkins || 0]
+  ]
+    .map(([label, value]) => `<article><span>${label}</span><strong>${value}</strong></article>`)
+    .join("");
+
+  reportTable.innerHTML = (reportCache.rows || [])
+    .map(
+      (row) => `
+        <tr>
+          <td>${new Date(row.date).toLocaleString("es-MX")}</td>
+          <td>${row.kind}</td>
+          <td>${row.name || ""}<br><small>${row.phone || ""}</small></td>
+          <td>${row.guests}</td>
+          <td>${row.tableId || ""}</td>
+          <td>${row.status || ""}</td>
+          <td>${formatPrice(row.paymentTotal || 0)}<br><small>${row.paymentStatus || ""}</small></td>
+        </tr>
+      `
+    )
+    .join("");
+}
+
+function reportRowsForExport() {
+  return [
+    ["Fecha", "Tipo", "Folio", "Comensal", "Telefono", "Email", "Personas", "Hora", "Mesa", "Estado", "Pago", "Estado pago"],
+    ...(reportCache.rows || []).map((row) => [
+      new Date(row.date).toLocaleString("es-MX"),
+      row.kind,
+      row.folio,
+      row.name,
+      row.phone,
+      row.email,
+      row.guests,
+      row.time,
+      row.tableId,
+      row.status,
+      row.paymentTotal,
+      row.paymentStatus
+    ])
+  ];
+}
+
+function exportReportCsv() {
+  const csv = reportRowsForExport().map((row) => row.map(csvEscape).join(",")).join("\n");
+  downloadFile("informe-xadani.csv", csv, "text/csv;charset=utf-8");
+}
+
+function exportReportXls() {
+  const rows = reportRowsForExport()
+    .map((row) => `<tr>${row.map((cell) => `<td>${String(cell ?? "")}</td>`).join("")}</tr>`)
+    .join("");
+  downloadFile("informe-xadani.xls", `<table>${rows}</table>`, "application/vnd.ms-excel;charset=utf-8");
+}
+
+function exportReportPdf() {
+  const rows = reportRowsForExport()
+    .map((row) => `<tr>${row.map((cell) => `<td>${String(cell ?? "")}</td>`).join("")}</tr>`)
+    .join("");
+  const win = window.open("", "_blank");
+  win.document.write(`
+    <title>Informe Xadani</title>
+    <style>body{font-family:Arial,sans-serif}table{width:100%;border-collapse:collapse}td{border:1px solid #ddd;padding:6px;font-size:12px}h1{font-size:22px}</style>
+    <h1>Informe Xadani</h1>
+    <p>${reportFilters.elements.startDate.value} a ${reportFilters.elements.endDate.value}</p>
+    <table>${rows}</table>
+  `);
+  win.document.close();
+  win.print();
+}
+
+function applyRoleAccess() {
+  const isOwner = (currentUser?.role || "owner") === "owner";
+  document.querySelectorAll(".owner-only").forEach((element) => {
+    element.hidden = !isOwner;
+  });
+  if (!isOwner && location.hash && document.querySelector(location.hash)?.classList.contains("owner-only")) {
+    location.hash = "#reservas";
+  }
+  if (passwordEditor.elements.recoveryEmail) {
+    passwordEditor.elements.recoveryEmail.value = currentUser?.recoveryEmail || "";
+  }
+}
+
 async function renderAll() {
   await Promise.all([loadReservations(), loadTables(), loadWalkins(), loadMenu(), loadLibrary(), loadExperiences()]);
+  await loadReport();
   const settings = await loadSettings();
   renderReservations();
   renderTables();
@@ -845,12 +979,16 @@ async function renderAll() {
   clearExperienceEditor();
   clearCategoryEditor();
   renderSettingsEditor(settings);
+  renderReport();
+  applyRoleAccess();
 }
 
-function unlockAdmin(token) {
+function unlockAdmin(token, user = currentUser) {
   adminToken = token || adminToken;
+  currentUser = user || currentUser || { username: "admin", role: "owner", recoveryEmail: "" };
   sessionStorage.setItem("xadaniAdminUnlocked", "true");
   sessionStorage.setItem("xadaniAdminToken", adminToken);
+  sessionStorage.setItem("xadaniAdminUser", JSON.stringify(currentUser));
   adminShell.classList.remove("locked");
   adminSidebar.hidden = false;
   adminHeader.hidden = false;
@@ -862,6 +1000,7 @@ function unlockAdmin(token) {
 function lockAdmin() {
   sessionStorage.removeItem("xadaniAdminUnlocked");
   sessionStorage.removeItem("xadaniAdminToken");
+  sessionStorage.removeItem("xadaniAdminUser");
   adminShell.classList.add("locked");
   adminSidebar.hidden = true;
   adminHeader.hidden = true;
@@ -873,8 +1012,8 @@ loginForm.addEventListener("submit", (event) => {
   event.preventDefault();
   const password = new FormData(loginForm).get("password");
   adminLogin(password)
-    .then(({ token }) => {
-      unlockAdmin(token);
+    .then(({ token, user }) => {
+      unlockAdmin(token, user);
       loginForm.reset();
     })
     .catch(() => {
@@ -888,6 +1027,7 @@ passwordEditor.addEventListener("submit", async (event) => {
   const currentPassword = data.get("currentPassword");
   const newPassword = data.get("newPassword");
   const confirmPassword = data.get("confirmPassword");
+  const recoveryEmail = data.get("recoveryEmail").trim();
 
   if (newPassword !== confirmPassword) {
     alert("La nueva contraseña no coincide.");
@@ -897,7 +1037,7 @@ passwordEditor.addEventListener("submit", async (event) => {
   try {
     await apiRequest("/api/admin/password", {
       method: "PUT",
-      body: JSON.stringify({ currentPassword, newPassword })
+      body: JSON.stringify({ currentPassword, newPassword, recoveryEmail })
     });
     alert("Contraseña actualizada. Vuelve a iniciar sesión.");
     passwordEditor.reset();
@@ -910,6 +1050,26 @@ passwordEditor.addEventListener("submit", async (event) => {
 lockButton.addEventListener("click", lockAdmin);
 searchInput.addEventListener("input", renderReservations);
 statusFilter.addEventListener("change", renderReservations);
+
+reportFilters.elements.period.addEventListener("change", (event) => {
+  if (event.target.value !== "custom") {
+    setReportPeriod(event.target.value);
+  }
+});
+
+reportFilters.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  try {
+    await loadReport();
+    renderReport();
+  } catch {
+    alert("No se pudo cargar el informe.");
+  }
+});
+
+exportReportCsvButton.addEventListener("click", exportReportCsv);
+exportReportXlsButton.addEventListener("click", exportReportXls);
+exportReportPdfButton.addEventListener("click", exportReportPdf);
 
 reservationTable.addEventListener("change", async (event) => {
   if (!event.target.matches(".table-select")) return;
@@ -1371,4 +1531,5 @@ resetSettingsButton.addEventListener("click", async () => {
   }
 });
 
+setReportPeriod("day");
 lockAdmin();

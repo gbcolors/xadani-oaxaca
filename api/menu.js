@@ -1,4 +1,4 @@
-const { initializeDatabase, query, requireAdmin, sendError } = require("../lib/db");
+﻿const { initializeDatabase, query, requireAdminRole, sendError } = require("../lib/db");
 
 function mapMenu(row) {
   return {
@@ -41,7 +41,7 @@ module.exports = async function handler(req, res) {
     }
 
     if (req.method === "POST") {
-      requireAdmin(req);
+      await requireAdminRole(req, ["owner"]);
       const item = req.body || {};
       const result = await query(
         `insert into menu_items (category, name, description, price, image, tags, active)
@@ -60,7 +60,7 @@ module.exports = async function handler(req, res) {
     }
 
     if (req.method === "PUT") {
-      requireAdmin(req);
+      await requireAdminRole(req, ["owner"]);
       const item = req.body || {};
       const result = await query(
         `update menu_items
@@ -87,7 +87,7 @@ module.exports = async function handler(req, res) {
     }
 
     if (req.method === "DELETE") {
-      requireAdmin(req);
+      await requireAdminRole(req, ["owner"]);
       const { id } = req.body || {};
       await query("update menu_items set active = false, updated_at = now() where id = $1", [id]);
       return res.status(200).json({ ok: true });
@@ -99,3 +99,4 @@ module.exports = async function handler(req, res) {
     return sendError(res, error);
   }
 };
+
