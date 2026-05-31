@@ -121,6 +121,8 @@ let libraryCache = [];
 let experienceCache = [];
 let reportCache = { summary: {}, rows: [] };
 let currentUser = JSON.parse(sessionStorage.getItem("xadaniAdminUser") || "null");
+let draggedTable = null;
+let suppressTableClick = false;
 
 function readStorage(key, fallback) {
   try {
@@ -202,6 +204,47 @@ function downloadFile(fileName, content, mimeType) {
 function csvEscape(value) {
   const text = String(value ?? "");
   return `"${text.replaceAll('"', '""')}"`;
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function getTableGuest(table) {
+  const walkin = walkinsCache.find(
+    (item) => item.tableId === table.id && item.status !== "closed"
+  );
+
+  if (walkin) {
+    return {
+      label: walkin.name?.trim() || "Walk-in",
+      type: "Walk-in"
+    };
+  }
+
+  const reservation = reservationsCache.find(
+    (item) =>
+      item.tableId === table.id &&
+      !["completed", "cancelled"].includes(item.status)
+  );
+
+  if (reservation) {
+    return {
+      label: reservation.name?.trim() || "Reserva",
+      type: "Reserva"
+    };
+  }
+
+  return null;
 }
 
 async function loadReservations() {
@@ -589,19 +632,21 @@ function renderReservations() {
 
 function renderTables() {
   floorPlan.innerHTML = tablesCache
-    .map(
-      (table) => `
-        <button class="table-node ${table.shape} ${table.status}" type="button" data-table-edit="${table.id}"
-          style="left: ${table.x}%; top: ${table.y}%;">
+    .map((table) => {
+      const guest = getTableGuest(table);
+      return `
+        <button class="table-node ${table.shape} ${table.status}" type="button" data-table-edit="${table.id}" data-table-id="${table.id}"
+          style="left: ${table.x}%; top: ${table.y}%;" aria-label="Mesa ${escapeHtml(table.id)}">
           <span>
-            <strong>${table.id}</strong>
-            <small>${table.capacity} pax</small>
-            <small>${table.zone}</small>
-            <small>${table.status}</small>
+            <strong>${escapeHtml(table.id)}</strong>
+            <small>${escapeHtml(table.capacity)} pax</small>
+            <small>${escapeHtml(table.zone)}</small>
+            <small>${escapeHtml(table.status)}</small>
+            ${guest ? `<small class="table-guest">${escapeHtml(guest.label)}</small>` : ""}
           </span>
         </button>
-      `
-    )
+      `;
+    })
     .join("");
 
   tableList.innerHTML = tablesCache
@@ -1071,6 +1116,90 @@ exportReportCsvButton.addEventListener("click", exportReportCsv);
 exportReportXlsButton.addEventListener("click", exportReportXls);
 exportReportPdfButton.addEventListener("click", exportReportPdf);
 
+function updateDraggedTablePosition(event) {
+  if (!draggedTable) return;
+  const { table, node } = draggedTable;
+  const planRect = floorPlan.getBoundingClientRect();
+  const nodeWidthPercent = (node.offsetWidth / planRect.width) * 100;
+  const nodeHeightPercent = (node.offsetHeight / planRect.height) * 100;
+  const x = ((event.clientX - planRect.left - draggedTable.offsetX) / planRect.width) * 100;
+  const y = ((event.clientY - planRect.top - draggedTable.offsetY) / planRect.height) * 100;
+
+  table.x = Number(clamp(x, 0, 100 - nodeWidthPercent).toFixed(1));
+  table.y = Number(clamp(y, 0, 100 - nodeHeightPercent).toFixed(1));
+  node.style.left = `${table.x}%`;
+  node.style.top = `${table.y}%`;
+
+  if (tableEditor.elements.originalId.value === table.id || tableEditor.elements.id.value === table.id) {
+    tableEditor.elements.x.value = table.x;
+    tableEditor.elements.y.value = table.y;
+  }
+}
+
+function startTableDrag(event) {
+  if (event.button !== undefined && event.button !== 0) return;
+  const tableButton = event.target.closest("[data-table-id]");
+  if (!tableButton) return;
+  const table = tablesCache.find((item) => item.id === tableButton.dataset.tableId);
+  if (!table) return;
+
+  event.preventDefault();
+  const buttonRect = tableButton.getBoundingClientRect();
+  draggedTable = {
+    table,
+    node: tableButton,
+    startX: event.clientX,
+    startY: event.clientY,
+    offsetX: event.clientX - buttonRect.left,
+    offsetY: event.clientY - buttonRect.top,
+    moved: false
+  };
+  tableButton.setPointerCapture?.(event.pointerId);
+  tableButton.classList.add("dragging");
+}
+
+function moveTableDrag(event) {
+  if (!draggedTable) return;
+  if (Math.abs(event.clientX - draggedTable.startX) > 3 || Math.abs(event.clientY - draggedTable.startY) > 3) {
+    draggedTable.moved = true;
+  }
+  updateDraggedTablePosition(event);
+}
+
+async function finishTableDrag() {
+  if (!draggedTable) return;
+  const currentDrag = draggedTable;
+  draggedTable = null;
+  currentDrag.node.classList.remove("dragging");
+
+  if (!currentDrag.moved) return;
+
+  suppressTableClick = true;
+  try {
+    await saveTable(currentDrag.table);
+    renderTables();
+  } catch {
+    alert("No se pudo guardar la nueva posicion de la mesa.");
+    await loadTables();
+    renderTables();
+  } finally {
+    setTimeout(() => {
+      suppressTableClick = false;
+    }, 0);
+  }
+}
+
+if (window.PointerEvent) {
+  floorPlan.addEventListener("pointerdown", startTableDrag);
+  floorPlan.addEventListener("pointermove", moveTableDrag);
+  floorPlan.addEventListener("pointerup", finishTableDrag);
+  floorPlan.addEventListener("pointercancel", finishTableDrag);
+} else {
+  floorPlan.addEventListener("mousedown", startTableDrag);
+  document.addEventListener("mousemove", moveTableDrag);
+  document.addEventListener("mouseup", finishTableDrag);
+}
+
 reservationTable.addEventListener("change", async (event) => {
   if (!event.target.matches(".table-select")) return;
   try {
@@ -1098,6 +1227,7 @@ reservationTable.addEventListener("change", async (event) => {
 });
 
 floorPlan.addEventListener("click", (event) => {
+  if (suppressTableClick) return;
   const tableButton = event.target.closest("[data-table-edit]");
   if (!tableButton) return;
   const table = tablesCache.find((item) => item.id === tableButton.dataset.tableEdit);

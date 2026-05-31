@@ -370,6 +370,7 @@ th {
   min-height: 520px;
   border: 1px solid var(--line);
   border-radius: 8px;
+  touch-action: none;
   background:
     linear-gradient(rgba(42, 27, 24, 0.05) 1px, transparent 1px),
     linear-gradient(90deg, rgba(42, 27, 24, 0.05) 1px, transparent 1px),
@@ -389,7 +390,16 @@ th {
   text-align: center;
   background: var(--cream);
   box-shadow: 0 10px 24px rgba(42, 27, 24, 0.12);
-  cursor: pointer;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.table-node.dragging {
+  z-index: 10;
+  cursor: grabbing;
+  box-shadow: 0 18px 34px rgba(42, 27, 24, 0.22);
+  transform: scale(1.03);
 }
 
 .table-node.round {
@@ -419,6 +429,13 @@ th {
 
 .table-node small {
   color: var(--muted);
+}
+
+.table-node .table-guest {
+  margin-top: 4px;
+  color: var(--ink);
+  font-weight: 900;
+  line-height: 1.15;
 }
 
 .menu-editor,
