@@ -12,13 +12,13 @@ const sessions = new Map();
 const defaultSettings = {
   businessName: "Xadani en Oaxaca",
   domain: "xadanienoaxaca.com",
-  phone: "951 672 4141",
-  phoneHref: "+529516724141",
+  phone: "951 343 8483",
+  phoneHref: "+529513438483",
   email: "hola@xadanienoaxaca.com",
   address: "Calle Fundadores 105, 68127 Oaxaca de Juárez, Oaxaca",
   hours: "Miércoles a lunes, 13:00 - 19:00",
   contactIntro:
-    "Reserva directo por WhatsApp o teléfono. Para grupos, comparte fecha, hora y número de personas.",
+    "Reserva directo por WhatsApp o teléfono. También puedes comunicarte al +52 951 150 9454 para grupos y eventos.",
   heroText:
     "Cocina tradicional de Santa María Xadani, productos del mar, recetas autóctonas y sabores del Istmo servidos en la capital de Oaxaca."
 };

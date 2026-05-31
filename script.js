@@ -220,6 +220,26 @@ const closeReservationButtons = document.querySelectorAll("[data-close-reservati
 const paymentTypeInput = document.querySelector("#payment-type");
 const paymentPreview = document.querySelector("#payment-preview");
 const staleHeroTextPattern = /moles\s+profundos|Ma[ií]z\s+criollo/i;
+const stalePhonePattern = /951\s*672\s*4141|529516724141|9516724141/;
+
+function sanitizeSiteSettings(settings) {
+  const nextSettings = { ...settings };
+  if (staleHeroTextPattern.test(nextSettings.heroText || "")) {
+    nextSettings.heroText = defaultSiteSettings.heroText;
+  }
+  if (stalePhonePattern.test(`${nextSettings.phone || ""} ${nextSettings.phoneHref || ""}`)) {
+    nextSettings.phone = defaultSiteSettings.phone;
+    nextSettings.phoneHref = defaultSiteSettings.phoneHref;
+  }
+  if (stalePhonePattern.test(`${nextSettings.whatsapp || ""} ${nextSettings.whatsappHref || ""}`)) {
+    nextSettings.whatsapp = defaultSiteSettings.whatsapp;
+    nextSettings.whatsappHref = defaultSiteSettings.whatsappHref;
+  }
+  if (stalePhonePattern.test(nextSettings.contactIntro || "")) {
+    nextSettings.contactIntro = defaultSiteSettings.contactIntro;
+  }
+  return nextSettings;
+}
 const reservationSubmit = document.querySelector("#reservation-submit");
 
 const checkoutEndpoint = "/api/create-checkout-session";
@@ -233,14 +253,14 @@ let activeMenuItems = [];
 const defaultSiteSettings = {
   businessName: "Xadani en Oaxaca",
   domain: "xadanienoaxaca.com",
-  phone: "951 672 4141",
-  phoneHref: "+529516724141",
-  whatsapp: "951 672 4141",
-  whatsappHref: "https://wa.me/529516724141",
+  phone: "951 343 8483",
+  phoneHref: "+529513438483",
+  whatsapp: "951 343 8483",
+  whatsappHref: "https://wa.me/529513438483",
   email: "hola@xadanienoaxaca.com",
   address: "Calle Fundadores 105, 68127 Oaxaca de Juárez, Oaxaca",
   hours: "Martes a domingo, 12:00 - 19:30",
-  contactIntro: "Reserva directo por WhatsApp o teléfono. Para grupos, comparte fecha, hora y número de personas.",
+  contactIntro: "Reserva directo por WhatsApp o teléfono. También puedes comunicarte al +52 951 150 9454 para grupos y eventos.",
   heroText:
     "Cocina tradicional de Santa María Xadani, productos del mar, recetas autóctonas y sabores del Istmo servidos en la capital de Oaxaca."
 };
@@ -335,11 +355,8 @@ async function apiJson(path, options = {}) {
 
 function getSiteSettings() {
   try {
-    const storedSettings = JSON.parse(localStorage.getItem("xadaniSiteSettings")) || {};
-    if (staleHeroTextPattern.test(storedSettings.heroText || "")) {
-      storedSettings.heroText = defaultSiteSettings.heroText;
-      localStorage.setItem("xadaniSiteSettings", JSON.stringify({ ...defaultSiteSettings, ...storedSettings }));
-    }
+    const storedSettings = sanitizeSiteSettings(JSON.parse(localStorage.getItem("xadaniSiteSettings")) || {});
+    localStorage.setItem("xadaniSiteSettings", JSON.stringify({ ...defaultSiteSettings, ...storedSettings }));
     return {
       ...defaultSiteSettings,
       ...storedSettings
@@ -352,10 +369,7 @@ function getSiteSettings() {
 async function loadRemoteSettings() {
   try {
     const data = await apiJson("/api/settings");
-    const remoteSettings = data.settings || {};
-    if (staleHeroTextPattern.test(remoteSettings.heroText || "")) {
-      remoteSettings.heroText = defaultSiteSettings.heroText;
-    }
+    const remoteSettings = sanitizeSiteSettings(data.settings || {});
     localStorage.setItem("xadaniSiteSettings", JSON.stringify({ ...defaultSiteSettings, ...remoteSettings }));
   } catch {
     // Local settings remain available before DATABASE_URL is configured.
