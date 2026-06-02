@@ -171,7 +171,7 @@ a {
   background:
     linear-gradient(90deg, rgba(19, 15, 13, 0.96), rgba(42, 27, 24, 0.52) 44%, rgba(19, 15, 13, 0.2)),
     linear-gradient(0deg, rgba(19, 15, 13, 0.86), rgba(19, 15, 13, 0.1) 52%),
-    url("uploads/1780011832987-img-3155.jpg") center/cover;
+    url("assets/xadani-portada-foto-02.jpg") center/cover;
 }
 
 .hero-media::before {
@@ -393,7 +393,7 @@ h3 {
   color: var(--cream);
   background:
     linear-gradient(135deg, rgba(19, 15, 13, 0.94), rgba(42, 27, 24, 0.88)),
-    url("uploads/1780014560345-img-3234.jpg") center/cover;
+    url("assets/xadani-portada-foto-09.jpg") center/cover;
 }
 
 .seo-section .section-heading > p:last-child {
