@@ -28,7 +28,10 @@ module.exports = async function handler(req, res) {
     const end = endOfDay(toIsoDate(req.query.end, now));
 
     const reservations = await query(
-      `select created_at as happened_at,
+      `select coalesce(
+                case when reservation_date ~ '^\\d{4}-\\d{2}-\\d{2}$' then reservation_date::date end,
+                created_at::date
+              ) as happened_at,
               'Reserva' as kind,
               folio,
               name,
@@ -41,7 +44,10 @@ module.exports = async function handler(req, res) {
               payment_total,
               payment_status
          from reservations
-        where created_at between $1 and $2
+        where coalesce(
+                case when reservation_date ~ '^\\d{4}-\\d{2}-\\d{2}$' then reservation_date::date end,
+                created_at::date
+              ) between $1::date and $2::date
         order by created_at desc`,
       [start.toISOString(), end.toISOString()]
     );

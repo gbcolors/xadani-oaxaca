@@ -18,12 +18,13 @@ const defaultSettings = {
   whatsapp: "951 343 8483",
   whatsappHref: "https://wa.me/529513438483",
   email: "hola@xadanienoaxaca.com",
+  reservationNotifyEmail: "gbcolorsc@gmail.com",
   address: "Calle Fundadores 105, 68127 Oaxaca de Juárez, Oaxaca",
   hours: "Martes a domingo, 12:00 - 19:30",
   contactIntro:
     "Reserva directo por WhatsApp o teléfono. También puedes comunicarte al +52 951 150 9454 para grupos y eventos.",
   heroText:
-    "Cocina tradicional de Santa María Xadani, productos del mar, recetas autóctonas y sabores del Istmo servidos en la capital de Oaxaca."
+    "Garnachas, cocina al horno, pesca fresca y recetas familiares del Istmo para visitantes de Juchitán, Tehuantepec, Salina Cruz y viajeros que buscan una experiencia gastronómica auténtica."
 };
 
 const defaultTables = [
@@ -601,6 +602,7 @@ function renderReservations() {
             <small>${reservation.email || ""}</small>
             <small>${reservation.restrictions || "Sin restricciones"}</small>
           </td>
+          <td>${reservation.date || "Sin fecha"}</td>
           <td>${reservation.time}</td>
           <td>${reservation.guests}</td>
           <td class="payment-cell">
@@ -626,7 +628,7 @@ function renderReservations() {
     .join("");
 
   if (!visibleReservations.length) {
-    reservationTable.innerHTML = `<tr><td colspan="7">No hay reservas para mostrar.</td></tr>`;
+    reservationTable.innerHTML = `<tr><td colspan="8">No hay reservas para mostrar.</td></tr>`;
   }
 }
 
@@ -1328,6 +1330,7 @@ seedButton.addEventListener("click", async () => {
     phone: "951 343 8483",
     email: "hola@xadanienoaxaca.com",
     guests: 4,
+    date: new Date().toISOString().slice(0, 10),
     time: "14:30",
     restrictions: "Mesa familiar",
     paymentLabel: "Reserva sin cargo",
@@ -1352,7 +1355,7 @@ seedButton.addEventListener("click", async () => {
 });
 
 exportButton.addEventListener("click", () => {
-  const header = ["folio", "name", "phone", "email", "guests", "time", "status", "paymentTotal", "paymentStatus", "restrictions"];
+  const header = ["folio", "name", "phone", "email", "guests", "date", "time", "status", "paymentTotal", "paymentStatus", "restrictions"];
   const rows = reservationsCache.map((reservation) =>
     header.map((key) => `"${String(reservation[key] || "").replaceAll('"', '""')}"`).join(",")
   );
@@ -1638,6 +1641,7 @@ settingsEditor.addEventListener("submit", async (event) => {
     whatsapp: data.get("whatsapp").trim(),
     whatsappHref: data.get("whatsappHref").trim(),
     email: data.get("email").trim(),
+    reservationNotifyEmail: data.get("reservationNotifyEmail").trim(),
     address: data.get("address").trim(),
     hours: data.get("hours").trim(),
     contactIntro: data.get("contactIntro").trim(),

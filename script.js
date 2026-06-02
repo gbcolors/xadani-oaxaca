@@ -201,6 +201,7 @@ const fallbackMenuItems = {
 
 const grid = document.querySelector("#menu-grid");
 const menuTabs = document.querySelector("#menu-tabs");
+const fullMenuGrid = document.querySelector("#full-menu-grid");
 const galleryGrid = document.querySelector("#gallery-grid");
 const experienceGrid = document.querySelector("#experience-grid");
 const photoLightbox = document.querySelector("#photo-lightbox");
@@ -219,7 +220,7 @@ const openReservationButtons = document.querySelectorAll("[data-open-reservation
 const closeReservationButtons = document.querySelectorAll("[data-close-reservation]");
 const paymentTypeInput = document.querySelector("#payment-type");
 const paymentPreview = document.querySelector("#payment-preview");
-const staleHeroTextPattern = /moles\s+profundos|Ma[ií]z\s+criollo/i;
+const staleHeroTextPattern = /moles\s+profundos|Ma[ií]z\s+criollo|paisanos/i;
 const stalePhonePattern = /951\s*672\s*4141|529516724141|9516724141/;
 
 function sanitizeSiteSettings(settings) {
@@ -247,6 +248,7 @@ const localFileApiBase = "http://127.0.0.1:3000";
 const apiBase = location.protocol === "file:" ? localFileApiBase : "";
 let remoteMenuItems = [];
 let menuCategories = [...defaultMenuCategories];
+let fullMenuCategories = [...defaultMenuCategories];
 let galleryItems = [];
 let experiences = [];
 let activeMenuItems = [];
@@ -262,7 +264,8 @@ const defaultSiteSettings = {
   hours: "Martes a domingo, 12:00 - 19:30",
   contactIntro: "Reserva directo por WhatsApp o teléfono. También puedes comunicarte al +52 951 150 9454 para grupos y eventos.",
   heroText:
-    "Garnachas, cocina al horno, pesca fresca y recetas familiares del Istmo para paisanos de Juchitán, Tehuantepec, Salina Cruz y viajeros que buscan una experiencia gastronómica auténtica."
+    "Garnachas, cocina al horno, pesca fresca y recetas familiares del Istmo para visitantes de Juchitán, Tehuantepec, Salina Cruz y viajeros que buscan una experiencia gastronómica auténtica.",
+  reservationNotifyEmail: "gbcolorsc@gmail.com"
 };
 
 function formatPrice(price) {
@@ -315,6 +318,9 @@ function closePhotoLightbox() {
 }
 
 function getSelectedPayment() {
+  if (!paymentTypeInput || !reservationForm) {
+    return { paymentType: "free", label: "Reserva sin cargo", unitAmount: 0, quantity: 1, total: 0 };
+  }
   const option = paymentTypeInput.options[paymentTypeInput.selectedIndex];
   const unitAmount = Number(option.dataset.amount || 0);
   const guests = Number(reservationForm.elements.guests.value || 1);
@@ -332,6 +338,7 @@ function getSelectedPayment() {
 }
 
 function updatePaymentPreview() {
+  if (!paymentPreview || !reservationSubmit) return;
   const payment = getSelectedPayment();
   paymentPreview.querySelector("strong").textContent = formatPrice(payment.total);
   reservationSubmit.textContent = payment.total > 0 ? "Continuar a pago seguro" : "Enviar solicitud";
@@ -380,9 +387,11 @@ async function loadRemoteMenu() {
   try {
     const data = await apiJson("/api/menu");
     remoteMenuItems = data.menu || [];
+    fullMenuCategories = data.categories?.length ? data.categories : [...defaultMenuCategories];
     menuCategories = [...defaultMenuCategories];
   } catch {
     remoteMenuItems = [];
+    fullMenuCategories = [...defaultMenuCategories];
     menuCategories = [...defaultMenuCategories];
   }
 }
@@ -448,6 +457,7 @@ function resolveImageUrl(imageUrl) {
 }
 
 function renderMenu(category) {
+  if (!grid) return;
   const categorySlugs = mainCategoryMap[category] || [category];
   const visibleItems = getLocalMenuItems(categorySlugs);
   activeMenuItems = visibleItems;
@@ -503,6 +513,7 @@ function getLocalMenuItems(category) {
 }
 
 function renderMenuTabs(activeCategory = menuCategories[0]?.slug || "entradas-frias") {
+  if (!menuTabs) return;
   menuTabs.innerHTML = menuCategories
     .map(
       (category) => `
@@ -515,7 +526,48 @@ function renderMenuTabs(activeCategory = menuCategories[0]?.slug || "entradas-fr
     .join("");
 }
 
+function renderFullMenu() {
+  if (!fullMenuGrid) return;
+  const categories = fullMenuCategories.length ? fullMenuCategories : defaultMenuCategories;
+  fullMenuGrid.innerHTML = categories
+    .map((category) => {
+      const items = getLocalMenuItems(mainCategoryMap[category.slug] || category.slug);
+      if (!items.length) return "";
+      return `
+        <section class="full-menu-category">
+          <div class="section-heading">
+            <p class="eyebrow">${escapeHtml(category.group || "Menú")}</p>
+            <h2>${escapeHtml(category.name)}</h2>
+          </div>
+          <div class="menu-grid">
+            ${items
+              .map(
+                (item, index) => `
+                  <article class="dish-card" data-full-menu-photo data-full-menu-category="${escapeHtml(category.slug)}" data-full-menu-index="${index}" tabindex="0">
+                    <img class="dish-image" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" loading="lazy">
+                    <div class="dish-content">
+                      <div class="dish-top">
+                        <h3>${escapeHtml(item.name)}</h3>
+                        <span class="price">${formatPrice(item.price)}</span>
+                      </div>
+                      <p>${escapeHtml(item.description)}</p>
+                      <div class="tags">
+                        ${item.tags.map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("")}
+                      </div>
+                    </div>
+                  </article>
+                `
+              )
+              .join("")}
+          </div>
+        </section>
+      `;
+    })
+    .join("");
+}
+
 function renderGallery() {
+  if (!galleryGrid) return;
   if (!galleryItems.length) {
     galleryGrid.innerHTML = `<p class="empty-menu">La biblioteca aun no tiene fotografias publicadas.</p>`;
     return;
@@ -534,6 +586,7 @@ function renderGallery() {
 }
 
 function renderExperiences() {
+  if (!experienceGrid) return;
   experienceGrid.innerHTML = (experiences.length ? experiences : [])
     .map(
       (item) => `
@@ -558,7 +611,7 @@ function renderExperiences() {
   }
 }
 
-menuTabs.addEventListener("click", (event) => {
+menuTabs?.addEventListener("click", (event) => {
   const tab = event.target.closest(".tab");
   if (!tab) return;
   menuTabs.querySelectorAll(".tab").forEach((item) => {
@@ -570,7 +623,7 @@ menuTabs.addEventListener("click", (event) => {
   renderMenu(tab.dataset.category);
 });
 
-grid.addEventListener("click", (event) => {
+grid?.addEventListener("click", (event) => {
   const card = event.target.closest("[data-menu-photo]");
   if (!card) return;
   const item = activeMenuItems[Number(card.dataset.menuPhoto)];
@@ -584,7 +637,7 @@ grid.addEventListener("click", (event) => {
   });
 });
 
-grid.addEventListener("keydown", (event) => {
+grid?.addEventListener("keydown", (event) => {
   if (event.key !== "Enter" && event.key !== " ") return;
   const card = event.target.closest("[data-menu-photo]");
   if (!card) return;
@@ -592,7 +645,32 @@ grid.addEventListener("keydown", (event) => {
   card.click();
 });
 
-galleryGrid.addEventListener("click", (event) => {
+fullMenuGrid?.addEventListener("click", (event) => {
+  const card = event.target.closest("[data-full-menu-photo]");
+  if (!card) return;
+  const slug = card.dataset.fullMenuCategory;
+  const indexValue = card.dataset.fullMenuIndex;
+  const items = getLocalMenuItems(mainCategoryMap[slug] || slug);
+  const item = items[Number(indexValue)];
+  if (!item) return;
+  openPhotoLightbox({
+    image: item.image,
+    title: item.name,
+    description: item.description,
+    meta: `${formatPrice(item.price)}${item.tags?.length ? ` · ${item.tags.join(" · ")}` : ""}`,
+    kicker: "Menú Xadani"
+  });
+});
+
+fullMenuGrid?.addEventListener("keydown", (event) => {
+  if (event.key !== "Enter" && event.key !== " ") return;
+  const card = event.target.closest("[data-full-menu-photo]");
+  if (!card) return;
+  event.preventDefault();
+  card.click();
+});
+
+galleryGrid?.addEventListener("click", (event) => {
   const card = event.target.closest("[data-gallery-photo]");
   if (!card) return;
   const index = Number(card.dataset.galleryPhoto);
@@ -607,7 +685,7 @@ galleryGrid.addEventListener("click", (event) => {
   });
 });
 
-galleryGrid.addEventListener("keydown", (event) => {
+galleryGrid?.addEventListener("keydown", (event) => {
   if (event.key !== "Enter" && event.key !== " ") return;
   const card = event.target.closest("[data-gallery-photo]");
   if (!card) return;
@@ -627,13 +705,13 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
-navToggle.addEventListener("click", () => {
+navToggle?.addEventListener("click", () => {
   const expanded = navToggle.getAttribute("aria-expanded") === "true";
   navToggle.setAttribute("aria-expanded", String(!expanded));
   siteNav.classList.toggle("open");
 });
 
-siteNav.querySelectorAll("a").forEach((link) => {
+siteNav?.querySelectorAll("a").forEach((link) => {
   link.addEventListener("click", () => {
     siteNav.classList.remove("open");
     navToggle.setAttribute("aria-expanded", "false");
@@ -649,7 +727,7 @@ function openReservationModal() {
   reservationForm.hidden = false;
   reservationSuccess.hidden = true;
   updatePaymentPreview();
-  reservationForm.querySelector("input[name='name']").focus();
+  reservationForm?.querySelector("input[name='name']")?.focus();
 }
 
 function closeReservationModal() {
@@ -693,7 +771,7 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
-reservationForm.addEventListener("submit", (event) => {
+reservationForm?.addEventListener("submit", (event) => {
   event.preventDefault();
   const formData = new FormData(reservationForm);
   const folio = `XAD-${Date.now().toString().slice(-6)}`;
@@ -704,6 +782,7 @@ reservationForm.addEventListener("submit", (event) => {
     phone: formData.get("phone").trim(),
     email: formData.get("email").trim(),
     guests: Number(formData.get("guests")),
+    date: formData.get("date"),
     time: formData.get("time"),
     paymentType: payment.paymentType,
     paymentLabel: payment.label,
@@ -743,9 +822,9 @@ reservationForm.addEventListener("submit", (event) => {
         reservationSuccess.hidden = false;
         reservationSummary.textContent = `${reservation.name}, guardamos tu solicitud con folio ${
           reservation.folio
-        } por ${formatPrice(
+        } para el ${reservation.date} a las ${reservation.time} por ${formatPrice(
           reservation.paymentTotal
-        )}. No pudimos iniciar el pago en este momento; confirmaremos la reserva por telefono.`;
+        )}. No pudimos iniciar el pago en este momento; confirmaremos la reserva por teléfono.`;
         reservationForm.reset();
         reservationSubmit.disabled = false;
         updatePaymentPreview();
@@ -757,19 +836,22 @@ reservationForm.addEventListener("submit", (event) => {
   reservationSuccess.hidden = false;
   reservationSummary.textContent = `${reservation.name}, recibimos tu solicitud para ${reservation.guests} persona${
     reservation.guests === 1 ? "" : "s"
-  } a las ${reservation.time}. Folio ${reservation.folio}. Confirmaremos disponibilidad al ${reservation.phone}.`;
+  } el ${reservation.date} a las ${reservation.time}. Folio ${reservation.folio}. Confirmaremos disponibilidad al ${reservation.phone}.`;
   reservationForm.reset();
   updatePaymentPreview();
 });
 
-reservationForm.elements.guests.addEventListener("input", updatePaymentPreview);
-paymentTypeInput.addEventListener("change", updatePaymentPreview);
+reservationForm?.elements.guests?.addEventListener("input", updatePaymentPreview);
+reservationForm?.elements.date?.setAttribute("min", new Date().toISOString().slice(0, 10));
+reservationForm?.elements.date && (reservationForm.elements.date.value = new Date().toISOString().slice(0, 10));
+paymentTypeInput?.addEventListener("change", updatePaymentPreview);
 
-experienceGrid.addEventListener("click", (event) => {
+experienceGrid?.addEventListener("click", (event) => {
   const button = event.target.closest("[data-experience-reserve]");
   if (!button) return;
+  if (!paymentTypeInput) return;
   paymentTypeInput.value = button.dataset.experienceReserve || "experience";
-  document.querySelector("#reservas").scrollIntoView({ behavior: "smooth" });
+  document.querySelector("#reservas")?.scrollIntoView({ behavior: "smooth" });
   updatePaymentPreview();
 });
 
@@ -777,6 +859,7 @@ const stripeStatus = new URLSearchParams(window.location.search).get("stripe");
 if (stripeStatus === "success" || stripeStatus === "cancel") {
   const folio = new URLSearchParams(window.location.search).get("folio") || "";
   window.addEventListener("load", () => {
+    if (!reservationForm || !reservationSuccess) return;
     openReservationModal();
     reservationForm.hidden = true;
     reservationSuccess.hidden = false;
@@ -790,6 +873,7 @@ if (stripeStatus === "success" || stripeStatus === "cancel") {
 applySiteSettings();
 renderMenuTabs("entradas");
 renderMenu("entradas");
+renderFullMenu();
 
 Promise.all([loadRemoteSettings(), loadRemoteMenu(), loadRemoteGallery(), loadRemoteExperiences()]).then(() => {
   applySiteSettings();
@@ -798,4 +882,5 @@ Promise.all([loadRemoteSettings(), loadRemoteMenu(), loadRemoteGallery(), loadRe
   const activeCategory = menuCategories[0]?.slug || "entradas";
   renderMenuTabs(activeCategory);
   renderMenu(activeCategory);
+  renderFullMenu();
 });

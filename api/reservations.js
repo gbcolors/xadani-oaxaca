@@ -1,4 +1,5 @@
 const { initializeDatabase, query, requireAdmin, sendError } = require("../lib/db");
+const { sendReservationNotification } = require("../lib/mailer");
 
 function mapReservation(row) {
   return {
@@ -7,6 +8,7 @@ function mapReservation(row) {
     name: row.name,
     phone: row.phone,
     email: row.email,
+    date: row.reservation_date,
     guests: row.guests,
     time: row.reservation_time,
     restrictions: row.restrictions,
@@ -42,6 +44,11 @@ async function releaseTable(tableId) {
   await query("update tables set status = 'free', updated_at = now() where id = $1", [tableId]);
 }
 
+async function getReservationNotificationEmail() {
+  const result = await query("select value from app_settings where key = 'reservationNotifyEmail'");
+  return result.rows[0]?.value || "gbcolorsc@gmail.com";
+}
+
 module.exports = async function handler(req, res) {
   try {
     await initializeDatabase();
@@ -57,14 +64,15 @@ module.exports = async function handler(req, res) {
       const tableId = reservation.tableId || (await findAvailableTable(reservation.guests));
       const result = await query(
         `insert into reservations
-         (folio, name, phone, email, guests, reservation_time, restrictions,
+         (folio, name, phone, email, reservation_date, guests, reservation_time, restrictions,
           payment_type, payment_label, payment_total, payment_status, status, table_id)
-         values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
+         values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
          on conflict (folio)
          do update set
            name = excluded.name,
            phone = excluded.phone,
            email = excluded.email,
+           reservation_date = excluded.reservation_date,
            guests = excluded.guests,
            reservation_time = excluded.reservation_time,
            restrictions = excluded.restrictions,
@@ -80,6 +88,7 @@ module.exports = async function handler(req, res) {
           reservation.name,
           reservation.phone,
           reservation.email || "",
+          reservation.date || reservation.reservationDate || "",
           Number(reservation.guests || 1),
           reservation.time,
           reservation.restrictions || "",
@@ -93,7 +102,14 @@ module.exports = async function handler(req, res) {
       );
 
       await setTableStatusForReservation(result.rows[0].table_id, result.rows[0].status);
-      return res.status(200).json({ reservation: mapReservation(result.rows[0]) });
+      const savedReservation = mapReservation(result.rows[0]);
+      sendReservationNotification({
+        reservation: savedReservation,
+        to: await getReservationNotificationEmail()
+      }).catch((error) => {
+        console.warn("Reservation notification email failed", error.message);
+      });
+      return res.status(200).json({ reservation: savedReservation });
     }
 
     if (req.method === "PATCH") {

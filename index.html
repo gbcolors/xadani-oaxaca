@@ -59,7 +59,7 @@
         "acceptsReservations": true
       }
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260602-visual-seo" />
+    <link rel="stylesheet" href="styles.css?v=20260602-reservation-date-email" />
   </head>
   <body>
     <header class="site-header">
@@ -78,6 +78,7 @@
       <nav id="site-nav" class="site-nav" aria-label="Navegación principal">
         <a href="#inicio">Inicio</a>
         <a href="#menu">Menú</a>
+        <a href="/menu.html">Carta completa</a>
         <a href="#experiencias">Experiencias</a>
         <a href="#reservas">Reservas</a>
         <a href="/biblioteca.html">Biblioteca</a>
@@ -99,7 +100,7 @@
           <p class="eyebrow">Restaurante de comida istmeña en Oaxaca</p>
           <h1>Comida istmeña auténtica en Oaxaca</h1>
           <p data-setting="heroText">
-            Garnachas, cocina al horno, pesca fresca y recetas familiares del Istmo para paisanos de Juchitán, Tehuantepec, Salina Cruz y viajeros que buscan una experiencia gastronómica auténtica.
+            Garnachas, cocina al horno, pesca fresca y recetas familiares del Istmo para visitantes de Juchitán, Tehuantepec, Salina Cruz y viajeros que buscan una experiencia gastronómica auténtica.
           </p>
           <div class="hero-actions">
             <a class="button primary" href="#reservas">Reservar</a>
@@ -115,6 +116,19 @@
         </aside>
       </section>
 
+      <section id="menu" class="section menu-section">
+        <div class="section-heading">
+          <p class="eyebrow">Carta visual</p>
+          <h2>Menú</h2>
+          <p>Explora por categoría principal: entradas, fuertes, especiales, menú istmeño y bebidas.</p>
+        </div>
+        <div class="menu-tabs" id="menu-tabs" role="tablist" aria-label="Categorías del menú"></div>
+        <div id="menu-grid" class="menu-grid" aria-live="polite"></div>
+        <div class="review-actions">
+          <a class="button secondary" href="/menu.html">Ver carta completa con imágenes</a>
+        </div>
+      </section>
+
       <section class="section about-section" aria-label="Nosotros">
         <div class="section-heading">
           <p class="eyebrow">Nosotros</p>
@@ -122,17 +136,6 @@
           <p>
             Xadani en Oaxaca nace para acercar a la capital del estado la cocina tradicional de Santa María Xadani: garnachas, comida al horno, producto del mar y sabores del Istmo servidos con orgullo familiar.
           </p>
-        </div>
-        <div class="social-links" aria-label="Redes y perfiles públicos">
-          <a href="https://www.facebook.com/XadanienOaxaca/" target="_blank" rel="noopener">
-            <span class="social-icon">f</span> Facebook
-          </a>
-          <a href="https://maps.app.goo.gl/NjqWFZrMUX8hjMTv5" target="_blank" rel="noopener">
-            <span class="social-icon">G</span> Perfil de Google
-          </a>
-          <a href="https://www.tripadvisor.com/" target="_blank" rel="noopener">
-            <span class="social-icon">T</span> Tripadvisor
-          </a>
         </div>
       </section>
 
@@ -187,7 +190,7 @@
             <h3>Una cocina viva que mejora cada día</h3>
             <p>
               Entendemos la cocina tradicional como un arte vivo: se cuida, se afina y evoluciona
-              sin perder su raíz. Buscamos que paisanos istmeños, visitantes y comensales de
+              sin perder su raíz. Buscamos que familias istmeñas, visitantes y comensales de
               cualquier lugar puedan reencontrarse con esos sabores y vivir una experiencia
               auténtica de cocina regional.
             </p>
@@ -198,7 +201,7 @@
       <section class="section seo-section" aria-label="Comida istmeña en Oaxaca">
         <div class="section-heading">
           <p class="eyebrow">Istmo de Oaxaca</p>
-          <h2>Para paisanos istmeños y visitantes que buscan sabor real</h2>
+          <h2>Para familias istmeñas y visitantes que buscan sabor real</h2>
           <p>
             Xadani en Oaxaca es una opción para quienes buscan comida istmeña auténtica en Oaxaca:
             garnachas, comida al horno, mariscos, recetas familiares y experiencias gastronómicas
@@ -214,16 +217,6 @@
           <span>Tehuantepec</span>
           <span>Salina Cruz</span>
         </div>
-      </section>
-
-      <section id="menu" class="section menu-section">
-        <div class="section-heading">
-          <p class="eyebrow">Carta visual</p>
-          <h2>Menú</h2>
-          <p>Explora por categoría principal: entradas, fuertes, especiales, menú istmeño y bebidas.</p>
-        </div>
-        <div class="menu-tabs" id="menu-tabs" role="tablist" aria-label="Categorías del menú"></div>
-        <div id="menu-grid" class="menu-grid" aria-live="polite"></div>
       </section>
 
       <section id="experiencias" class="section experiences-section">
@@ -308,6 +301,10 @@
                 <input type="number" name="guests" min="1" max="20" value="2" required />
               </label>
               <label>
+                Fecha
+                <input type="date" name="date" required />
+              </label>
+              <label>
                 Hora
                 <select name="time" required>
                   <option value="">Selecciona una hora</option>
@@ -357,6 +354,31 @@
             <p id="reservation-summary"></p>
           </div>
         </section>
+      </section>
+
+      <section class="section profiles-section" aria-label="Perfiles públicos de Xadani">
+        <div class="section-heading">
+          <p class="eyebrow">Perfiles públicos</p>
+          <h2>Síguenos y comparte tu experiencia</h2>
+          <p>Encuentra reseñas, fotografías y actualizaciones de Xadani en nuestros perfiles públicos.</p>
+        </div>
+        <div class="profile-grid">
+          <a href="https://www.facebook.com/XadanienOaxaca/" target="_blank" rel="noopener">
+            <span class="social-icon">f</span>
+            <strong>Facebook</strong>
+            <p>Noticias, fotografías de platillos y comunicación directa con el restaurante.</p>
+          </a>
+          <a href="https://maps.app.goo.gl/NjqWFZrMUX8hjMTv5" target="_blank" rel="noopener">
+            <span class="social-icon">G</span>
+            <strong>Perfil de Google</strong>
+            <p>Ubicación, instrucciones para llegar, horarios y reseñas de visitantes.</p>
+          </a>
+          <a href="https://www.tripadvisor.com.mx/Restaurant_Review-g150801-d34425085-Reviews-Xadani_en_Oaxaca-Oaxaca_Southern_Mexico.html" target="_blank" rel="noopener">
+            <span class="social-icon">T</span>
+            <strong>Tripadvisor</strong>
+            <p>Comparte tu opinión y ayuda a otros viajeros a descubrir nuestra cocina.</p>
+          </a>
+        </div>
       </section>
 
       <section id="contacto" class="contact-section">
@@ -436,7 +458,11 @@
       </article>
     </div>
 
+    <a class="review-sticker" href="https://www.tripadvisor.com.mx/Restaurant_Review-g150801-d34425085-Reviews-Xadani_en_Oaxaca-Oaxaca_Southern_Mexico.html" target="_blank" rel="noopener" aria-label="Déjanos una reseña en Tripadvisor">
+      <span>★★★★★</span>
+      <strong>Déjanos tu reseña</strong>
+    </a>
     <a class="mobile-reserve" href="#reservas">Reservar</a>
-    <script src="script.js?v=20260602-visual-seo"></script>
+    <script src="script.js?v=20260602-reservation-date-email"></script>
   </body>
 </html>

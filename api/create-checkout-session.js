@@ -36,6 +36,7 @@ module.exports = async function handler(req, res) {
     phone,
     email,
     guests,
+    date,
     time,
     restrictions,
     paymentType
@@ -48,7 +49,7 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: "Unsupported payment type" });
   }
 
-  if (!name || !phone || !email || !time || quantity < 1) {
+  if (!name || !phone || !email || !date || !time || quantity < 1) {
     return res.status(400).json({ error: "Missing reservation data" });
   }
 
@@ -77,6 +78,7 @@ module.exports = async function handler(req, res) {
       phone,
       email,
       guests: String(guests),
+      date,
       time,
       restrictions: restrictions || "",
       paymentType
