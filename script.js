@@ -262,7 +262,7 @@ const defaultSiteSettings = {
   hours: "Martes a domingo, 12:00 - 19:30",
   contactIntro: "Reserva directo por WhatsApp o teléfono. También puedes comunicarte al +52 951 150 9454 para grupos y eventos.",
   heroText:
-    "Cocina tradicional de Santa María Xadani, productos del mar, recetas autóctonas y sabores del Istmo servidos en la capital de Oaxaca."
+    "Garnachas, cocina al horno, pesca fresca y recetas familiares del Istmo para paisanos de Juchitán, Tehuantepec, Salina Cruz y viajeros que buscan una experiencia gastronómica auténtica."
 };
 
 function formatPrice(price) {

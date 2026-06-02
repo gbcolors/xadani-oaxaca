@@ -29,6 +29,18 @@ body {
     url("assets/xadani-fondo-calido.jpg") center top / cover fixed;
 }
 
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(242, 163, 50, 0.16), transparent 32%),
+    radial-gradient(circle at 80% 16%, rgba(207, 47, 130, 0.12), transparent 34%),
+    linear-gradient(135deg, rgba(255, 250, 240, 0.86), rgba(251, 246, 235, 0.96));
+}
+
 img {
   display: block;
   max-width: 100%;
@@ -146,8 +158,8 @@ a {
   position: relative;
   min-height: calc(100vh - 72px);
   display: grid;
-  align-items: end;
-  padding: clamp(110px, 15vw, 180px) clamp(18px, 5vw, 72px) clamp(34px, 5vw, 72px);
+  align-items: center;
+  padding: clamp(110px, 15vw, 180px) clamp(18px, 5vw, 72px) clamp(44px, 5vw, 78px);
   color: var(--cream);
   overflow: hidden;
 }
@@ -157,13 +169,93 @@ a {
   inset: 0;
   z-index: -2;
   background:
-    linear-gradient(90deg, rgba(19, 15, 13, 0.94), rgba(42, 27, 24, 0.54) 48%, rgba(19, 15, 13, 0.34)),
-    linear-gradient(0deg, rgba(19, 15, 13, 0.76), rgba(19, 15, 13, 0.04) 45%),
-    url("assets/xadani-hero-portada.jpg") center/cover;
+    linear-gradient(90deg, rgba(19, 15, 13, 0.96), rgba(42, 27, 24, 0.52) 44%, rgba(19, 15, 13, 0.2)),
+    linear-gradient(0deg, rgba(19, 15, 13, 0.86), rgba(19, 15, 13, 0.1) 52%),
+    url("uploads/1780011832987-img-3155.jpg") center/cover;
+}
+
+.hero-media::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background:
+    linear-gradient(90deg, rgba(19, 15, 13, 0.98), rgba(19, 15, 13, 0.9) 45%, rgba(19, 15, 13, 0.18) 78%),
+    linear-gradient(0deg, rgba(19, 15, 13, 0.92), transparent 56%);
+}
+
+.hero-media::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 6;
+  height: 32%;
+  background: linear-gradient(0deg, rgba(19, 15, 13, 0.96), transparent);
+}
+
+.hero-photo {
+  position: absolute;
+  z-index: 2;
+  object-fit: cover;
+  border: 1px solid rgba(255, 250, 240, 0.22);
+  border-radius: 8px;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.58);
+  filter: saturate(1.06) contrast(1.03);
+}
+
+.hero-photo-main {
+  right: clamp(42px, 7vw, 118px);
+  top: clamp(92px, 11vw, 150px);
+  width: min(43vw, 620px);
+  aspect-ratio: 1 / 1;
+  transform: rotate(-2deg);
+}
+
+.hero-photo-plate {
+  right: clamp(280px, 32vw, 520px);
+  top: clamp(190px, 23vw, 310px);
+  width: min(23vw, 330px);
+  aspect-ratio: 1 / 1;
+  transform: rotate(4deg);
+}
+
+.hero-photo-round-a {
+  right: clamp(38px, 7vw, 120px);
+  bottom: clamp(110px, 12vw, 185px);
+  width: min(22vw, 300px);
+  aspect-ratio: 1 / 1;
+  transform: rotate(5deg);
+}
+
+.hero-photo-round-b {
+  right: clamp(260px, 30vw, 470px);
+  bottom: clamp(72px, 8vw, 120px);
+  width: min(18vw, 260px);
+  aspect-ratio: 1 / 1;
+  transform: rotate(-5deg);
+}
+
+.hero-photo-wide {
+  right: clamp(150px, 19vw, 310px);
+  top: clamp(48px, 7vw, 86px);
+  width: min(22vw, 320px);
+  aspect-ratio: 1 / 1;
+  transform: rotate(7deg);
+}
+
+.hero-photo-small {
+  right: clamp(12px, 2vw, 44px);
+  top: clamp(270px, 31vw, 390px);
+  width: min(17vw, 230px);
+  aspect-ratio: 1 / 1;
+  transform: rotate(-7deg);
 }
 
 .hero-content {
-  max-width: 760px;
+  position: relative;
+  z-index: 8;
+  max-width: 720px;
+  transform: translateY(-34px);
 }
 
 .eyebrow {
@@ -193,10 +285,10 @@ h2 {
 }
 
 h1 {
-  max-width: 760px;
+  max-width: 690px;
   margin-bottom: 18px;
-  font-size: clamp(56px, 9vw, 132px);
-  line-height: 0.88;
+  font-size: clamp(42px, 5.9vw, 76px);
+  line-height: 0.9;
 }
 
 h2 {
@@ -211,10 +303,10 @@ h3 {
 }
 
 .hero-content p {
-  max-width: 620px;
+  max-width: 690px;
   color: rgba(255, 250, 240, 0.86);
-  font-size: clamp(18px, 2vw, 24px);
-  line-height: 1.45;
+  font-size: clamp(17px, 1.7vw, 21px);
+  line-height: 1.38;
 }
 
 .hero-actions,
@@ -222,7 +314,7 @@ h3 {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-top: 28px;
+  margin-top: 22px;
 }
 
 .button.primary {
@@ -295,6 +387,36 @@ h3 {
 
 .concept-section {
   background: rgba(255, 250, 240, 0.96);
+}
+
+.seo-section {
+  color: var(--cream);
+  background:
+    linear-gradient(135deg, rgba(19, 15, 13, 0.94), rgba(42, 27, 24, 0.88)),
+    url("uploads/1780014560345-img-3234.jpg") center/cover;
+}
+
+.seo-section .section-heading > p:last-child {
+  color: rgba(255, 250, 240, 0.78);
+}
+
+.seo-keywords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  max-width: 980px;
+}
+
+.seo-keywords span {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  border: 1px solid rgba(255, 250, 240, 0.22);
+  border-radius: 999px;
+  padding: 0 14px;
+  color: rgba(255, 250, 240, 0.88);
+  background: rgba(255, 250, 240, 0.08);
+  backdrop-filter: blur(12px);
 }
 
 .concept-grid {
@@ -1110,6 +1232,41 @@ dd {
     min-height: 760px;
   }
 
+  .hero-media::before {
+    background:
+      linear-gradient(90deg, rgba(19, 15, 13, 0.94), rgba(19, 15, 13, 0.62)),
+      linear-gradient(0deg, rgba(19, 15, 13, 0.94), transparent 58%);
+  }
+
+  .hero-photo-main {
+    right: -6vw;
+    top: 92px;
+    width: min(70vw, 520px);
+  }
+
+  .hero-photo-plate {
+    right: 42vw;
+    top: 210px;
+    width: min(34vw, 260px);
+  }
+
+  .hero-photo-round-a {
+    right: 4vw;
+    bottom: 120px;
+    width: min(34vw, 260px);
+  }
+
+  .hero-photo-round-b {
+    right: 42vw;
+    bottom: 86px;
+    width: min(28vw, 220px);
+  }
+
+  .hero-photo-wide,
+  .hero-photo-small {
+    opacity: 0.65;
+  }
+
   .hero-card {
     position: static;
     margin-top: 28px;
@@ -1179,6 +1336,39 @@ dd {
   .hero {
     min-height: 720px;
     padding-top: 96px;
+  }
+
+  .hero-photo {
+    opacity: 0.52;
+  }
+
+  .hero-photo-main {
+    right: -28vw;
+    top: 76px;
+    width: 94vw;
+  }
+
+  .hero-photo-plate {
+    right: 44vw;
+    top: 236px;
+    width: 42vw;
+  }
+
+  .hero-photo-round-a {
+    right: -6vw;
+    bottom: 132px;
+    width: 46vw;
+  }
+
+  .hero-photo-round-b {
+    right: 48vw;
+    bottom: 104px;
+    width: 36vw;
+  }
+
+  .hero-photo-wide,
+  .hero-photo-small {
+    display: none;
   }
 
   .hero-actions .button,
