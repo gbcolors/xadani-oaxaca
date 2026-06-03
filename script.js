@@ -221,7 +221,7 @@ const closeReservationButtons = document.querySelectorAll("[data-close-reservati
 const paymentTypeInput = document.querySelector("#payment-type");
 const paymentPreview = document.querySelector("#payment-preview");
 const staleHeroTextPattern = /moles\s+profundos|Ma[ií]z\s+criollo|paisanos/i;
-const stalePhonePattern = /951\s*672\s*4141|529516724141|9516724141/;
+const stalePhonePattern = /951\s*672\s*4141|529516724141|9516724141|951\s*343\s*8483|529513438483|9513438483/;
 
 function sanitizeSiteSettings(settings) {
   const nextSettings = { ...settings };
@@ -255,10 +255,10 @@ let activeMenuItems = [];
 const defaultSiteSettings = {
   businessName: "Xadani en Oaxaca",
   domain: "xadanienoaxaca.com",
-  phone: "951 343 8483",
-  phoneHref: "+529513438483",
-  whatsapp: "951 343 8483",
-  whatsappHref: "https://wa.me/529513438483",
+  phone: "951 150 9454",
+  phoneHref: "+529511509454",
+  whatsapp: "951 150 9454",
+  whatsappHref: "https://wa.me/529511509454",
   email: "hola@xadanienoaxaca.com",
   address: "Calle Fundadores 105, 68127 Oaxaca de Juárez, Oaxaca",
   hours: "Martes a domingo, 12:00 - 19:30",
@@ -325,7 +325,7 @@ function getSelectedPayment() {
   const unitAmount = Number(option.dataset.amount || 0);
   const guests = Number(reservationForm.elements.guests.value || 1);
   const paymentType = paymentTypeInput.value;
-  const quantity = paymentType === "event" ? 1 : guests;
+  const quantity = paymentType === "deposit" ? 1 : guests;
   const total = unitAmount * quantity;
 
   return {
@@ -341,7 +341,15 @@ function updatePaymentPreview() {
   if (!paymentPreview || !reservationSubmit) return;
   const payment = getSelectedPayment();
   paymentPreview.querySelector("strong").textContent = formatPrice(payment.total);
-  reservationSubmit.textContent = payment.total > 0 ? "Continuar a pago seguro" : "Enviar solicitud";
+  reservationSubmit.textContent = payment.total > 0 ? "Continuar a pago seguro" : "Reservar";
+}
+
+function trackAdsEvent(eventName, params = {}) {
+  if (typeof window.gtag !== "function") return;
+  window.gtag("event", eventName, {
+    send_to: "AW-18209814109",
+    ...params
+  });
 }
 
 async function apiJson(path, options = {}) {
@@ -793,6 +801,11 @@ reservationForm?.addEventListener("submit", (event) => {
   };
 
   saveReservation(reservation);
+  trackAdsEvent("reservation_request", {
+    value: payment.total || 1,
+    currency: "MXN",
+    event_category: "reservas"
+  });
 
   if (payment.total > 0) {
     reservationSubmit.disabled = true;
@@ -845,6 +858,15 @@ reservationForm?.elements.guests?.addEventListener("input", updatePaymentPreview
 reservationForm?.elements.date?.setAttribute("min", new Date().toISOString().slice(0, 10));
 reservationForm?.elements.date && (reservationForm.elements.date.value = new Date().toISOString().slice(0, 10));
 paymentTypeInput?.addEventListener("change", updatePaymentPreview);
+
+document.addEventListener("click", (event) => {
+  const link = event.target.closest("a[href*='wa.me']");
+  if (!link) return;
+  trackAdsEvent("whatsapp_click", {
+    event_category: "contacto",
+    event_label: link.href
+  });
+});
 
 experienceGrid?.addEventListener("click", (event) => {
   const button = event.target.closest("[data-experience-reserve]");

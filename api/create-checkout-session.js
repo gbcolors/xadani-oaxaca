@@ -5,18 +5,8 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const paymentCatalog = {
   deposit: {
     name: "Anticipo de reserva Xadani",
-    description: "Anticipo por persona para confirmar la mesa.",
-    unitAmount: 25000
-  },
-  experience: {
-    name: "Experiencia Xadani",
-    description: "Menú de experiencia por persona.",
-    unitAmount: 95000
-  },
-  event: {
-    name: "Evento privado Xadani",
-    description: "Apartado inicial para evento privado.",
-    unitAmount: 500000
+    description: "Anticipo fijo para confirmar la mesa.",
+    unitAmount: 10000
   }
 };
 
@@ -43,7 +33,7 @@ module.exports = async function handler(req, res) {
   } = req.body || {};
 
   const item = paymentCatalog[paymentType];
-  const quantity = paymentType === "event" ? 1 : Number(guests || 1);
+  const quantity = 1;
 
   if (!item) {
     return res.status(400).json({ error: "Unsupported payment type" });

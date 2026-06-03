@@ -24,6 +24,14 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Xadani en Oaxaca | Restaurante de comida istmeña" />
     <meta name="twitter:description" content="Cocina istmeña auténtica, comida al horno, garnachas y experiencias gastronómicas en Oaxaca." />
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18209814109"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'AW-18209814109');
+    </script>
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -34,7 +42,7 @@
         "description": "Restaurante familiar de comida istmeña auténtica en Oaxaca, con garnachas, comida al horno, pesca fresca y experiencias gastronómicas inspiradas en Santa María Xadani, Juchitán, Tehuantepec y Salina Cruz.",
         "servesCuisine": ["Comida istmeña", "Cocina oaxaqueña", "Garnachas", "Comida al horno", "Mariscos"],
         "priceRange": "$$",
-        "telephone": "+52 951 672 4141",
+        "telephone": "+52 951 150 9454",
         "address": {
           "@type": "PostalAddress",
           "streetAddress": "Calle Fundadores 105",
@@ -106,7 +114,7 @@
             <a class="button primary" href="#reservas">Reservar</a>
             <a class="button secondary" href="#menu">Ver menú</a>
             <a class="button secondary" href="https://maps.app.goo.gl/NjqWFZrMUX8hjMTv5" target="_blank" rel="noopener">Google Maps</a>
-            <a class="button secondary" href="https://wa.me/529513438483" target="_blank" rel="noopener">WhatsApp</a>
+            <a class="button secondary" href="https://wa.me/529511509454" target="_blank" rel="noopener">WhatsApp</a>
           </div>
         </div>
         <aside class="hero-card" aria-label="Información rápida">
@@ -290,7 +298,7 @@
               </label>
               <label>
                 Teléfono
-                <input type="tel" name="phone" autocomplete="tel" placeholder="951 343 8483" data-setting-placeholder="phone" minlength="8" required />
+                <input type="tel" name="phone" autocomplete="tel" placeholder="951 150 9454" data-setting-placeholder="phone" minlength="8" required />
               </label>
               <label>
                 Email
@@ -330,22 +338,20 @@
                 Modalidad
                 <select name="paymentType" id="payment-type" required>
                   <option value="free" data-amount="0">Reserva sin cargo</option>
-                  <option value="deposit" data-amount="250">Anticipo $250 por persona</option>
-                  <option value="experience" data-amount="950">Experiencia Xadani $950 por persona</option>
-                  <option value="event" data-amount="5000">Evento privado $5,000</option>
+                  <option value="deposit" data-amount="100">Anticipo de reserva $100</option>
                 </select>
               </label>
             </div>
             <div class="payment-preview" id="payment-preview">
               <span>Total a pagar</span>
               <strong>$0 MXN</strong>
-              <p>La reserva sin cargo solo registra la solicitud. Los anticipos y experiencias redirigen a Stripe Checkout.</p>
+              <p>Puedes reservar sin cargo o dejar un anticipo fijo de $100 MXN por reserva mediante Stripe Checkout.</p>
             </div>
             <label>
               Alergias o restricciones
               <textarea name="restrictions" rows="4" placeholder="Ej. alergia a mariscos, vegetariano, celebración especial"></textarea>
             </label>
-            <button class="button primary form-submit" type="submit" id="reservation-submit">Enviar solicitud</button>
+            <button class="button primary form-submit" type="submit" id="reservation-submit">Reservar</button>
             <p class="form-note" id="payment-note">Para pagos se usa Stripe Checkout. No guardamos datos de tarjeta.</p>
           </form>
           <div class="reservation-success" id="reservation-success" hidden>
@@ -390,13 +396,13 @@
           </p>
           <div class="contact-actions">
             <a class="button primary" href="#reservas">Reservar mesa</a>
-            <a class="button secondary" href="tel:+529513438483" data-setting-href="phoneHref">
+            <a class="button secondary" href="tel:+529511509454" data-setting-href="phoneHref">
               <span>Llamar</span>
-              <span data-setting="phone">951 343 8483</span>
+              <span data-setting="phone">951 150 9454</span>
             </a>
-            <a class="button secondary" href="https://wa.me/529513438483" target="_blank" rel="noopener" data-setting-href="whatsappHref">
+            <a class="button secondary" href="https://wa.me/529511509454" target="_blank" rel="noopener" data-setting-href="whatsappHref">
               <span>WhatsApp</span>
-              <span data-setting="whatsapp">951 343 8483</span>
+              <span data-setting="whatsapp">951 150 9454</span>
             </a>
             <a class="button secondary" href="tel:+529511509454">
               <span>Adicional</span>
