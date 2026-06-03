@@ -103,13 +103,17 @@ module.exports = async function handler(req, res) {
 
       await setTableStatusForReservation(result.rows[0].table_id, result.rows[0].status);
       const savedReservation = mapReservation(result.rows[0]);
-      sendReservationNotification({
-        reservation: savedReservation,
-        to: await getReservationNotificationEmail()
-      }).catch((error) => {
+      let notification = { ok: false };
+      try {
+        notification = await sendReservationNotification({
+          reservation: savedReservation,
+          to: await getReservationNotificationEmail()
+        });
+      } catch (error) {
+        notification = { ok: false, error: error.message };
         console.warn("Reservation notification email failed", error.message);
-      });
-      return res.status(200).json({ reservation: savedReservation });
+      }
+      return res.status(200).json({ reservation: savedReservation, notification });
     }
 
     if (req.method === "PATCH") {
