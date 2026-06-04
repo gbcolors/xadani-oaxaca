@@ -1558,7 +1558,8 @@ dd {
 
 .cinematic-hero-image {
   background: url("assets/xadani-portada-foto-02.jpg") center 48% / cover no-repeat;
-  animation: cinematicZoom 20s ease-in-out infinite alternate;
+  animation: cinematicZoom 22s ease-in-out infinite;
+  will-change: transform;
 }
 
 .cinematic-hero-shade {
@@ -1569,8 +1570,8 @@ dd {
 }
 
 @keyframes cinematicZoom {
-  from { transform: scale(1.02); }
-  to { transform: scale(1.13); }
+  0%, 100% { transform: scale(1.025); }
+  50% { transform: scale(1.14); }
 }
 
 .cinematic-hero-content {
@@ -1679,7 +1680,8 @@ dd {
   background:
     linear-gradient(90deg, rgba(8, 7, 6, 0.92), rgba(8, 7, 6, 0.22)),
     linear-gradient(0deg, rgba(8, 7, 6, 0.92), transparent 65%),
-    url("uploads/1780015412509-img-3378.jpg") center / cover;
+    url("assets/xadani-fondo-calido.jpg") center / cover;
+  animation: backgroundZoom 22s ease-in-out infinite;
 }
 
 .page-visual-hero > div,
@@ -1865,7 +1867,74 @@ dd {
   align-items: end;
   background:
     linear-gradient(90deg, rgba(8, 7, 6, 0.94), rgba(8, 7, 6, 0.35)),
-    url("uploads/1780015523077-img-3373.jpg") center / cover;
+    url("assets/xadani-portada-foto-10.jpg") center / cover;
+  animation: backgroundZoom 22s ease-in-out infinite;
+}
+
+@keyframes backgroundZoom {
+  0%, 100% { background-size: cover, cover, 100% auto; }
+  50% { background-size: cover, cover, 112% auto; }
+}
+
+@keyframes backgroundZoomMobile {
+  0%, 100% { background-size: cover, cover, auto 100%; }
+  50% { background-size: cover, cover, auto 112%; }
+}
+
+.social-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.social-icon-link {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 250, 240, 0.24);
+  border-radius: 50%;
+  color: var(--cream);
+  font-weight: 800;
+  line-height: 1;
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.social-icon-link:hover {
+  transform: translateY(-3px);
+  border-color: var(--maize);
+  background: rgba(255, 250, 240, 0.08);
+}
+
+.social-icon-wide {
+  width: auto;
+  padding: 0 16px;
+  border-radius: 22px;
+  font-size: 12px;
+}
+
+.whatsapp-float {
+  position: fixed;
+  z-index: 40;
+  right: 22px;
+  bottom: 22px;
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  background: #25d366;
+  color: #082e18;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
+  font-size: 13px;
+  font-weight: 900;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.whatsapp-float:hover {
+  transform: translateY(-4px) scale(1.04);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.36);
 }
 
 .full-menu-section .menu-grid {
@@ -1900,7 +1969,9 @@ dd {
 
 @media (prefers-reduced-motion: reduce) {
   .cinematic-hero-image,
-  .oven-background {
+  .oven-background,
+  .page-visual-about,
+  .menu-page-hero {
     animation: none;
   }
 }
@@ -1924,6 +1995,23 @@ dd {
 }
 
 @media (max-width: 720px) {
+  .page-visual-about,
+  .menu-page-hero {
+    animation-name: backgroundZoomMobile;
+  }
+
+  .site-footer {
+    gap: 18px;
+  }
+
+  .social-footer {
+    width: 100%;
+  }
+
+  .whatsapp-float {
+    right: 14px;
+    bottom: 14px;
+  }
   .cinematic-hero {
     min-height: calc(100svh - 73px);
     align-items: end;

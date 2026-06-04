@@ -276,6 +276,10 @@ function formatPrice(price) {
   }).format(price);
 }
 
+function formatMenuPrice(item) {
+  return item?.priceLabel || formatPrice(Number(item?.price || 0));
+}
+
 function escapeHtml(value = "") {
   return String(value)
     .replaceAll("&", "&amp;")
@@ -478,7 +482,7 @@ function renderMenu(category) {
           <div class="dish-content">
             <div class="dish-top">
               <h3>${escapeHtml(item.name)}</h3>
-              <span class="price">${formatPrice(item.price)}</span>
+              <span class="price">${escapeHtml(formatMenuPrice(item))}</span>
             </div>
             <p>${escapeHtml(item.description)}</p>
             <div class="tags">
@@ -502,6 +506,7 @@ function getLocalMenuItems(category) {
         name: item.name,
         description: item.description,
         price: Number(item.price),
+        priceLabel: item.priceLabel || "",
         tags: ["Nuevo"],
         image: resolveImageUrl(item.image)
       }));
@@ -511,6 +516,7 @@ function getLocalMenuItems(category) {
         name: item.name,
         description: item.description,
         price: Number(item.price),
+        priceLabel: item.priceLabel || "",
         tags: item.tags?.length ? item.tags : ["Nuevo"],
         image: resolveImageUrl(item.image)
       }));
@@ -556,7 +562,7 @@ function renderFullMenu() {
                     <div class="dish-content">
                       <div class="dish-top">
                         <h3>${escapeHtml(item.name)}</h3>
-                        <span class="price">${formatPrice(item.price)}</span>
+                        <span class="price">${escapeHtml(formatMenuPrice(item))}</span>
                       </div>
                       <p>${escapeHtml(item.description)}</p>
                       <div class="tags">
@@ -640,7 +646,7 @@ grid?.addEventListener("click", (event) => {
     image: item.image,
     title: item.name,
     description: item.description,
-    meta: `${formatPrice(item.price)}${item.tags?.length ? ` · ${item.tags.join(" · ")}` : ""}`,
+    meta: `${formatMenuPrice(item)}${item.tags?.length ? ` · ${item.tags.join(" · ")}` : ""}`,
     kicker: "Menú Xadani"
   });
 });
@@ -665,7 +671,7 @@ fullMenuGrid?.addEventListener("click", (event) => {
     image: item.image,
     title: item.name,
     description: item.description,
-    meta: `${formatPrice(item.price)}${item.tags?.length ? ` · ${item.tags.join(" · ")}` : ""}`,
+    meta: `${formatMenuPrice(item)}${item.tags?.length ? ` · ${item.tags.join(" · ")}` : ""}`,
     kicker: "Menú Xadani"
   });
 });

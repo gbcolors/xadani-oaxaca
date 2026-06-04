@@ -17,7 +17,7 @@
       gtag('js', new Date());
       gtag('config', 'AW-18209814109');
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260603-navigation" />
+    <link rel="stylesheet" href="styles.css?v=20260604-motion-menu" />
   </head>
   <body>
     <header class="site-header">
@@ -34,16 +34,16 @@
         <span></span>
       </button>
       <nav id="site-nav" class="site-nav" aria-label="Navegación principal">
-        <a href="/nosotros.html">Nosotros</a>
         <a href="/menu.html">Menú</a>
         <a href="/experiencia.html">Experiencia</a>
-        <a href="/biblioteca.html">Galería</a>
         <a href="/reservas.html">Reservaciones</a>
+        <a href="/nosotros.html">Nosotros</a>
+        <a href="/biblioteca.html">Galería</a>
       </nav>
     </header>
 
     <main>
-      <section class="section menu-page-hero">
+      <section class="section menu-page-hero" id="favoritos">
         <div class="section-heading">
           <p class="eyebrow">Carta visual</p>
           <h1>Menú Xadani</h1>
@@ -53,7 +53,7 @@
         </div>
       </section>
 
-      <section class="section full-menu-section">
+      <section class="section full-menu-section" id="temporada">
         <div id="full-menu-grid" class="full-menu-grid" aria-live="polite"></div>
         <div class="review-actions">
           <a class="button secondary" href="/biblioteca.html">Ir a galería de imágenes</a>
@@ -73,6 +73,7 @@
         Google Maps
       </a>
     </footer>
+    <a class="whatsapp-float" href="https://wa.me/529511509454" target="_blank" rel="noopener" aria-label="Consultar por WhatsApp"><span>WA</span></a>
 
     <div class="photo-lightbox" id="photo-lightbox" aria-hidden="true">
       <button class="lightbox-backdrop" type="button" data-close-lightbox aria-label="Cerrar vista"></button>
@@ -92,6 +93,6 @@
       <span>★★★★★</span>
       <strong>Déjanos tu reseña</strong>
     </a>
-    <script src="script.js?v=20260603-navigation"></script>
+    <script src="script.js?v=20260604-motion-menu"></script>
   </body>
 </html>

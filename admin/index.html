@@ -331,7 +331,15 @@
               </label>
               <label>
                 Precio
-                <input name="price" type="number" min="1" required />
+                <input name="price" type="number" min="0" value="0" required />
+              </label>
+              <label>
+                Precio visible especial
+                <input name="priceLabel" type="text" maxlength="30" placeholder="Ej. S/T" />
+              </label>
+              <label class="check-row">
+                <input name="active" type="checkbox" checked />
+                Platillo visible en el sitio
               </label>
               <label class="wide">
                 Descripción
@@ -536,6 +544,6 @@
       </section>
     </main>
 
-    <script src="/admin.js?v=20260602-reservation-date-email"></script>
+    <script src="/admin.js?v=20260604-full-menu-prices"></script>
   </body>
 </html>

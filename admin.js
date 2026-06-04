@@ -334,7 +334,7 @@ async function closeWalkin(id) {
 
 async function loadMenu() {
   try {
-    const data = await apiRequest("/api/menu");
+    const data = await apiRequest("/api/menu?includeInactive=true");
     categoryCache = data.categories?.length ? data.categories : [...defaultCategories];
     menuCache = (data.menu || []).map((item, index) => ({ ...item, id: item.id || `api-${index}` }));
     writeStorage(MENU_KEY, menuCache);
@@ -397,7 +397,8 @@ async function deleteMenuItem(id) {
     method: "DELETE",
     body: JSON.stringify({ id })
   });
-  menuCache = menuCache.filter((item) => String(item.id) !== String(id));
+  const index = menuCache.findIndex((item) => String(item.id) === String(id));
+  if (index >= 0) menuCache[index] = { ...menuCache[index], active: false };
   writeStorage(MENU_KEY, menuCache);
 }
 
@@ -732,13 +733,13 @@ function renderMenuAdmin() {
       (item) => `
         <article class="menu-row">
           <div>
-            <strong>${item.name}</strong>
+            <strong>${item.name}${item.active === false ? " · Oculto" : ""}</strong>
             <p>${categoryLabels[item.category] || item.category} · ${item.description}</p>
           </div>
-          <span>${formatPrice(item.price)}</span>
+          <span>${item.priceLabel || formatPrice(item.price)}</span>
           <div class="button-row">
             <button class="button" type="button" data-edit-menu="${item.id}">Editar</button>
-            <button class="button" type="button" data-delete-menu="${item.id}">Eliminar</button>
+            <button class="button" type="button" data-delete-menu="${item.id}">Ocultar</button>
           </div>
         </article>
       `
@@ -774,6 +775,7 @@ function renderCategoryAdmin() {
 function clearMenuEditor() {
   menuEditor.reset();
   menuEditor.elements.id.value = "";
+  menuEditor.elements.active.checked = true;
   menuSubmitButton.textContent = "Agregar platillo";
   cancelMenuEditButton.hidden = true;
 }
@@ -801,6 +803,8 @@ function fillMenuEditor(item) {
   menuEditor.elements.category.value = item.category;
   menuEditor.elements.name.value = item.name;
   menuEditor.elements.price.value = item.price;
+  menuEditor.elements.priceLabel.value = item.priceLabel || "";
+  menuEditor.elements.active.checked = item.active !== false;
   menuEditor.elements.description.value = item.description;
   menuEditor.elements.image.value = item.image || "";
   menuEditor.elements.libraryImage.value = findLibraryImageId(item.image || "");
@@ -1452,8 +1456,9 @@ menuEditor.addEventListener("submit", async (event) => {
       category: data.get("category"),
       name: data.get("name").trim(),
       price: Number(data.get("price")),
+      priceLabel: data.get("priceLabel").trim(),
+      active: data.get("active") === "on",
       description: data.get("description").trim(),
-      includedItems: data.get("includedItems").trim(),
       image: uploadedImage || libraryImage || data.get("image").trim(),
       tags: ["Nuevo"]
     };

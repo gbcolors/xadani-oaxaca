@@ -7,6 +7,7 @@ function mapMenu(row) {
     name: row.name,
     description: row.description,
     price: row.price,
+    priceLabel: row.price_label || "",
     image: row.image,
     tags: row.tags || [],
     active: row.active
@@ -28,8 +29,14 @@ module.exports = async function handler(req, res) {
     await initializeDatabase();
 
     if (req.method === "GET") {
+      const includeInactive = String(req.query?.includeInactive || "") === "true";
+      if (includeInactive) {
+        await requireAdminRole(req, ["owner"]);
+      }
       const menuResult = await query(
-        "select * from menu_items where active = true order by category, sort_order, id"
+        includeInactive
+          ? "select * from menu_items order by active desc, category, sort_order, id"
+          : "select * from menu_items where active = true order by category, sort_order, id"
       );
       const categoryResult = await query(
         "select * from menu_categories where active = true order by sort_order, group_name, name"
@@ -44,16 +51,18 @@ module.exports = async function handler(req, res) {
       await requireAdminRole(req, ["owner"]);
       const item = req.body || {};
       const result = await query(
-        `insert into menu_items (category, name, description, price, image, tags, active)
-         values ($1,$2,$3,$4,$5,$6,true)
+        `insert into menu_items (category, name, description, price, price_label, image, tags, active)
+         values ($1,$2,$3,$4,$5,$6,$7,$8)
          returning *`,
         [
           item.category,
           item.name,
           item.description,
-          Number(item.price),
+          Number(item.price || 0),
+          item.priceLabel || "",
           item.image || "",
-          item.tags || []
+          item.tags || [],
+          item.active !== false
         ]
       );
       return res.status(200).json({ item: mapMenu(result.rows[0]) });
@@ -68,8 +77,10 @@ module.exports = async function handler(req, res) {
              name = $3,
              description = $4,
              price = $5,
-             image = $6,
-             tags = $7,
+             price_label = $6,
+             image = $7,
+             tags = $8,
+             active = $9,
              updated_at = now()
          where id = $1
          returning *`,
@@ -78,9 +89,11 @@ module.exports = async function handler(req, res) {
           item.category,
           item.name,
           item.description,
-          Number(item.price),
+          Number(item.price || 0),
+          item.priceLabel || "",
           item.image || "",
-          item.tags || []
+          item.tags || [],
+          item.active !== false
         ]
       );
       return res.status(200).json({ item: mapMenu(result.rows[0]) });
