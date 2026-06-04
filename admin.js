@@ -29,7 +29,7 @@ const defaultSettings = {
   homeHeroImage: "assets/xadani-portada-foto-02.jpg",
   homeHeroTitle: "El sabor del Istmo servido al centro.",
   homeHeroDescription: "Recetas familiares, cocina tradicional para compartir sin prisa.",
-  homeIntroTitle: "Una cocina tradicional del Istmo hecha para encontrarse.",
+  homeIntroTitle: "Una cocina del Istmo hecha para encontrarse.",
   homeIntroText: "Nuestra carta reúne los sabores tradicionales del Istmo, pesca fresca de la región y preparaciones especiales al horno en un menú con platos fieles al sazón autóctono de Santa María Xadani, generosos y abundantes, pensados para llegar al centro de la mesa.",
   aboutHeroImage: "assets/xadani-fondo-calido.jpg",
   aboutHeroTitle: "Una cocina nacida en Santa María Xadani.",
