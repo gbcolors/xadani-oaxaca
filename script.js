@@ -266,6 +266,21 @@ const defaultSiteSettings = {
   heroText:
     "Garnachas, cocina al horno, pesca fresca y recetas familiares del Istmo para visitantes de Juchitán, Tehuantepec, Salina Cruz y viajeros que buscan una experiencia gastronómica auténtica.",
   reservationNotifyEmail: "gbcolorsc@gmail.com"
+  ,googleProfileHref: "https://share.google/C5J90ehjHyg3jdsg1",
+  homeHeroImage: "assets/xadani-portada-foto-02.jpg",
+  homeHeroTitle: "El sabor del Istmo servido al centro.",
+  homeHeroDescription: "Recetas familiares, cocina tradicional para compartir sin prisa.",
+  homeIntroTitle: "Una cocina tradicional del Istmo hecha para encontrarse.",
+  homeIntroText: "Nuestra carta reúne los sabores tradicionales del Istmo, pesca fresca de la región y preparaciones especiales al horno en un menú con platos fieles al sazón autóctono de Santa María Xadani, generosos y abundantes, pensados para llegar al centro de la mesa.",
+  aboutHeroImage: "assets/xadani-fondo-calido.jpg",
+  aboutHeroTitle: "Una cocina nacida en Santa María Xadani.",
+  aboutHeroDescription: "Memoria familiar, producto del mar y una manera generosa de compartir la mesa.",
+  menuHeroImage: "assets/xadani-portada-foto-10.jpg",
+  menuHeroTitle: "Menú Xadani",
+  menuHeroDescription: "Consulta todos los platillos publicados con fotografía, descripción y precio.",
+  experienceHeroImage: "assets/xadani-fondo-calido.jpg",
+  contactTitle: "Encuentra tu mesa en Xadani.",
+  contactDescription: "Estamos en Oaxaca de Juárez para compartir contigo los sabores familiares de Santa María Xadani."
 };
 
 function formatPrice(price) {
@@ -428,6 +443,32 @@ async function loadRemoteExperiences() {
 
 function applySiteSettings() {
   const settings = getSiteSettings();
+  document.querySelectorAll(".site-footer").forEach((footer) => {
+    if (footer.querySelector(".footer-contact-links")) return;
+    const links = document.createElement("nav");
+    links.className = "footer-contact-links";
+    links.setAttribute("aria-label", "Contacto");
+    links.innerHTML = `
+      <a href="tel:${escapeHtml(settings.phoneHref)}">Llamar</a>
+      <a href="${escapeHtml(settings.whatsappHref)}" target="_blank" rel="noopener">WhatsApp</a>
+      <a href="${escapeHtml(settings.googleProfileHref || "https://share.google/C5J90ehjHyg3jdsg1")}" target="_blank" rel="noopener">Cómo llegar</a>
+      <a href="mailto:${escapeHtml(settings.email)}">Correo</a>
+    `;
+    footer.append(links);
+  });
+  if (!document.querySelector(".whatsapp-float")) {
+    const whatsapp = document.createElement("a");
+    whatsapp.className = "whatsapp-float";
+    whatsapp.href = settings.whatsappHref;
+    whatsapp.target = "_blank";
+    whatsapp.rel = "noopener";
+    whatsapp.setAttribute("aria-label", "Consultar por WhatsApp");
+    whatsapp.innerHTML = "<span>WA</span>";
+    document.body.append(whatsapp);
+  }
+  document.querySelectorAll('a[href*="maps.app.goo.gl"], a[href*="google.com/maps/search"]').forEach((link) => {
+    link.href = settings.googleProfileHref || "https://share.google/C5J90ehjHyg3jdsg1";
+  });
   document.querySelectorAll("[data-setting]").forEach((element) => {
     const key = element.dataset.setting;
     if (Object.prototype.hasOwnProperty.call(settings, key)) {
@@ -447,6 +488,13 @@ function applySiteSettings() {
     if (key === "emailHref" && settings.email) {
       element.href = `mailto:${settings.email}`;
     }
+    if (key === "googleProfileHref" && settings.googleProfileHref) {
+      element.href = settings.googleProfileHref;
+    }
+  });
+  document.querySelectorAll("[data-setting-bg]").forEach((element) => {
+    const image = settings[element.dataset.settingBg];
+    if (image) element.style.setProperty("--setting-bg", `url("${resolveImageUrl(image)}")`);
   });
   document.querySelectorAll("[data-setting-placeholder]").forEach((element) => {
     const key = element.dataset.settingPlaceholder;

@@ -25,6 +25,21 @@ const defaultSettings = {
     "Reserva directo por WhatsApp o teléfono. También puedes comunicarte al +52 951 150 9454 para grupos y eventos.",
   heroText:
     "Garnachas, cocina al horno, pesca fresca y recetas familiares del Istmo para visitantes de Juchitán, Tehuantepec, Salina Cruz y viajeros que buscan una experiencia gastronómica auténtica."
+  ,googleProfileHref: "https://share.google/C5J90ehjHyg3jdsg1",
+  homeHeroImage: "assets/xadani-portada-foto-02.jpg",
+  homeHeroTitle: "El sabor del Istmo servido al centro.",
+  homeHeroDescription: "Recetas familiares, cocina tradicional para compartir sin prisa.",
+  homeIntroTitle: "Una cocina tradicional del Istmo hecha para encontrarse.",
+  homeIntroText: "Nuestra carta reúne los sabores tradicionales del Istmo, pesca fresca de la región y preparaciones especiales al horno en un menú con platos fieles al sazón autóctono de Santa María Xadani, generosos y abundantes, pensados para llegar al centro de la mesa.",
+  aboutHeroImage: "assets/xadani-fondo-calido.jpg",
+  aboutHeroTitle: "Una cocina nacida en Santa María Xadani.",
+  aboutHeroDescription: "Memoria familiar, producto del mar y una manera generosa de compartir la mesa.",
+  menuHeroImage: "assets/xadani-portada-foto-10.jpg",
+  menuHeroTitle: "Menú Xadani",
+  menuHeroDescription: "Consulta todos los platillos publicados con fotografía, descripción y precio.",
+  experienceHeroImage: "assets/xadani-fondo-calido.jpg",
+  contactTitle: "Encuentra tu mesa en Xadani.",
+  contactDescription: "Estamos en Oaxaca de Juárez para compartir contigo los sabores familiares de Santa María Xadani."
 };
 
 const defaultTables = [
@@ -1652,7 +1667,21 @@ settingsEditor.addEventListener("submit", async (event) => {
     address: data.get("address").trim(),
     hours: data.get("hours").trim(),
     contactIntro: data.get("contactIntro").trim(),
-    heroText: data.get("heroText").trim()
+    googleProfileHref: data.get("googleProfileHref").trim(),
+    homeHeroImage: data.get("homeHeroImage").trim(),
+    homeHeroTitle: data.get("homeHeroTitle").trim(),
+    homeHeroDescription: data.get("homeHeroDescription").trim(),
+    homeIntroTitle: data.get("homeIntroTitle").trim(),
+    homeIntroText: data.get("homeIntroText").trim(),
+    aboutHeroImage: data.get("aboutHeroImage").trim(),
+    aboutHeroTitle: data.get("aboutHeroTitle").trim(),
+    aboutHeroDescription: data.get("aboutHeroDescription").trim(),
+    menuHeroImage: data.get("menuHeroImage").trim(),
+    menuHeroTitle: data.get("menuHeroTitle").trim(),
+    menuHeroDescription: data.get("menuHeroDescription").trim(),
+    experienceHeroImage: data.get("experienceHeroImage").trim(),
+    contactTitle: data.get("contactTitle").trim(),
+    contactDescription: data.get("contactDescription").trim()
   };
   try {
     await saveSettings(settings);

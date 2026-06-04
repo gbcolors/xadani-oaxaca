@@ -1557,7 +1557,7 @@ dd {
 }
 
 .cinematic-hero-image {
-  background: url("assets/xadani-portada-foto-02.jpg") center 48% / cover no-repeat;
+  background: var(--setting-bg, url("assets/xadani-portada-foto-02.jpg")) center 48% / cover no-repeat;
   animation: cinematicZoom 22s ease-in-out infinite;
   will-change: transform;
 }
@@ -1680,7 +1680,7 @@ dd {
   background:
     linear-gradient(90deg, rgba(8, 7, 6, 0.92), rgba(8, 7, 6, 0.22)),
     linear-gradient(0deg, rgba(8, 7, 6, 0.92), transparent 65%),
-    url("assets/xadani-fondo-calido.jpg") center / cover;
+    var(--setting-bg, url("assets/xadani-fondo-calido.jpg")) center / cover;
   animation: backgroundZoom 22s ease-in-out infinite;
 }
 
@@ -1757,7 +1757,7 @@ dd {
 .oven-background {
   position: absolute;
   inset: -4%;
-  background: url("assets/xadani-fondo-calido.jpg") center / cover;
+  background: var(--setting-bg, url("assets/xadani-fondo-calido.jpg")) center / cover;
   filter: saturate(1.2) contrast(1.12) brightness(0.62);
   animation: ovenMove 18s ease-in-out infinite alternate;
 }
@@ -1834,7 +1834,7 @@ dd {
   color: var(--cream);
   background:
     linear-gradient(0deg, rgba(8, 7, 6, 0.92), rgba(8, 7, 6, 0.48)),
-    url("assets/xadani-portada-foto-10.jpg") center / cover;
+    var(--setting-bg, url("assets/xadani-portada-foto-10.jpg")) center / cover;
 }
 
 .reservation-side h1 {
@@ -1887,6 +1887,19 @@ dd {
   gap: 10px;
 }
 
+.footer-contact-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 22px;
+}
+
+.footer-contact-links a {
+  color: rgba(255, 250, 240, 0.78);
+  font-size: 13px;
+  font-weight: 700;
+}
+
 .social-icon-link {
   width: 42px;
   height: 42px;
@@ -1937,6 +1950,74 @@ dd {
   box-shadow: 0 18px 42px rgba(0, 0, 0, 0.36);
 }
 
+.contact-hero {
+  min-height: calc(100vh - 87px);
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  background: #090807;
+  color: var(--cream);
+}
+
+.contact-hero > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(70px, 10vw, 150px) clamp(24px, 7vw, 110px);
+}
+
+.contact-hero h1 {
+  max-width: 720px;
+  margin: 0 0 24px;
+  font-size: clamp(52px, 7vw, 100px);
+  line-height: 0.96;
+}
+
+.contact-hero p,
+.contact-hero address,
+.contact-hero span {
+  max-width: 650px;
+  color: rgba(255, 250, 240, 0.72);
+  font-size: 17px;
+  font-style: normal;
+  line-height: 1.65;
+}
+
+.contact-hero iframe {
+  width: 100%;
+  min-height: 620px;
+  height: 100%;
+  border: 0;
+  filter: saturate(0.75) contrast(1.04);
+}
+
+.contact-actions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  background: var(--cream);
+}
+
+.contact-actions a {
+  min-height: 170px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 34px;
+  border-right: 1px solid rgba(34, 24, 19, 0.14);
+}
+
+.contact-actions span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.contact-actions strong {
+  overflow-wrap: anywhere;
+  font-size: 18px;
+}
+
 .full-menu-section .menu-grid {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
@@ -1977,6 +2058,17 @@ dd {
 }
 
 @media (max-width: 980px) {
+  .contact-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-hero iframe {
+    min-height: 480px;
+  }
+
+  .contact-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .story-section,
   .experience-detail,
   .reservation-layout {
@@ -1995,6 +2087,9 @@ dd {
 }
 
 @media (max-width: 720px) {
+  .contact-actions {
+    grid-template-columns: 1fr;
+  }
   .page-visual-about,
   .menu-page-hero {
     animation-name: backgroundZoomMobile;

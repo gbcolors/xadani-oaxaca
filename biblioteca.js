@@ -103,6 +103,18 @@ document.addEventListener("keydown", (event) => {
 
 loadGallery();
 
+fetch("/api/settings")
+  .then((response) => response.json())
+  .then(({ settings = {} }) => {
+    const links = document.querySelectorAll(".footer-contact-links a");
+    if (links[0] && settings.phoneHref) links[0].href = `tel:${settings.phoneHref}`;
+    if (links[1] && settings.whatsappHref) links[1].href = settings.whatsappHref;
+    if (links[2] && settings.googleProfileHref) links[2].href = settings.googleProfileHref;
+    if (links[3] && settings.email) links[3].href = `mailto:${settings.email}`;
+    if (settings.whatsappHref) document.querySelector(".whatsapp-float").href = settings.whatsappHref;
+  })
+  .catch(() => {});
+
 navToggle?.addEventListener("click", () => {
   const expanded = navToggle.getAttribute("aria-expanded") === "true";
   navToggle.setAttribute("aria-expanded", String(!expanded));

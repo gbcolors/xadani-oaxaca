@@ -499,12 +499,30 @@
                 <input name="hours" type="text" required />
               </label>
               <label class="wide">
+                Perfil de Google / CÃ³mo llegar
+                <input name="googleProfileHref" type="url" required />
+              </label>
+              <label class="wide">
                 Texto de contacto
                 <textarea name="contactIntro" rows="3" required></textarea>
               </label>
               <label class="wide">
-                Texto hero
-                <textarea name="heroText" rows="3" required></textarea>
+                Portada inicio
+                <input name="homeHeroImage" type="text" />
+              </label>
+              <label>TÃ­tulo inicio <input name="homeHeroTitle" type="text" required /></label>
+              <label>DescripciÃ³n inicio <textarea name="homeHeroDescription" rows="3" required></textarea></label>
+              <label class="wide">TÃ­tulo Carta visual <input name="homeIntroTitle" type="text" required /></label>
+              <label class="wide">Texto Carta visual <textarea name="homeIntroText" rows="4" required></textarea></label>
+              <label class="wide">Portada Nosotros <input name="aboutHeroImage" type="text" /></label>
+              <label>TÃ­tulo Nosotros <input name="aboutHeroTitle" type="text" required /></label>
+              <label>DescripciÃ³n Nosotros <textarea name="aboutHeroDescription" rows="3" required></textarea></label>
+              <label class="wide">Portada MenÃº <input name="menuHeroImage" type="text" /></label>
+              <label>TÃ­tulo MenÃº <input name="menuHeroTitle" type="text" required /></label>
+              <label>DescripciÃ³n MenÃº <textarea name="menuHeroDescription" rows="3" required></textarea></label>
+              <label class="wide">Portada Experiencia <input name="experienceHeroImage" type="text" /></label>
+              <label class="wide">TÃ­tulo Contacto <input name="contactTitle" type="text" required /></label>
+              <label class="wide">DescripciÃ³n Contacto <textarea name="contactDescription" rows="3" required></textarea>
               </label>
               <button class="button primary" type="submit">Guardar cambios</button>
             </form>
@@ -544,6 +562,6 @@
       </section>
     </main>
 
-    <script src="/admin.js?v=20260604-full-menu-prices"></script>
+    <script src="/admin.js?v=20260604-contacto"></script>
   </body>
 </html>
