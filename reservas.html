@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es-MX">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Reservaciones | Xadani en Oaxaca</title>
+    <meta name="description" content="Reserva tu mesa en Xadani en Oaxaca." />
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18209814109"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','AW-18209814109');</script>
+    <link rel="stylesheet" href="styles.css?v=20260603-navigation" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/"><img class="brand-logo" src="assets/xadani-logo.png" alt="" /><span><strong>Xadani</strong><small>Oaxaca</small></span></a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav id="site-nav" class="site-nav"><a href="/nosotros.html">Nosotros</a><a href="/menu.html">Menú</a><a href="/experiencia.html">Experiencia</a><a href="/biblioteca.html">Galería</a><a href="/reservas.html">Reservaciones</a></nav>
+    </header>
+    <main class="reservation-layout">
+      <section class="reservation-side">
+        <div><p class="eyebrow">Reservaciones</p><h1>Tu mesa te espera.</h1><p>Completa los datos y confirmaremos disponibilidad por teléfono o correo.</p></div>
+        <dl><div><dt>Horario</dt><dd data-setting="hours">Martes a domingo, 12:00–19:30</dd></div><div><dt>Ubicación</dt><dd data-setting="address">Calle Fundadores 105, 68127 Oaxaca de Juárez, Oaxaca</dd></div></dl>
+      </section>
+      <section class="reservation-dialog reservation-inline">
+        <form class="reservation-form" id="reservation-form">
+          <div class="form-grid">
+            <label>Nombre<input type="text" name="name" autocomplete="name" required /></label>
+            <label>Teléfono<input type="tel" name="phone" autocomplete="tel" minlength="8" required /></label>
+            <label>Email<input type="email" name="email" autocomplete="email" required /></label>
+            <label>Personas<input type="number" name="guests" min="1" max="20" value="2" required /></label>
+            <label>Fecha<input type="date" name="date" required /></label>
+            <label>Hora<select name="time" required><option value="">Selecciona una hora</option><option>12:00</option><option>12:30</option><option>13:00</option><option>13:30</option><option>14:00</option><option>14:30</option><option>15:00</option><option>15:30</option><option>16:00</option><option>16:30</option><option>17:00</option><option>17:30</option><option>18:00</option><option>18:30</option><option>19:00</option><option>19:30</option></select></label>
+            <label>Modalidad<select name="paymentType" id="payment-type" required><option value="free" data-amount="0">Reserva sin cargo</option><option value="deposit" data-amount="100">Anticipo de reserva $100</option></select></label>
+          </div>
+          <div class="payment-preview" id="payment-preview"><span>Total a pagar</span><strong>$0 MXN</strong><p>Puedes reservar sin cargo o dejar un anticipo fijo mediante Stripe Checkout.</p></div>
+          <label>Alergias, restricciones o celebración<textarea name="restrictions" rows="4"></textarea></label>
+          <button class="button primary form-submit" type="submit" id="reservation-submit">Reservar</button>
+        </form>
+        <div class="reservation-success" id="reservation-success" hidden><span class="success-mark">✓</span><h3>Solicitud recibida</h3><p id="reservation-summary"></p></div>
+      </section>
+    </main>
+    <footer class="site-footer"><span class="footer-brand"><img src="assets/xadani-logo.png" alt="" /><span>Xadani en Oaxaca</span></span><a href="https://wa.me/529511509454">WhatsApp</a><a href="https://maps.app.goo.gl/NjqWFZrMUX8hjMTv5">Cómo llegar</a></footer>
+    <script src="script.js?v=20260603-navigation"></script>
+  </body>
+</html>

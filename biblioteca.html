@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Biblioteca | Xadani en Oaxaca</title>
+    <title>Galería | Xadani en Oaxaca</title>
     <meta name="robots" content="index,follow" />
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18209814109"></script>
@@ -13,7 +13,7 @@
       gtag('js', new Date());
       gtag('config', 'AW-18209814109');
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260530-roles-reports" />
+    <link rel="stylesheet" href="styles.css?v=20260603-navigation" />
   </head>
   <body>
     <header class="site-header">
@@ -24,18 +24,20 @@
           <small>Oaxaca</small>
         </span>
       </a>
-      <nav class="site-nav open" aria-label="Navegación biblioteca">
-        <a href="/">Inicio</a>
-        <a href="/#menu">Menú</a>
-        <a href="/#reservas">Reservas</a>
-        <a href="/#contacto">Contacto</a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav id="site-nav" class="site-nav" aria-label="Navegación principal">
+        <a href="/nosotros.html">Nosotros</a>
+        <a href="/menu.html">Menú</a>
+        <a href="/experiencia.html">Experiencia</a>
+        <a href="/biblioteca.html">Galería</a>
+        <a href="/reservas.html">Reservaciones</a>
       </nav>
     </header>
 
     <main>
       <section class="section gallery-section gallery-page">
         <div class="section-heading">
-          <p class="eyebrow">Biblioteca</p>
+          <p class="eyebrow">Galería</p>
           <h1>Galería Xadani</h1>
           <p>Una mirada completa a nuestros platillos, horno, mesa e instalaciones.</p>
         </div>

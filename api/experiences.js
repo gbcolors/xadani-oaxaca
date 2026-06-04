@@ -12,7 +12,8 @@ function mapItem(row) {
     paymentType: row.payment_type,
     ctaLabel: row.cta_label,
     active: row.active,
-    sortOrder: row.sort_order
+    sortOrder: row.sort_order,
+    includedItems: row.included_items || ""
   };
 }
 
@@ -33,8 +34,8 @@ module.exports = async function handler(req, res) {
       const item = req.body || {};
       const result = await query(
         `insert into experiences
-         (title, description, image, event_date, event_time, price, payment_type, cta_label, sort_order, active)
-         values ($1,$2,$3,$4,$5,$6,$7,$8,$9,true)
+         (title, description, image, event_date, event_time, price, payment_type, cta_label, sort_order, included_items, active)
+         values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,true)
          returning *`,
         [
           item.title,
@@ -45,7 +46,8 @@ module.exports = async function handler(req, res) {
           Number(item.price || 0),
           item.paymentType || "experience",
           item.ctaLabel || "Reservar",
-          Number(item.sortOrder || 0)
+          Number(item.sortOrder || 0),
+          item.includedItems || ""
         ]
       );
       return res.status(200).json({ item: mapItem(result.rows[0]) });
@@ -56,7 +58,7 @@ module.exports = async function handler(req, res) {
       const result = await query(
         `update experiences
          set title=$2, description=$3, image=$4, event_date=$5, event_time=$6,
-             price=$7, payment_type=$8, cta_label=$9, sort_order=$10, updated_at=now()
+             price=$7, payment_type=$8, cta_label=$9, sort_order=$10, included_items=$11, updated_at=now()
          where id=$1
          returning *`,
         [
@@ -69,7 +71,8 @@ module.exports = async function handler(req, res) {
           Number(item.price || 0),
           item.paymentType || "experience",
           item.ctaLabel || "Reservar",
-          Number(item.sortOrder || 0)
+          Number(item.sortOrder || 0),
+          item.includedItems || ""
         ]
       );
       return res.status(200).json({ item: mapItem(result.rows[0]) });

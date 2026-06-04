@@ -899,6 +899,7 @@ function fillExperienceEditor(item) {
   experienceEditor.elements.id.value = item.id;
   experienceEditor.elements.title.value = item.title;
   experienceEditor.elements.description.value = item.description;
+  experienceEditor.elements.includedItems.value = item.includedItems || "";
   experienceEditor.elements.eventDate.value = item.eventDate || "";
   experienceEditor.elements.eventTime.value = item.eventTime || "";
   experienceEditor.elements.price.value = item.price || 0;
@@ -1452,6 +1453,7 @@ menuEditor.addEventListener("submit", async (event) => {
       name: data.get("name").trim(),
       price: Number(data.get("price")),
       description: data.get("description").trim(),
+      includedItems: data.get("includedItems").trim(),
       image: uploadedImage || libraryImage || data.get("image").trim(),
       tags: ["Nuevo"]
     };
