@@ -12,6 +12,28 @@ function mapItem(row) {
   };
 }
 
+function fallbackGallery() {
+  const items = [
+    "xadani-portada-foto-02.jpg",
+    "xadani-portada-foto-09.jpg",
+    "xadani-portada-foto-10.jpg",
+    "xadani-portada-foto-11.jpg",
+    "xadani-portada-foto-18.jpg",
+    "xadani-portada-foto-19.jpg",
+    "xadani-fondo-calido.jpg",
+    "xadani-hero-portada.jpg"
+  ];
+  return items.map((file, index) => ({
+    id: `static-gallery-${index}`,
+    title: "Menú y cocina Xadani",
+    caption: "Imagen de nuestra cocina istmeña, platillos, horno y propuesta familiar en Oaxaca.",
+    image: `/assets/${file}`,
+    type: "concepto",
+    active: true,
+    sortOrder: index
+  }));
+}
+
 module.exports = async function handler(req, res) {
   try {
     await initializeDatabase();
@@ -69,6 +91,9 @@ module.exports = async function handler(req, res) {
     res.setHeader("Allow", "GET, POST, PUT, DELETE");
     return res.status(405).json({ error: "Method not allowed" });
   } catch (error) {
+    if (req.method === "GET") {
+      return res.status(200).json({ gallery: fallbackGallery() });
+    }
     return sendError(res, error);
   }
 };

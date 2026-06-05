@@ -176,7 +176,7 @@ const defaultMenuCategories = [
 const mainCategoryMap = {
   entradas: ["entradas-frias", "entradas-cocteles", "entradas-ensaladas", "entradas-calientes", "entradas-caldos", "entradas-sopas", "entradas-consomes"],
   fuertes: ["fuertes-pesca-del-dia", "fuertes-camarones", "fuertes-para-compartir"],
-  especiales: ["fuertes-especiales-istmenos", "fuertes-extras", "postres"],
+  especiales: ["fuertes-extras", "postres"],
   "menu-istmeno": ["fuertes-especiales-istmenos"],
   bebidas: ["bebidas-con-alcohol", "bebidas-sin-alcohol"]
 };
@@ -414,7 +414,7 @@ async function loadRemoteMenu() {
   try {
     const data = await apiJson("/api/menu");
     remoteMenuItems = data.menu || [];
-    fullMenuCategories = data.categories?.length ? data.categories : [...defaultMenuCategories];
+    fullMenuCategories = [...defaultMenuCategories];
     menuCategories = [...defaultMenuCategories];
   } catch {
     remoteMenuItems = [];

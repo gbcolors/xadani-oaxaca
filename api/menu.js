@@ -1,4 +1,11 @@
-﻿const { initializeDatabase, query, requireAdminRole, sendError } = require("../lib/db");
+const {
+  initializeDatabase,
+  query,
+  requireAdminRole,
+  sendError,
+  getDefaultMenuCategories,
+  getPhysicalMenuItems
+} = require("../lib/db");
 
 function mapMenu(row) {
   return {
@@ -8,7 +15,7 @@ function mapMenu(row) {
     description: row.description,
     price: row.price,
     priceLabel: row.price_label || "",
-    image: row.image,
+    image: row.image && String(row.image).startsWith("data:") ? "" : row.image,
     tags: row.tags || [],
     active: row.active
   };
@@ -24,6 +31,29 @@ function mapCategory(row) {
   };
 }
 
+function publicFallbackMenu() {
+  return {
+    categories: getDefaultMenuCategories().map(([slug, group, name], index) => ({
+      slug,
+      group,
+      name,
+      active: true,
+      sortOrder: index
+    })),
+    menu: getPhysicalMenuItems().map(([category, name, description, price, priceLabel, tagText], index) => ({
+      id: `static-${index}`,
+      category,
+      name,
+      description,
+      price,
+      priceLabel: priceLabel || "",
+      image: "",
+      tags: tagText.split(",").map((tag) => tag.trim()).filter(Boolean),
+      active: true
+    }))
+  };
+}
+
 module.exports = async function handler(req, res) {
   try {
     await initializeDatabase();
@@ -35,8 +65,8 @@ module.exports = async function handler(req, res) {
       }
       const menuResult = await query(
         includeInactive
-          ? "select * from menu_items order by active desc, category, sort_order, id"
-          : "select * from menu_items where active = true order by category, sort_order, id"
+          ? "select id, category, name, description, price, price_label, case when image like 'data:%' then '' else image end as image, tags, active from menu_items order by active desc, category, sort_order, id"
+          : "select id, category, name, description, price, price_label, case when image like 'data:%' then '' else image end as image, tags, active from menu_items where active = true order by category, sort_order, id"
       );
       const categoryResult = await query(
         "select * from menu_categories where active = true order by sort_order, group_name, name"
@@ -109,7 +139,9 @@ module.exports = async function handler(req, res) {
     res.setHeader("Allow", "GET, POST, PUT, DELETE");
     return res.status(405).json({ error: "Method not allowed" });
   } catch (error) {
+    if (req.method === "GET" && String(req.query?.includeInactive || "") !== "true") {
+      return res.status(200).json(publicFallbackMenu());
+    }
     return sendError(res, error);
   }
 };
-
