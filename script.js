@@ -337,6 +337,16 @@ function closePhotoLightbox() {
   lightboxImage.src = "";
 }
 
+document.querySelectorAll("[data-close-lightbox]").forEach((button) => {
+  button.addEventListener("click", closePhotoLightbox);
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && photoLightbox?.classList.contains("open")) {
+    closePhotoLightbox();
+  }
+});
+
 function getSelectedPayment() {
   if (!paymentTypeInput || !reservationForm) {
     return { paymentType: "free", label: "Reserva sin cargo", unitAmount: 0, quantity: 1, total: 0 };
