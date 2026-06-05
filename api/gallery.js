@@ -14,20 +14,52 @@ function mapItem(row) {
 
 function fallbackGallery() {
   const items = [
-    "xadani-portada-foto-02.jpg",
-    "xadani-portada-foto-09.jpg",
-    "xadani-portada-foto-10.jpg",
-    "xadani-portada-foto-11.jpg",
-    "xadani-portada-foto-18.jpg",
-    "xadani-portada-foto-19.jpg",
-    "xadani-fondo-calido.jpg",
-    "xadani-hero-portada.jpg"
+    {
+      file: "xadani-portada-foto-02.jpg",
+      title: "Salmón del patrón",
+      caption: "Salmón horneado con orégano, aceite de oliva y ajo, servido con arroz y ensalada."
+    },
+    {
+      file: "xadani-portada-foto-09.jpg",
+      title: "Plátanos al horno",
+      caption: "Plátanos al horno con queso y crema, un postre cálido de la casa."
+    },
+    {
+      file: "xadani-portada-foto-10.jpg",
+      title: "Lisa al horno con aderezo",
+      caption: "Lisa al horno servida con ensalada, preparada al estilo Xadani."
+    },
+    {
+      file: "xadani-portada-foto-11.jpg",
+      title: "Garnachas",
+      caption: "Garnachas istmeñas con carne, queso, curtido y salsa."
+    },
+    {
+      file: "xadani-portada-foto-18.jpg",
+      title: "Aguachile de camarón",
+      caption: "Preparación fresca con cítricos, cebolla morada, pepino y chile."
+    },
+    {
+      file: "xadani-portada-foto-19.jpg",
+      title: "Molote de plátano",
+      caption: "Molote de plátano con queso y crema, servido al centro."
+    },
+    {
+      file: "xadani-fondo-calido.jpg",
+      title: "Cocina al horno",
+      caption: "Detalle de nuestra cocina al horno y preparaciones calientes."
+    },
+    {
+      file: "xadani-hero-portada.jpg",
+      title: "Carta visual Xadani",
+      caption: "Composición visual de platos, pesca fresca y cocina istmeña para compartir."
+    }
   ];
-  return items.map((file, index) => ({
+  return items.map((item, index) => ({
     id: `static-gallery-${index}`,
-    title: "Menú y cocina Xadani",
-    caption: "Imagen de nuestra cocina istmeña, platillos, horno y propuesta familiar en Oaxaca.",
-    image: `/assets/${file}`,
+    title: item.title,
+    caption: item.caption,
+    image: `/assets/${item.file}`,
     type: "concepto",
     active: true,
     sortOrder: index

@@ -4,7 +4,8 @@ const {
   requireAdminRole,
   sendError,
   getDefaultMenuCategories,
-  getPhysicalMenuItems
+  getPhysicalMenuItems,
+  getPhysicalMenuImageMap
 } = require("../lib/db");
 
 function mapMenu(row) {
@@ -32,6 +33,7 @@ function mapCategory(row) {
 }
 
 function publicFallbackMenu() {
+  const imageMap = getPhysicalMenuImageMap();
   return {
     categories: getDefaultMenuCategories().map(([slug, group, name], index) => ({
       slug,
@@ -47,7 +49,7 @@ function publicFallbackMenu() {
       description,
       price,
       priceLabel: priceLabel || "",
-      image: "",
+      image: imageMap[name] || "",
       tags: tagText.split(",").map((tag) => tag.trim()).filter(Boolean),
       active: true
     }))
