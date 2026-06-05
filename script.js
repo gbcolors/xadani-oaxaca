@@ -252,6 +252,7 @@ let fullMenuCategories = [...defaultMenuCategories];
 let galleryItems = [];
 let experiences = [];
 let activeMenuItems = [];
+let fullMenuLookup = [];
 const defaultSiteSettings = {
   businessName: "Xadani en Oaxaca",
   domain: "xadanienoaxaca.com",
@@ -599,43 +600,42 @@ function renderMenuTabs(activeCategory = menuCategories[0]?.slug || "entradas-fr
 function renderFullMenu() {
   if (!fullMenuGrid) return;
   const categories = fullMenuCategories.length ? fullMenuCategories : defaultMenuCategories;
+  fullMenuLookup = [];
   fullMenuGrid.innerHTML = categories
     .map((category) => {
       const items = getLocalMenuItems(mainCategoryMap[category.slug] || category.slug);
-      if (!items.length) return "";
+      const startIndex = fullMenuLookup.length;
+      fullMenuLookup.push(...items);
       return `
-        <section class="full-menu-category">
-          <div class="section-heading">
-            <p class="eyebrow">${escapeHtml(category.group || "Menú")}</p>
-            <h2>${escapeHtml(category.name)}</h2>
-          </div>
-          <div class="menu-grid">
-            ${items
-              .map(
-                (item, index) => `
-                  <article class="dish-card" data-full-menu-photo data-full-menu-category="${escapeHtml(category.slug)}" data-full-menu-index="${index}" tabindex="0">
-                    <img class="dish-image" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" loading="lazy">
-                    <div class="dish-content">
-                      <div class="dish-top">
-                        <h3>${escapeHtml(item.name)}</h3>
-                        <span class="price">${escapeHtml(formatMenuPrice(item))}</span>
-                      </div>
-                      <p>${escapeHtml(item.description)}</p>
-                      <div class="tags">
-                        ${item.tags.map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("")}
-                      </div>
-                    </div>
-                  </article>
-                `
-              )
-              .join("")}
-          </div>
-        </section>
+        <details class="full-menu-category menu-accordion">
+          <summary>
+            <span>
+              <small>${escapeHtml(category.group || "Menu")}</small>
+              <strong>${escapeHtml(category.name)}</strong>
+            </span>
+            <em>${items.length} platillos</em>
+          </summary>
+          ${
+            items.length
+              ? `<div class="menu-list">
+                  ${items
+                    .map(
+                      (item, index) => `
+                        <button class="menu-list-item" type="button" data-full-menu-photo="${startIndex + index}">
+                          <span>${escapeHtml(item.name)}</span>
+                          <strong>${escapeHtml(formatMenuPrice(item))}</strong>
+                        </button>
+                      `
+                    )
+                    .join("")}
+                </div>`
+              : `<p class="menu-list-empty">Bebidas disponibles en restaurante.</p>`
+          }
+        </details>
       `;
     })
     .join("");
 }
-
 function renderGallery() {
   if (!galleryGrid) return;
   if (!galleryItems.length) {
@@ -716,12 +716,9 @@ grid?.addEventListener("keydown", (event) => {
 });
 
 fullMenuGrid?.addEventListener("click", (event) => {
-  const card = event.target.closest("[data-full-menu-photo]");
-  if (!card) return;
-  const slug = card.dataset.fullMenuCategory;
-  const indexValue = card.dataset.fullMenuIndex;
-  const items = getLocalMenuItems(mainCategoryMap[slug] || slug);
-  const item = items[Number(indexValue)];
+  const button = event.target.closest("[data-full-menu-photo]");
+  if (!button) return;
+  const item = fullMenuLookup[Number(button.dataset.fullMenuPhoto)];
   if (!item) return;
   openPhotoLightbox({
     image: item.image,
@@ -734,202 +731,11 @@ fullMenuGrid?.addEventListener("click", (event) => {
 
 fullMenuGrid?.addEventListener("keydown", (event) => {
   if (event.key !== "Enter" && event.key !== " ") return;
-  const card = event.target.closest("[data-full-menu-photo]");
-  if (!card) return;
+  const button = event.target.closest("[data-full-menu-photo]");
+  if (!button) return;
   event.preventDefault();
-  card.click();
+  button.click();
 });
-
-galleryGrid?.addEventListener("click", (event) => {
-  const card = event.target.closest("[data-gallery-photo]");
-  if (!card) return;
-  const index = Number(card.dataset.galleryPhoto);
-  const item = galleryItems[index];
-  if (!item) return;
-  openPhotoLightbox({
-    image: resolveImageUrl(item.image),
-    title: displayGalleryTitle(item, index),
-    description: item.caption || "Una mirada a los platillos, el horno y los momentos de mesa en Xadani.",
-    meta: item.type ? item.type : "Fotografía",
-    kicker: "Biblioteca"
-  });
-});
-
-galleryGrid?.addEventListener("keydown", (event) => {
-  if (event.key !== "Enter" && event.key !== " ") return;
-  const card = event.target.closest("[data-gallery-photo]");
-  if (!card) return;
-  event.preventDefault();
-  card.click();
-});
-
-photoLightbox?.addEventListener("click", (event) => {
-  if (event.target.closest("[data-close-lightbox]")) {
-    closePhotoLightbox();
-  }
-});
-
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") {
-    closePhotoLightbox();
-  }
-});
-
-navToggle?.addEventListener("click", () => {
-  const expanded = navToggle.getAttribute("aria-expanded") === "true";
-  navToggle.setAttribute("aria-expanded", String(!expanded));
-  siteNav.classList.toggle("open");
-});
-
-siteNav?.querySelectorAll("a").forEach((link) => {
-  link.addEventListener("click", () => {
-    siteNav.classList.remove("open");
-    navToggle.setAttribute("aria-expanded", "false");
-  });
-});
-
-function openReservationModal() {
-  if (reservationModal) {
-    reservationModal.classList.add("open");
-    reservationModal.setAttribute("aria-hidden", "false");
-    document.body.style.overflow = "hidden";
-  }
-  reservationForm.hidden = false;
-  reservationSuccess.hidden = true;
-  updatePaymentPreview();
-  reservationForm?.querySelector("input[name='name']")?.focus();
-}
-
-function closeReservationModal() {
-  if (!reservationModal) return;
-  reservationModal.classList.remove("open");
-  reservationModal.setAttribute("aria-hidden", "true");
-  document.body.style.overflow = "";
-}
-
-function getSavedReservations() {
-  try {
-    return JSON.parse(localStorage.getItem("xadaniReservations")) || [];
-  } catch {
-    return [];
-  }
-}
-
-function saveReservation(reservation) {
-  const reservations = getSavedReservations();
-  reservations.push(reservation);
-  localStorage.setItem("xadaniReservations", JSON.stringify(reservations));
-  apiJson("/api/reservations", {
-    method: "POST",
-    body: JSON.stringify(reservation)
-  }).catch(() => {
-    // The local copy is kept when the database is not configured yet.
-  });
-}
-
-openReservationButtons.forEach((button) => {
-  button.addEventListener("click", openReservationModal);
-});
-
-closeReservationButtons.forEach((button) => {
-  button.addEventListener("click", closeReservationModal);
-});
-
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && reservationModal?.classList.contains("open")) {
-    closeReservationModal();
-  }
-});
-
-reservationForm?.addEventListener("submit", (event) => {
-  event.preventDefault();
-  const formData = new FormData(reservationForm);
-  const folio = `XAD-${Date.now().toString().slice(-6)}`;
-  const payment = getSelectedPayment();
-  const reservation = {
-    folio,
-    name: formData.get("name").trim(),
-    phone: formData.get("phone").trim(),
-    email: formData.get("email").trim(),
-    guests: Number(formData.get("guests")),
-    date: formData.get("date"),
-    time: formData.get("time"),
-    paymentType: payment.paymentType,
-    paymentLabel: payment.label,
-    paymentTotal: payment.total,
-    paymentStatus: payment.total > 0 ? "pending" : "not_required",
-    restrictions: formData.get("restrictions").trim(),
-    createdAt: new Date().toISOString()
-  };
-
-  saveReservation(reservation);
-  trackAdsEvent("reservation_request", {
-    value: payment.total || 1,
-    currency: "MXN",
-    event_category: "reservas"
-  });
-
-  if (payment.total > 0) {
-    reservationSubmit.disabled = true;
-    reservationSubmit.textContent = "Preparando pago...";
-
-    fetch(`${apiBase}${checkoutEndpoint}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(reservation)
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Stripe checkout endpoint unavailable");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (!data.url) {
-          throw new Error("Stripe checkout URL missing");
-        }
-        window.location.href = data.url;
-      })
-      .catch(() => {
-        reservationForm.hidden = true;
-        reservationSuccess.hidden = false;
-        reservationSummary.textContent = `${reservation.name}, guardamos tu solicitud con folio ${
-          reservation.folio
-        } para el ${reservation.date} a las ${reservation.time} por ${formatPrice(
-          reservation.paymentTotal
-        )}. No pudimos iniciar el pago en este momento; confirmaremos la reserva por teléfono.`;
-        reservationForm.reset();
-        reservationSubmit.disabled = false;
-        updatePaymentPreview();
-      });
-    return;
-  }
-
-  reservationForm.hidden = true;
-  reservationSuccess.hidden = false;
-  reservationSummary.textContent = `${reservation.name}, recibimos tu solicitud para ${reservation.guests} persona${
-    reservation.guests === 1 ? "" : "s"
-  } el ${reservation.date} a las ${reservation.time}. Folio ${reservation.folio}. Confirmaremos disponibilidad al ${reservation.phone}.`;
-  reservationForm.reset();
-  updatePaymentPreview();
-});
-
-reservationForm?.elements.guests?.addEventListener("input", updatePaymentPreview);
-reservationForm?.elements.date?.setAttribute("min", new Date().toISOString().slice(0, 10));
-reservationForm?.elements.date && (reservationForm.elements.date.value = new Date().toISOString().slice(0, 10));
-paymentTypeInput?.addEventListener("change", updatePaymentPreview);
-
-document.addEventListener("click", (event) => {
-  const link = event.target.closest("a[href*='wa.me']");
-  if (!link) return;
-  trackAdsEvent("whatsapp_click", {
-    event_category: "contacto",
-    event_label: link.href
-  });
-});
-
 experienceGrid?.addEventListener("click", (event) => {
   const button = event.target.closest("[data-experience-reserve]");
   if (!button) return;
