@@ -347,6 +347,35 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
+function closeSiteNav() {
+  if (!siteNav || !navToggle) return;
+  siteNav.classList.remove("open");
+  navToggle.setAttribute("aria-expanded", "false");
+}
+
+navToggle?.addEventListener("click", () => {
+  if (!siteNav) return;
+  const isOpen = siteNav.classList.toggle("open");
+  navToggle.setAttribute("aria-expanded", String(isOpen));
+});
+
+siteNav?.addEventListener("click", (event) => {
+  if (event.target.closest("a")) closeSiteNav();
+});
+
+document.addEventListener("click", (event) => {
+  if (!siteNav?.classList.contains("open")) return;
+  if (event.target.closest("#site-nav") || event.target.closest(".nav-toggle")) return;
+  closeSiteNav();
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") closeSiteNav();
+});
+
+paymentTypeInput?.addEventListener("change", updatePaymentPreview);
+reservationForm?.elements?.guests?.addEventListener("change", updatePaymentPreview);
+
 function getSelectedPayment() {
   if (!paymentTypeInput || !reservationForm) {
     return { paymentType: "free", label: "Reserva sin cargo", unitAmount: 0, quantity: 1, total: 0 };
@@ -372,6 +401,15 @@ function updatePaymentPreview() {
   const payment = getSelectedPayment();
   paymentPreview.querySelector("strong").textContent = formatPrice(payment.total);
   reservationSubmit.textContent = payment.total > 0 ? "Continuar a pago seguro" : "Reservar";
+}
+
+function applyReservationQueryParams() {
+  if (!paymentTypeInput) return;
+  const params = new URLSearchParams(window.location.search);
+  const paymentType = params.get("tipo");
+  if (!paymentType) return;
+  const hasOption = Array.from(paymentTypeInput.options).some((option) => option.value === paymentType);
+  if (hasOption) paymentTypeInput.value = paymentType;
 }
 
 function trackAdsEvent(eventName, params = {}) {
@@ -749,9 +787,14 @@ fullMenuGrid?.addEventListener("keydown", (event) => {
 experienceGrid?.addEventListener("click", (event) => {
   const button = event.target.closest("[data-experience-reserve]");
   if (!button) return;
-  if (!paymentTypeInput) return;
-  paymentTypeInput.value = button.dataset.experienceReserve || "experience";
-  document.querySelector("#reservas")?.scrollIntoView({ behavior: "smooth" });
+  const paymentType = button.dataset.experienceReserve || "experience";
+  if (paymentTypeInput) paymentTypeInput.value = paymentType;
+  const reservationSection = document.querySelector("#reservas");
+  if (reservationSection) {
+    reservationSection.scrollIntoView({ behavior: "smooth" });
+  } else {
+    window.location.href = `/reservas.html?tipo=${encodeURIComponent(paymentType)}`;
+  }
   updatePaymentPreview();
 });
 
@@ -771,6 +814,8 @@ if (stripeStatus === "success" || stripeStatus === "cancel") {
 }
 
 applySiteSettings();
+applyReservationQueryParams();
+updatePaymentPreview();
 renderMenuTabs("entradas");
 renderMenu("entradas");
 renderFullMenu();
