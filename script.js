@@ -505,16 +505,20 @@ function applySiteSettings() {
     `;
     footer.append(links);
   });
-  if (!document.querySelector(".whatsapp-float")) {
-    const whatsapp = document.createElement("a");
+  let whatsapp = document.querySelector(".whatsapp-float");
+  if (!whatsapp) {
+    whatsapp = document.createElement("a");
     whatsapp.className = "whatsapp-float";
-    whatsapp.href = settings.whatsappHref;
     whatsapp.target = "_blank";
     whatsapp.rel = "noopener";
     whatsapp.setAttribute("aria-label", "Consultar por WhatsApp");
-    whatsapp.innerHTML = "<span>WA</span>";
     document.body.append(whatsapp);
   }
+  whatsapp.href = settings.whatsappHref;
+  whatsapp.innerHTML = `
+    <span class="whatsapp-bubble">Iniciar Chat</span>
+    <img src="assets/whatsapp-icon.png" alt="" aria-hidden="true" />
+  `;
   document.querySelectorAll('a[href*="maps.app.goo.gl"], a[href*="google.com/maps/search"]').forEach((link) => {
     link.href = settings.googleProfileHref || "https://share.google/C5J90ehjHyg3jdsg1";
   });
