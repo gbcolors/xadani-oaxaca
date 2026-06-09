@@ -1797,8 +1797,9 @@ dd {
 
 .page-visual-about {
   background:
-    linear-gradient(90deg, rgba(8, 7, 6, 0.92), rgba(8, 7, 6, 0.22)),
-    linear-gradient(0deg, rgba(8, 7, 6, 0.92), transparent 65%),
+    radial-gradient(ellipse at center, rgba(8, 7, 6, 0) 34%, rgba(8, 7, 6, 0.34) 68%, rgba(8, 7, 6, 0.88) 100%),
+    linear-gradient(90deg, rgba(8, 7, 6, 0.76), rgba(8, 7, 6, 0.12) 58%, rgba(8, 7, 6, 0.56)),
+    linear-gradient(0deg, rgba(8, 7, 6, 0.86), transparent 62%),
     var(--setting-bg, url("assets/xadani-fondo-calido.jpg")) center / cover;
   animation: backgroundZoom 22s ease-in-out infinite;
 }
@@ -1877,7 +1878,7 @@ dd {
   position: absolute;
   inset: -4%;
   background: var(--setting-bg, url("assets/xadani-fondo-calido.jpg")) center / cover;
-  filter: saturate(1.2) contrast(1.12) brightness(0.62);
+  filter: saturate(1.12) contrast(1.06) brightness(0.88);
   animation: ovenMove 18s ease-in-out infinite alternate;
 }
 
@@ -1885,8 +1886,11 @@ dd {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(8, 7, 6, 0.9), rgba(8, 7, 6, 0.2)), linear-gradient(0deg, rgba(8, 7, 6, 0.82), transparent 62%);
-  box-shadow: inset 0 0 100px #080706;
+  background:
+    radial-gradient(ellipse at center, rgba(8, 7, 6, 0) 34%, rgba(8, 7, 6, 0.34) 68%, rgba(8, 7, 6, 0.88) 100%),
+    linear-gradient(90deg, rgba(8, 7, 6, 0.74), rgba(8, 7, 6, 0.12) 58%, rgba(8, 7, 6, 0.58)),
+    linear-gradient(0deg, rgba(8, 7, 6, 0.84), transparent 62%);
+  box-shadow: inset 0 0 120px rgba(8, 7, 6, 0.82);
 }
 
 @keyframes ovenMove {
@@ -1985,19 +1989,21 @@ dd {
   display: grid;
   align-items: end;
   background:
-    linear-gradient(90deg, rgba(8, 7, 6, 0.94), rgba(8, 7, 6, 0.35)),
+    radial-gradient(ellipse at center, rgba(8, 7, 6, 0) 34%, rgba(8, 7, 6, 0.34) 68%, rgba(8, 7, 6, 0.9) 100%),
+    linear-gradient(90deg, rgba(8, 7, 6, 0.78), rgba(8, 7, 6, 0.14) 58%, rgba(8, 7, 6, 0.58)),
+    linear-gradient(0deg, rgba(8, 7, 6, 0.84), transparent 62%),
     url("assets/xadani-portada-foto-10.jpg") center / cover;
   animation: backgroundZoom 22s ease-in-out infinite;
 }
 
 @keyframes backgroundZoom {
-  0%, 100% { background-size: cover, cover, 100% auto; }
-  50% { background-size: cover, cover, 112% auto; }
+  0%, 100% { background-size: cover, cover, cover, 100% auto; }
+  50% { background-size: cover, cover, cover, 112% auto; }
 }
 
 @keyframes backgroundZoomMobile {
-  0%, 100% { background-size: cover, cover, auto 100%; }
-  50% { background-size: cover, cover, auto 112%; }
+  0%, 100% { background-size: cover, cover, cover, auto 100%; }
+  50% { background-size: cover, cover, cover, auto 112%; }
 }
 
 .social-footer {
@@ -2402,9 +2408,10 @@ body::before {
 
 .cinematic-hero-shade {
   background:
-    linear-gradient(90deg, rgba(63, 23, 16, 0.96) 0%, rgba(118, 39, 25, 0.7) 42%, rgba(255, 250, 243, 0.16) 74%, rgba(63, 23, 16, 0.78) 100%),
-    linear-gradient(0deg, rgba(63, 23, 16, 0.92), transparent 58%);
-  box-shadow: inset 0 0 120px 20px rgba(63, 23, 16, 0.7);
+    radial-gradient(ellipse at center, rgba(5, 4, 3, 0) 30%, rgba(5, 4, 3, 0.34) 68%, rgba(5, 4, 3, 0.9) 100%),
+    linear-gradient(90deg, rgba(5, 4, 3, 0.84) 0%, rgba(5, 4, 3, 0.28) 46%, rgba(5, 4, 3, 0.1) 72%, rgba(5, 4, 3, 0.78) 100%),
+    linear-gradient(0deg, rgba(5, 4, 3, 0.9), transparent 58%);
+  box-shadow: inset 0 0 140px 28px rgba(5, 4, 3, 0.82);
 }
 
 .page-visual-hero,
@@ -2412,7 +2419,9 @@ body::before {
 .menu-page-hero {
   color: #fffaf3;
   background:
-    linear-gradient(90deg, rgba(63, 23, 16, 0.94), rgba(118, 39, 25, 0.62)),
+    radial-gradient(ellipse at center, rgba(5, 4, 3, 0) 32%, rgba(5, 4, 3, 0.36) 66%, rgba(5, 4, 3, 0.84) 100%),
+    linear-gradient(90deg, rgba(5, 4, 3, 0.78) 0%, rgba(5, 4, 3, 0.28) 42%, rgba(5, 4, 3, 0.1) 68%, rgba(5, 4, 3, 0.66) 100%),
+    linear-gradient(0deg, rgba(5, 4, 3, 0.86), transparent 56%),
     var(--setting-bg, url("assets/xadani-portada-foto-10.jpg")) center/cover;
 }
 
