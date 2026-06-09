@@ -522,6 +522,10 @@ function applySiteSettings() {
   document.querySelectorAll('a[href*="maps.app.goo.gl"], a[href*="google.com/maps/search"]').forEach((link) => {
     link.href = settings.googleProfileHref || "https://share.google/C5J90ehjHyg3jdsg1";
   });
+  document.querySelectorAll('a[href*="share.google"], a[href*="google.com/maps"], a[href*="maps.app.goo.gl"]').forEach((link) => {
+    link.target = "_blank";
+    link.rel = "noopener";
+  });
   document.querySelectorAll("[data-setting]").forEach((element) => {
     const key = element.dataset.setting;
     if (Object.prototype.hasOwnProperty.call(settings, key)) {
@@ -551,6 +555,8 @@ function applySiteSettings() {
     }
     if (key === "googleProfileHref" && settings.googleProfileHref) {
       element.href = settings.googleProfileHref;
+      element.target = "_blank";
+      element.rel = "noopener";
     }
   });
   document.querySelectorAll("[data-setting-bg]").forEach((element) => {
@@ -562,6 +568,108 @@ function applySiteSettings() {
     if (settings[key]) {
       element.placeholder = settings[key];
     }
+  });
+}
+
+function normalizeQuestion(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
+function whatsappLinkWithText(text) {
+  const settings = getSiteSettings();
+  const base = settings.whatsappHref?.startsWith("http")
+    ? settings.whatsappHref
+    : `https://wa.me/${String(settings.whatsappHref || "529511509454").replace(/\D/g, "")}`;
+  const separator = base.includes("?") ? "&" : "?";
+  return `${base}${separator}text=${encodeURIComponent(text)}`;
+}
+
+function answerFaqQuestion(question) {
+  const text = normalizeQuestion(question);
+  const settings = getSiteSettings();
+  const googleLink = settings.googleProfileHref || "https://share.google/C5J90ehjHyg3jdsg1";
+  const menuLink = `${location.origin}/menu.html`;
+  const reserveLink = `${location.origin}/reservas.html`;
+
+  if (/horario|hora|abren|cierran|abierto/.test(text)) {
+    return `Nuestro horario es ${settings.hours || "martes a domingo, 12:00 - 19:30"}.`;
+  }
+  if (/direccion|ubicacion|llegar|mapa|maps|google|donde/.test(text)) {
+    return `Estamos en ${settings.address || "Calle Fundadores 105, Oaxaca de Juarez"}. Para instrucciones abre el perfil de Google: ${googleLink}`;
+  }
+  if (/reserv|mesa|apart|disponibilidad/.test(text)) {
+    return `Puedes solicitar tu reserva en ${reserveLink}. Tambien podemos ayudarte por WhatsApp si es para grupo, evento o celebracion.`;
+  }
+  if (/menu|carta|platillo|precio|comida|istm|garnacha|horno|pescado|camaron/.test(text)) {
+    return `Puedes ver la carta completa en ${menuLink}. Tenemos cocina del Istmo, pesca fresca, platos al horno y opciones para compartir al centro.`;
+  }
+  if (/pago|anticipo|stripe|tarjeta|transferencia|prepago/.test(text)) {
+    return "Manejamos reservas sin cargo y, para experiencias o eventos, podemos solicitar anticipo o prepago en linea segun la configuracion vigente.";
+  }
+  if (/alerg|restric|vegetar|sin gluten|intoler/.test(text)) {
+    return "Si tienes alergias o restricciones, indicalas al reservar. El equipo revisa la solicitud antes de confirmar disponibilidad.";
+  }
+  if (/evento|experiencia|cumple|celebr|grupo|familia|conviv/.test(text)) {
+    return "Tenemos experiencias y opciones para grupos, celebraciones y convivencias con comida al centro. Conviene contactarnos por WhatsApp para armar la propuesta.";
+  }
+  if (/telefono|whatsapp|contact|llamar/.test(text)) {
+    return `Puedes escribirnos por WhatsApp o llamar al ${settings.whatsapp || settings.phone || "951 150 9454"}.`;
+  }
+  return "";
+}
+
+function initFaqChat() {
+  const form = document.querySelector("#faq-chat-form");
+  const messages = document.querySelector("#faq-chat-messages");
+  if (!form || !messages) return;
+  if (form.dataset.initialized === "true") return;
+  form.dataset.initialized = "true";
+
+  const appendMessage = (content, type = "bot") => {
+    const message = document.createElement("p");
+    message.className = `chat-message ${type}`;
+    message.textContent = content;
+    messages.append(message);
+    messages.scrollTop = messages.scrollHeight;
+  };
+
+  const appendTransfer = (question) => {
+    const message = document.createElement("p");
+    message.className = "chat-message action";
+    const url = whatsappLinkWithText(`Hola Xadani, tengo esta consulta y no quedo resuelta en el chat: ${question}`);
+    message.innerHTML = `
+      No quiero inventarte una respuesta. Puedo transferir tu consulta por WhatsApp para que el restaurante la responda directamente.<br>
+      <a href="${escapeHtml(url)}" target="_blank" rel="noopener">Enviar consulta por WhatsApp</a>
+    `;
+    messages.append(message);
+    messages.scrollTop = messages.scrollHeight;
+  };
+
+  const handleQuestion = (question) => {
+    const cleanQuestion = String(question || "").trim();
+    if (!cleanQuestion) return;
+    appendMessage(cleanQuestion, "user");
+    const answer = answerFaqQuestion(cleanQuestion);
+    if (answer) {
+      appendMessage(answer, "bot");
+    }
+    appendTransfer(cleanQuestion);
+  };
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const input = form.elements.question;
+    handleQuestion(input.value);
+    form.reset();
+    input.focus();
+  });
+
+  document.querySelectorAll("[data-faq-question]").forEach((button) => {
+    button.addEventListener("click", () => handleQuestion(button.dataset.faqQuestion));
   });
 }
 
@@ -818,6 +926,7 @@ if (stripeStatus === "success" || stripeStatus === "cancel") {
 }
 
 applySiteSettings();
+initFaqChat();
 applyReservationQueryParams();
 updatePaymentPreview();
 renderMenuTabs("entradas");
@@ -826,6 +935,7 @@ renderFullMenu();
 
 Promise.all([loadRemoteSettings(), loadRemoteMenu(), loadRemoteGallery(), loadRemoteExperiences()]).then(() => {
   applySiteSettings();
+  initFaqChat();
   renderGallery();
   renderExperiences();
   const activeCategory = menuCategories[0]?.slug || "entradas";

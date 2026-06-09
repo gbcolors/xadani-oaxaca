@@ -3,37 +3,93 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Contacto y ubicación | Xadani en Oaxaca</title>
-    <meta name="description" content="Ubicación, teléfono, WhatsApp y cómo llegar a Xadani en Oaxaca." />
+    <title>Contacto y ubicaci&oacute;n | Xadani en Oaxaca</title>
+    <meta name="description" content="Ubicaci&oacute;n, tel&eacute;fono, WhatsApp y c&oacute;mo llegar a Xadani en Oaxaca." />
     <link rel="canonical" href="https://www.xadanienoaxaca.com/contacto.html" />
-    <link rel="stylesheet" href="styles.css?v=20260608-clear-vignette" />
+    <link rel="stylesheet" href="styles.css?v=20260609-contact-chat-3" />
   </head>
   <body>
     <header class="site-header">
-      <a class="brand" href="/"><img class="brand-logo" src="assets/xadani-logo.png" alt="" /><span><strong>Xadani</strong><small>Oaxaca</small></span></a>
-      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
-      <nav id="site-nav" class="site-nav"><a href="/menu.html">Menú</a><a href="/experiencia.html">Experiencia</a><a href="/reservas.html">Reservaciones</a><a href="/nosotros.html">Nosotros</a><a href="/biblioteca.html">Galería</a><a href="/contacto.html">Contacto</a></nav>
+      <a class="brand" href="/">
+        <img class="brand-logo" src="assets/xadani-logo.png" alt="" />
+        <span><strong>Xadani</strong><small>Oaxaca</small></span>
+      </a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+        <span></span><span></span><span></span>
+      </button>
+      <nav id="site-nav" class="site-nav">
+        <a href="/menu.html">Men&uacute;</a>
+        <a href="/experiencia.html">Experiencia</a>
+        <a href="/reservas.html">Reservaciones</a>
+        <a href="/nosotros.html">Nosotros</a>
+        <a href="/biblioteca.html">Galer&iacute;a</a>
+        <a href="/contacto.html">Contacto</a>
+      </nav>
     </header>
+
     <main>
       <section class="contact-hero">
         <div>
-          <p class="eyebrow">Contacto · Ubicación</p>
+          <p class="eyebrow">Contacto &middot; Ubicaci&oacute;n</p>
           <h1 data-setting="contactTitle">Encuentra tu mesa en Xadani.</h1>
-          <p data-setting="contactDescription">Estamos en Oaxaca de Juárez para compartir contigo los sabores familiares de Santa María Xadani.</p>
-          <address data-setting="address">Calle Fundadores 105, 68127 Oaxaca de Juárez, Oaxaca</address>
+          <p data-setting="contactDescription">Estamos en Oaxaca de Ju&aacute;rez para compartir contigo los sabores familiares de Santa Mar&iacute;a Xadani.</p>
+          <address data-setting="address">Calle Fundadores 105, 68127 Oaxaca de Ju&aacute;rez, Oaxaca</address>
           <span data-setting="hours">Martes a domingo, 12:00 - 19:30</span>
+
+          <aside class="contact-chat" aria-label="Chat de preguntas frecuentes">
+            <div class="chat-heading">
+              <div>
+                <strong>Asistente Xadani</strong>
+                <span>Preguntas frecuentes</span>
+              </div>
+              <small>En linea</small>
+            </div>
+            <div class="chat-messages" id="faq-chat-messages" aria-live="polite">
+              <p class="chat-message bot">Hola, puedo ayudarte con horarios, reservas, ubicacion, menu, eventos y formas de pago.</p>
+            </div>
+            <div class="chat-quick-actions" aria-label="Preguntas rapidas">
+              <button type="button" data-faq-question="Cual es el horario">Horario</button>
+              <button type="button" data-faq-question="Como llegar a Xadani en Oaxaca">Como llegar</button>
+              <button type="button" data-faq-question="Como puedo reservar">Reservar</button>
+              <button type="button" data-faq-question="Tienen menu istmeno">Menu</button>
+            </div>
+            <form class="chat-form" id="faq-chat-form">
+              <input name="question" type="text" autocomplete="off" placeholder="Escribe tu pregunta" required />
+              <button type="submit">Enviar</button>
+            </form>
+          </aside>
         </div>
-        <iframe title="Ubicación de Xadani en Oaxaca" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=Xadani%20en%20Oaxaca&output=embed"></iframe>
+
+        <div class="contact-map-shell">
+          <iframe title="Ubicaci&oacute;n de Xadani en Oaxaca" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=Xadani%20en%20Oaxaca&output=embed"></iframe>
+          <a class="map-profile-link" href="https://share.google/C5J90ehjHyg3jdsg1" data-setting-href="googleProfileHref" target="_blank" rel="noopener" aria-label="Abrir perfil de Xadani en Google Maps">
+            <span>Abrir en Google Maps</span>
+          </a>
+        </div>
       </section>
+
       <section class="contact-actions">
         <a href="tel:+529511509454" data-setting-href="phoneHref"><span>Llamar</span><strong data-setting="phone">951 150 9454</strong></a>
         <a href="https://wa.me/529511509454" data-setting-href="whatsappHref" target="_blank" rel="noopener"><span>WhatsApp</span><strong data-setting="whatsapp">951 150 9454</strong></a>
-        <a href="https://share.google/C5J90ehjHyg3jdsg1" data-setting-href="googleProfileHref" target="_blank" rel="noopener"><span>Cómo llegar</span><strong>Perfil de Xadani en Google</strong></a>
+        <a href="https://share.google/C5J90ehjHyg3jdsg1" data-setting-href="googleProfileHref" target="_blank" rel="noopener"><span>C&oacute;mo llegar</span><strong>Perfil de Xadani en Google</strong></a>
         <a href="mailto:hola@xadanienoaxaca.com" data-setting-href="emailHref"><span>Correo</span><strong data-setting="email">hola@xadanienoaxaca.com</strong></a>
       </section>
     </main>
-    <footer class="site-footer"><span class="footer-brand"><img src="assets/xadani-logo.png" alt="" /><span>Xadani en Oaxaca</span></span><nav class="footer-contact-links"><a href="tel:+529511509454" data-setting-href="phoneHref">Llamar</a><a href="https://wa.me/529511509454" data-setting-href="whatsappHref">WhatsApp</a><a href="https://share.google/C5J90ehjHyg3jdsg1" data-setting-href="googleProfileHref">Cómo llegar</a><a href="mailto:hola@xadanienoaxaca.com" data-setting-href="emailHref">Correo</a></nav></footer>
-    <a class="whatsapp-float" href="https://wa.me/529511509454" data-setting-href="whatsappHref" target="_blank" rel="noopener" aria-label="Consultar por WhatsApp"><span class="whatsapp-bubble">Iniciar Chat</span><img src="assets/whatsapp-icon.png" alt="" aria-hidden="true" /></a>
-    <script src="script.js?v=20260608-nav-admin"></script>
+
+    <footer class="site-footer">
+      <span class="footer-brand"><img src="assets/xadani-logo.png" alt="" /><span>Xadani en Oaxaca</span></span>
+      <nav class="footer-contact-links">
+        <a href="tel:+529511509454" data-setting-href="phoneHref">Llamar</a>
+        <a href="https://wa.me/529511509454" data-setting-href="whatsappHref">WhatsApp</a>
+        <a href="https://share.google/C5J90ehjHyg3jdsg1" data-setting-href="googleProfileHref">C&oacute;mo llegar</a>
+        <a href="mailto:hola@xadanienoaxaca.com" data-setting-href="emailHref">Correo</a>
+      </nav>
+    </footer>
+
+    <a class="whatsapp-float" href="https://wa.me/529511509454" data-setting-href="whatsappHref" target="_blank" rel="noopener" aria-label="Consultar por WhatsApp">
+      <span class="whatsapp-bubble">Iniciar Chat</span>
+      <img src="assets/whatsapp-icon.png" alt="" aria-hidden="true" />
+    </a>
+    <script src="script.js?v=20260609-contact-chat"></script>
   </body>
 </html>
