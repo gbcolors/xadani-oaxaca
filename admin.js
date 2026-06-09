@@ -8,7 +8,7 @@ const EXPERIENCES_KEY = "xadaniExperiences";
 const MANAGED_SITES_KEY = "xadaniManagedSites";
 const TEAM_EMAILS_KEY = "xadaniTeamEmails";
 const MOBILE_APPS_KEY = "xadaniMobileApps";
-const DEVELOPER_VENDOR = "GEMINPEC S.A. de C.V. SOFOM ENR";
+const DEVELOPER_VENDOR = "GATO BRONCO COLORS CLOTHING ART FOOD SAS DE CV";
 const DEFAULT_MAIL_SECURITY = "SSL/TLS";
 
 let adminToken = sessionStorage.getItem("xadaniAdminToken") || "";
@@ -94,6 +94,18 @@ const defaultManagedSites = [
     adminUrl: "https://www.xadanienoaxaca.com/admin",
     reservationUrl: "https://www.xadanienoaxaca.com/reservas.html",
     notes: "Sitio operativo con reservas, menu, galeria, experiencias y panel admin."
+  },
+  {
+    id: "local-verdemar",
+    siteKey: "verdemar",
+    name: "Verdemar Restaurante & Bar",
+    domain: "verdemar.com.mx",
+    type: "restaurant",
+    status: "active",
+    publicUrl: "https://verdemar.com.mx",
+    adminUrl: "https://verdemar.com.mx/admin",
+    reservationUrl: "https://verdemar.com.mx/reservas.html",
+    notes: "Sitio Verdemar conectado al superadmin para acceso operativo."
   }
 ];
 
