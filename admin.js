@@ -5,6 +5,9 @@ const MENU_KEY = "xadaniMenuOverrides";
 const SETTINGS_KEY = "xadaniSiteSettings";
 const LIBRARY_KEY = "xadaniLibrary";
 const EXPERIENCES_KEY = "xadaniExperiences";
+const MANAGED_SITES_KEY = "xadaniManagedSites";
+const TEAM_EMAILS_KEY = "xadaniTeamEmails";
+const MOBILE_APPS_KEY = "xadaniMobileApps";
 
 let adminToken = sessionStorage.getItem("xadaniAdminToken") || "";
 const localFileApiBase = "http://127.0.0.1:3000";
@@ -77,6 +80,21 @@ const defaultCategories = [
   { slug: "bebidas-sin-alcohol", group: "BEBIDAS", name: "SIN ALCOHOL", sortOrder: 14 }
 ];
 
+const defaultManagedSites = [
+  {
+    id: "local-xadani",
+    siteKey: "xadani",
+    name: "Xadani en Oaxaca",
+    domain: "xadanienoaxaca.com",
+    type: "restaurant",
+    status: "active",
+    publicUrl: "https://www.xadanienoaxaca.com",
+    adminUrl: "https://www.xadanienoaxaca.com/admin",
+    reservationUrl: "https://www.xadanienoaxaca.com/reservas.html",
+    notes: "Sitio operativo con reservas, menu, galeria, experiencias y panel admin."
+  }
+];
+
 const loginPanel = document.querySelector("#login-panel");
 const adminApp = document.querySelector("#admin-app");
 const adminShell = document.querySelector("#admin-shell");
@@ -127,6 +145,14 @@ const experienceEditor = document.querySelector("#experience-editor");
 const experienceList = document.querySelector("#experience-admin-list");
 const experienceSubmitButton = document.querySelector("#experience-submit");
 const cancelExperienceEditButton = document.querySelector("#cancel-experience-edit");
+const siteEditor = document.querySelector("#site-editor");
+const siteList = document.querySelector("#site-admin-list");
+const emailEditor = document.querySelector("#email-editor");
+const emailList = document.querySelector("#email-admin-list");
+const emailSiteSelect = document.querySelector("#email-site-select");
+const mobileAppEditor = document.querySelector("#mobile-app-editor");
+const mobileAppList = document.querySelector("#mobile-app-admin-list");
+const appSiteSelect = document.querySelector("#app-site-select");
 
 let reservationsCache = [];
 let tablesCache = [];
@@ -135,6 +161,9 @@ let menuCache = [];
 let categoryCache = [...defaultCategories];
 let libraryCache = [];
 let experienceCache = [];
+let managedSitesCache = [...defaultManagedSites];
+let teamEmailsCache = [];
+let mobileAppsCache = [];
 let reportCache = { summary: {}, rows: [] };
 let currentUser = JSON.parse(sessionStorage.getItem("xadaniAdminUser") || "null");
 let draggedTable = null;
@@ -150,6 +179,16 @@ function readStorage(key, fallback) {
 
 function writeStorage(key, value) {
   localStorage.setItem(key, JSON.stringify(value));
+}
+
+function slugify(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
 
 async function apiRequest(path, options = {}) {
@@ -269,8 +308,7 @@ async function loadReservations() {
     reservationsCache = data.reservations || [];
     writeStorage(RESERVATIONS_KEY, reservationsCache);
   } catch {
-    lockAdmin();
-    reservationsCache = [];
+    reservationsCache = readStorage(RESERVATIONS_KEY, []);
   }
 }
 
@@ -458,11 +496,15 @@ async function loadExperiences() {
 }
 
 async function loadReport() {
-  const params = new URLSearchParams({
-    start: reportFilters.elements.startDate.value,
-    end: reportFilters.elements.endDate.value
-  });
-  reportCache = await apiRequest(`/api/reports?${params.toString()}`);
+  try {
+    const params = new URLSearchParams({
+      start: reportFilters.elements.startDate.value,
+      end: reportFilters.elements.endDate.value
+    });
+    reportCache = await apiRequest(`/api/reports?${params.toString()}`);
+  } catch {
+    reportCache = { summary: {}, rows: [] };
+  }
 }
 
 async function saveExperienceItem(item) {
@@ -483,6 +525,122 @@ async function deleteExperienceItem(id) {
   });
   experienceCache = experienceCache.filter((item) => String(item.id) !== String(id));
   writeStorage(EXPERIENCES_KEY, experienceCache);
+}
+
+async function loadManagedSites() {
+  try {
+    const data = await apiRequest("/api/superadmin/sites");
+    managedSitesCache = data.sites?.length ? data.sites : [...defaultManagedSites];
+    writeStorage(MANAGED_SITES_KEY, managedSitesCache);
+  } catch {
+    managedSitesCache = readStorage(MANAGED_SITES_KEY, defaultManagedSites);
+  }
+}
+
+async function saveManagedSite(item) {
+  const fallbackItem = {
+    ...item,
+    id: item.id || `local-${Date.now()}`,
+    siteKey: item.siteKey || slugify(item.domain || item.name)
+  };
+
+  try {
+    const data = await apiRequest("/api/superadmin/sites", {
+      method: "POST",
+      body: JSON.stringify(fallbackItem)
+    });
+    const saved = data.site || fallbackItem;
+    const index = managedSitesCache.findIndex((site) => String(site.id) === String(saved.id) || site.siteKey === saved.siteKey);
+    if (index >= 0) managedSitesCache[index] = saved;
+    else managedSitesCache.push(saved);
+  } catch {
+    const index = managedSitesCache.findIndex((site) => String(site.id) === String(fallbackItem.id) || site.siteKey === fallbackItem.siteKey);
+    if (index >= 0) managedSitesCache[index] = fallbackItem;
+    else managedSitesCache.push(fallbackItem);
+  }
+
+  writeStorage(MANAGED_SITES_KEY, managedSitesCache);
+}
+
+async function deleteManagedSite(id) {
+  try {
+    await apiRequest("/api/superadmin/sites", {
+      method: "DELETE",
+      body: JSON.stringify({ id })
+    });
+  } catch {}
+  managedSitesCache = managedSitesCache.filter((site) => String(site.id) !== String(id));
+  writeStorage(MANAGED_SITES_KEY, managedSitesCache);
+}
+
+async function loadTeamEmails() {
+  try {
+    const data = await apiRequest("/api/superadmin/team-emails");
+    teamEmailsCache = data.emails || [];
+    writeStorage(TEAM_EMAILS_KEY, teamEmailsCache);
+  } catch {
+    teamEmailsCache = readStorage(TEAM_EMAILS_KEY, []);
+  }
+}
+
+async function saveTeamEmail(item) {
+  const fallbackItem = { ...item, id: item.id || `local-${Date.now()}` };
+  try {
+    const data = await apiRequest("/api/superadmin/team-emails", {
+      method: "POST",
+      body: JSON.stringify(fallbackItem)
+    });
+    teamEmailsCache.push(data.email || fallbackItem);
+  } catch {
+    teamEmailsCache.push(fallbackItem);
+  }
+  writeStorage(TEAM_EMAILS_KEY, teamEmailsCache);
+}
+
+async function deleteTeamEmail(id) {
+  try {
+    await apiRequest("/api/superadmin/team-emails", {
+      method: "DELETE",
+      body: JSON.stringify({ id })
+    });
+  } catch {}
+  teamEmailsCache = teamEmailsCache.filter((item) => String(item.id) !== String(id));
+  writeStorage(TEAM_EMAILS_KEY, teamEmailsCache);
+}
+
+async function loadMobileApps() {
+  try {
+    const data = await apiRequest("/api/superadmin/mobile-apps");
+    mobileAppsCache = data.apps || [];
+    writeStorage(MOBILE_APPS_KEY, mobileAppsCache);
+  } catch {
+    mobileAppsCache = readStorage(MOBILE_APPS_KEY, []);
+  }
+}
+
+async function saveMobileApp(item) {
+  const fallbackItem = { ...item, id: item.id || `local-${Date.now()}` };
+  try {
+    const data = await apiRequest("/api/superadmin/mobile-apps", {
+      method: "POST",
+      body: JSON.stringify(fallbackItem)
+    });
+    mobileAppsCache.push(data.app || fallbackItem);
+  } catch {
+    mobileAppsCache.push(fallbackItem);
+  }
+  writeStorage(MOBILE_APPS_KEY, mobileAppsCache);
+}
+
+async function deleteMobileApp(id) {
+  try {
+    await apiRequest("/api/superadmin/mobile-apps", {
+      method: "DELETE",
+      body: JSON.stringify({ id })
+    });
+  } catch {}
+  mobileAppsCache = mobileAppsCache.filter((item) => String(item.id) !== String(id));
+  writeStorage(MOBILE_APPS_KEY, mobileAppsCache);
 }
 
 function fileToDataUrl(file) {
@@ -1015,12 +1173,87 @@ function exportReportPdf() {
   win.print();
 }
 
+function renderSuperadminSiteOptions() {
+  const options = managedSitesCache
+    .map((site) => `<option value="${site.siteKey}">${site.name}</option>`)
+    .join("");
+  emailSiteSelect.innerHTML = options;
+  appSiteSelect.innerHTML = options;
+}
+
+function renderSuperadminSites() {
+  siteList.innerHTML = managedSitesCache
+    .map(
+      (site) => `
+        <article class="superadmin-row">
+          <div>
+            <strong>${site.name}</strong>
+            <p>${site.domain} · ${site.type || "sitio"} · ${site.status || "active"}</p>
+            <small>${site.notes || ""}</small>
+          </div>
+          <div class="link-stack">
+            ${site.publicUrl ? `<a href="${site.publicUrl}" target="_blank" rel="noopener">Publico</a>` : ""}
+            ${site.adminUrl ? `<a href="${site.adminUrl}" target="_blank" rel="noopener">Admin</a>` : ""}
+            ${site.reservationUrl ? `<a href="${site.reservationUrl}" target="_blank" rel="noopener">Reservas</a>` : ""}
+          </div>
+          <button class="button" type="button" data-delete-site="${site.id}">Eliminar</button>
+        </article>
+      `
+    )
+    .join("");
+}
+
+function renderTeamEmails() {
+  const siteNames = Object.fromEntries(managedSitesCache.map((site) => [site.siteKey, site.name]));
+  emailList.innerHTML = teamEmailsCache
+    .map(
+      (item) => `
+        <article class="superadmin-row">
+          <div>
+            <strong>${item.email}</strong>
+            <p>${item.displayName} · ${siteNames[item.siteKey] || item.siteKey} · ${item.status}</p>
+            <small>${item.provider || "proveedor pendiente"} · ${item.notes || ""}</small>
+          </div>
+          <span>${item.role || "team"}</span>
+          <button class="button" type="button" data-delete-email="${item.id}">Eliminar</button>
+        </article>
+      `
+    )
+    .join("");
+}
+
+function renderMobileApps() {
+  const siteNames = Object.fromEntries(managedSitesCache.map((site) => [site.siteKey, site.name]));
+  mobileAppList.innerHTML = mobileAppsCache
+    .map(
+      (item) => `
+        <article class="superadmin-row">
+          <div>
+            <strong>${item.appName}</strong>
+            <p>${siteNames[item.siteKey] || item.siteKey} · ${item.platform} · ${item.status}</p>
+            <small>${item.bundleId || "Bundle pendiente"} · ${item.notes || ""}</small>
+          </div>
+          <span>${item.platform}</span>
+          <button class="button" type="button" data-delete-mobile-app="${item.id}">Eliminar</button>
+        </article>
+      `
+    )
+    .join("");
+}
+
 function applyRoleAccess() {
   const isOwner = (currentUser?.role || "owner") === "owner";
+  const isSuperadmin = currentUser?.username === "superadmin";
   document.querySelectorAll(".owner-only").forEach((element) => {
     element.hidden = !isOwner;
   });
+  document.querySelectorAll(".superadmin-only").forEach((element) => {
+    element.hidden = !isSuperadmin;
+  });
   if (!isOwner && location.hash && document.querySelector(location.hash)?.classList.contains("owner-only")) {
+    location.hash = "#reservas";
+  }
+  if (!isSuperadmin && location.hash && document.querySelector(location.hash)?.classList.contains("superadmin-only")) {
     location.hash = "#reservas";
   }
   if (passwordEditor.elements.recoveryEmail) {
@@ -1029,7 +1262,17 @@ function applyRoleAccess() {
 }
 
 async function renderAll() {
-  await Promise.all([loadReservations(), loadTables(), loadWalkins(), loadMenu(), loadLibrary(), loadExperiences()]);
+  await Promise.all([
+    loadReservations(),
+    loadTables(),
+    loadWalkins(),
+    loadMenu(),
+    loadLibrary(),
+    loadExperiences(),
+    loadManagedSites(),
+    loadTeamEmails(),
+    loadMobileApps()
+  ]);
   await loadReport();
   const settings = await loadSettings();
   renderReservations();
@@ -1045,6 +1288,10 @@ async function renderAll() {
   clearLibraryEditor();
   clearExperienceEditor();
   clearCategoryEditor();
+  renderSuperadminSites();
+  renderSuperadminSiteOptions();
+  renderTeamEmails();
+  renderMobileApps();
   renderSettingsEditor(settings);
   renderReport();
   applyRoleAccess();
@@ -1086,6 +1333,78 @@ loginForm.addEventListener("submit", (event) => {
     .catch(() => {
       alert("Clave incorrecta.");
     });
+});
+
+siteEditor.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const data = new FormData(siteEditor);
+  await saveManagedSite({
+    name: data.get("name").trim(),
+    domain: data.get("domain").trim(),
+    siteKey: slugify(data.get("domain") || data.get("name")),
+    type: data.get("type"),
+    status: data.get("status"),
+    publicUrl: data.get("publicUrl").trim(),
+    adminUrl: data.get("adminUrl").trim(),
+    reservationUrl: data.get("reservationUrl").trim(),
+    notes: data.get("notes").trim()
+  });
+  siteEditor.reset();
+  renderSuperadminSites();
+  renderSuperadminSiteOptions();
+});
+
+siteList.addEventListener("click", async (event) => {
+  const button = event.target.closest("[data-delete-site]");
+  if (!button) return;
+  await deleteManagedSite(button.dataset.deleteSite);
+  renderSuperadminSites();
+  renderSuperadminSiteOptions();
+});
+
+emailEditor.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const data = new FormData(emailEditor);
+  await saveTeamEmail({
+    siteKey: data.get("siteKey"),
+    displayName: data.get("displayName").trim(),
+    email: data.get("email").trim(),
+    role: data.get("role").trim(),
+    provider: data.get("provider"),
+    status: data.get("status"),
+    notes: data.get("notes").trim()
+  });
+  emailEditor.reset();
+  renderTeamEmails();
+});
+
+emailList.addEventListener("click", async (event) => {
+  const button = event.target.closest("[data-delete-email]");
+  if (!button) return;
+  await deleteTeamEmail(button.dataset.deleteEmail);
+  renderTeamEmails();
+});
+
+mobileAppEditor.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const data = new FormData(mobileAppEditor);
+  await saveMobileApp({
+    siteKey: data.get("siteKey"),
+    platform: data.get("platform"),
+    appName: data.get("appName").trim(),
+    bundleId: data.get("bundleId").trim(),
+    status: data.get("status"),
+    notes: data.get("notes").trim()
+  });
+  mobileAppEditor.reset();
+  renderMobileApps();
+});
+
+mobileAppList.addEventListener("click", async (event) => {
+  const button = event.target.closest("[data-delete-mobile-app]");
+  if (!button) return;
+  await deleteMobileApp(button.dataset.deleteMobileApp);
+  renderMobileApps();
 });
 
 passwordEditor.addEventListener("submit", async (event) => {

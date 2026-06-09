@@ -22,6 +22,9 @@
           <a href="#informes">Informes</a>
           <a href="#mesas">Plano de mesas</a>
           <a href="#walkins">Walk-ins</a>
+          <a class="superadmin-only" href="#sitios-admin">Sitios</a>
+          <a class="superadmin-only" href="#correos-admin">Correos equipo</a>
+          <a class="superadmin-only" href="#apps-admin">Apps moviles</a>
           <a class="owner-only" href="#menu-admin">Menú</a>
           <a class="owner-only" href="#experiencias-admin">Experiencias</a>
           <a class="owner-only" href="#biblioteca-admin">Biblioteca</a>
@@ -70,6 +73,63 @@
             </article>
           </section>
 
+
+          <section class="admin-card superadmin-only" id="sitios-admin">
+            <div class="card-heading">
+              <div>
+                <p class="eyebrow">Superadmin</p>
+                <h2>Sitios administrados</h2>
+              </div>
+            </div>
+            <form class="site-editor" id="site-editor">
+              <label>Nombre <input name="name" type="text" placeholder="Xadani en Oaxaca" required /></label>
+              <label>Dominio <input name="domain" type="text" placeholder="xadanienoaxaca.com" required /></label>
+              <label>Tipo <select name="type"><option value="restaurant">Restaurante</option><option value="hotel">Hotel / Hospedaje</option><option value="commerce">Comercio</option><option value="service">Servicios</option></select></label>
+              <label>Estado <select name="status"><option value="active">Activo</option><option value="build">En construccion</option><option value="paused">Pausado</option></select></label>
+              <label class="wide">URL publica <input name="publicUrl" type="url" placeholder="https://www.xadanienoaxaca.com" /></label>
+              <label class="wide">URL admin <input name="adminUrl" type="url" placeholder="https://www.xadanienoaxaca.com/admin" /></label>
+              <label class="wide">URL reservas <input name="reservationUrl" type="url" placeholder="https://www.xadanienoaxaca.com/reservas.html" /></label>
+              <label class="wide">Notas <textarea name="notes" rows="3" placeholder="Proveedor, hosting, pendientes, credenciales por solicitar."></textarea></label>
+              <button class="button primary" type="submit">Guardar sitio</button>
+            </form>
+            <div class="superadmin-list" id="site-admin-list"></div>
+          </section>
+
+          <section class="admin-card superadmin-only" id="correos-admin">
+            <div class="card-heading"><div><p class="eyebrow">Equipo</p><h2>Cuentas de correo</h2></div></div>
+            <form class="email-editor" id="email-editor">
+              <label>Sitio <select name="siteKey" id="email-site-select"></select></label>
+              <label>Nombre <input name="displayName" type="text" placeholder="Reservas Xadani" required /></label>
+              <label>Correo <input name="email" type="email" placeholder="reservas@xadanienoaxaca.com" required /></label>
+              <label>Rol <input name="role" type="text" placeholder="reservas, marketing, gerencia" /></label>
+              <label>Proveedor <select name="provider"><option value="pending">Pendiente</option><option value="google-workspace">Google Workspace</option><option value="zoho">Zoho Mail</option><option value="cpanel">cPanel</option><option value="brevo">Brevo SMTP</option><option value="other">Otro</option></select></label>
+              <label>Estado <select name="status"><option value="requested">Solicitada</option><option value="created">Creada</option><option value="dns-pending">DNS pendiente</option><option value="active">Activa</option></select></label>
+              <label class="wide">Notas <textarea name="notes" rows="3" placeholder="Password temporal, MX/SPF/DKIM pendientes, responsable."></textarea></label>
+              <button class="button primary" type="submit">Crear solicitud de correo</button>
+            </form>
+            <p class="admin-note">Para crear cuentas reales necesitamos acceso al proveedor de correo del dominio. Aqui queda la solicitud lista y auditable.</p>
+            <div class="superadmin-list" id="email-admin-list"></div>
+          </section>
+
+          <section class="admin-card superadmin-only" id="apps-admin">
+            <div class="card-heading"><div><p class="eyebrow">Roadmap</p><h2>Apps moviles e integraciones</h2></div></div>
+            <form class="mobile-app-editor" id="mobile-app-editor">
+              <label>Sitio <select name="siteKey" id="app-site-select"></select></label>
+              <label>Plataforma <select name="platform"><option value="ios">iOS</option><option value="android">Android</option><option value="pwa">PWA</option></select></label>
+              <label>Nombre app <input name="appName" type="text" placeholder="Xadani en Oaxaca" required /></label>
+              <label>Bundle / Package ID <input name="bundleId" type="text" placeholder="mx.xadani.app" /></label>
+              <label>Estado <select name="status"><option value="planning">Planeacion</option><option value="credentials-needed">Faltan credenciales</option><option value="build-ready">Lista para build</option><option value="submitted">Enviada a tienda</option></select></label>
+              <label class="wide">Notas <textarea name="notes" rows="3" placeholder="Apple Team ID, Play Console, assets, pantallas pendientes."></textarea></label>
+              <button class="button primary" type="submit">Guardar app</button>
+            </form>
+            <div class="integration-roadmap">
+              <article><strong>Reservas</strong><span>Agenda dia/mes, horarios web, cierre por turno, mesas, waitlist, grupos, notas y estados.</span></article>
+              <article><strong>CRM</strong><span>Clientes, historial, etiquetas, comentarios, alergias, preferencias y campanas.</span></article>
+              <article><strong>Canales</strong><span>Google Business, WhatsApp, correo, Stripe, resenas, notificaciones e integraciones externas.</span></article>
+              <article><strong>Apps</strong><span>PWA primero; iOS/Android cuando tengamos App Store Connect y Play Console.</span></article>
+            </div>
+            <div class="superadmin-list" id="mobile-app-admin-list"></div>
+          </section>
           <section class="admin-card" id="reservas">
             <div class="card-heading">
               <div>
@@ -562,6 +622,6 @@
       </section>
     </main>
 
-    <script src="/admin.js?v=20260604-carta"></script>
+    <script src="/admin.js?v=20260608-superadmin-suite"></script>
   </body>
 </html>

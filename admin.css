@@ -231,6 +231,9 @@ h2 {
 .library-bulk-uploader,
 .category-editor,
 .menu-editor,
+.site-editor,
+.email-editor,
+.mobile-app-editor,
 .settings-editor {
   display: grid;
   gap: 14px;
@@ -451,6 +454,13 @@ th {
   margin-bottom: 18px;
 }
 
+.site-editor,
+.email-editor,
+.mobile-app-editor {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-bottom: 18px;
+}
+
 .settings-editor {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -463,6 +473,9 @@ th {
 .library-editor .wide,
 .library-bulk-uploader .wide,
 .category-editor .wide,
+.site-editor .wide,
+.email-editor .wide,
+.mobile-app-editor .wide,
 .menu-editor .wide {
   grid-column: 1 / -1;
 }
@@ -488,6 +501,67 @@ th {
   display: grid;
   gap: 10px;
   margin-bottom: 24px;
+}
+
+.superadmin-list {
+  display: grid;
+  gap: 10px;
+}
+
+.superadmin-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 150px auto;
+  gap: 12px;
+  align-items: center;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
+
+.superadmin-row p,
+.superadmin-row small {
+  margin: 4px 0 0;
+  color: var(--muted);
+}
+
+.link-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.link-stack a {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 7px 10px;
+  background: rgba(184, 51, 56, 0.08);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.integration-roadmap {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0 0 18px;
+}
+
+.integration-roadmap article {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+  background: rgba(255, 250, 240, 0.7);
+}
+
+.integration-roadmap strong,
+.integration-roadmap span {
+  display: block;
+}
+
+.integration-roadmap span {
+  margin-top: 7px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
 }
 
 .menu-row,
@@ -534,6 +608,11 @@ th {
   .library-bulk-uploader,
   .category-editor,
   .menu-editor,
+  .site-editor,
+  .email-editor,
+  .mobile-app-editor,
+  .superadmin-row,
+  .integration-roadmap,
   .settings-editor {
     grid-template-columns: 1fr;
   }
