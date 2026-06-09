@@ -8,6 +8,8 @@ const EXPERIENCES_KEY = "xadaniExperiences";
 const MANAGED_SITES_KEY = "xadaniManagedSites";
 const TEAM_EMAILS_KEY = "xadaniTeamEmails";
 const MOBILE_APPS_KEY = "xadaniMobileApps";
+const DEVELOPER_VENDOR = "GEMINPEC S.A. de C.V. SOFOM ENR";
+const DEFAULT_MAIL_SECURITY = "SSL/TLS";
 
 let adminToken = sessionStorage.getItem("xadaniAdminToken") || "";
 const localFileApiBase = "http://127.0.0.1:3000";
@@ -191,6 +193,11 @@ function slugify(value) {
     .replace(/^-+|-+$/g, "");
 }
 
+function cryptoRandomId() {
+  if (window.crypto?.randomUUID) return window.crypto.randomUUID().toUpperCase();
+  return `GBMAILER-${Date.now()}-${Math.random().toString(16).slice(2)}`.toUpperCase();
+}
+
 async function apiRequest(path, options = {}) {
   const response = await fetch(`${apiBase}${path}`, {
     ...options,
@@ -268,6 +275,35 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
+}
+
+function xmlEscape(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
+function defaultMailHost(email) {
+  const domain = String(email || "").split("@")[1] || "";
+  return domain ? `mail.${domain}` : "";
+}
+
+function normalizeEmailConfig(item) {
+  const incomingHost = item.incomingHost || defaultMailHost(item.email);
+  const outgoingHost = item.outgoingHost || defaultMailHost(item.email);
+  return {
+    ...item,
+    provider: item.provider || "hostgator",
+    incomingHost,
+    incomingPort: Number(item.incomingPort || 993),
+    outgoingHost,
+    outgoingPort: Number(item.outgoingPort || 465),
+    securityType: item.securityType || DEFAULT_MAIL_SECURITY,
+    webmailUrl: item.webmailUrl || (String(item.email || "").includes("@") ? `https://${String(item.email).split("@")[1]}/webmail` : ""),
+    signature: item.signature || ""
+  };
 }
 
 function clamp(value, min, max) {
@@ -584,13 +620,13 @@ async function loadTeamEmails() {
 }
 
 async function saveTeamEmail(item) {
-  const fallbackItem = { ...item, id: item.id || `local-${Date.now()}` };
+  const fallbackItem = normalizeEmailConfig({ ...item, id: item.id || `local-${Date.now()}` });
   try {
     const data = await apiRequest("/api/superadmin/team-emails", {
       method: "POST",
       body: JSON.stringify(fallbackItem)
     });
-    teamEmailsCache.push(data.email || fallbackItem);
+    teamEmailsCache.push(normalizeEmailConfig(data.email || fallbackItem));
   } catch {
     teamEmailsCache.push(fallbackItem);
   }
@@ -619,7 +655,11 @@ async function loadMobileApps() {
 }
 
 async function saveMobileApp(item) {
-  const fallbackItem = { ...item, id: item.id || `local-${Date.now()}` };
+  const vendorNote = `Vendedor temporal: ${DEVELOPER_VENDOR}`;
+  const notes = String(item.notes || "").includes(DEVELOPER_VENDOR)
+    ? item.notes
+    : [item.notes, vendorNote].filter(Boolean).join("\n");
+  const fallbackItem = { ...item, notes, id: item.id || `local-${Date.now()}` };
   try {
     const data = await apiRequest("/api/superadmin/mobile-apps", {
       method: "POST",
@@ -1207,17 +1247,28 @@ function renderTeamEmails() {
   const siteNames = Object.fromEntries(managedSitesCache.map((site) => [site.siteKey, site.name]));
   emailList.innerHTML = teamEmailsCache
     .map(
-      (item) => `
+      (rawItem) => {
+        const item = normalizeEmailConfig(rawItem);
+        return `
         <article class="superadmin-row">
           <div>
             <strong>${item.email}</strong>
-            <p>${item.displayName} · ${siteNames[item.siteKey] || item.siteKey} · ${item.status}</p>
-            <small>${item.provider || "proveedor pendiente"} · ${item.notes || ""}</small>
+            <p>${item.displayName} · ${siteNames[item.siteKey] || item.siteKey} · ${item.status} · GBMailer</p>
+            <small>IMAP ${item.incomingHost}:${item.incomingPort} · SMTP ${item.outgoingHost}:${item.outgoingPort} · ${item.securityType}</small>
+            ${item.signature ? `<small>Firma: ${escapeHtml(item.signature).replaceAll("\n", " · ")}</small>` : ""}
           </div>
-          <span>${item.role || "team"}</span>
-          <button class="button" type="button" data-delete-email="${item.id}">Eliminar</button>
+          <div class="link-stack">
+            ${item.webmailUrl ? `<a href="${item.webmailUrl}" target="_blank" rel="noopener">Webmail</a>` : ""}
+            <button class="button mini" type="button" data-download-ios-email="${item.id}">iPhone</button>
+            <button class="button mini" type="button" data-download-android-email="${item.id}">Android</button>
+          </div>
+          <div class="button-row">
+            <span class="status-pill">${item.role || "team"}</span>
+            <button class="button" type="button" data-delete-email="${item.id}">Eliminar</button>
+          </div>
         </article>
-      `
+      `;
+      }
     )
     .join("");
 }
@@ -1231,7 +1282,7 @@ function renderMobileApps() {
           <div>
             <strong>${item.appName}</strong>
             <p>${siteNames[item.siteKey] || item.siteKey} · ${item.platform} · ${item.status}</p>
-            <small>${item.bundleId || "Bundle pendiente"} · ${item.notes || ""}</small>
+            <small>${item.bundleId || "Bundle pendiente"} · Vendedor: ${DEVELOPER_VENDOR} · ${item.notes || ""}</small>
           </div>
           <span>${item.platform}</span>
           <button class="button" type="button" data-delete-mobile-app="${item.id}">Eliminar</button>
@@ -1239,6 +1290,96 @@ function renderMobileApps() {
       `
     )
     .join("");
+}
+
+function gbMailerConfigText(item) {
+  const account = normalizeEmailConfig(item);
+  return [
+    "Gato Business Mail / GBMailer",
+    `Cuenta: ${account.email}`,
+    `Nombre: ${account.displayName}`,
+    `Proveedor: ${account.provider || "hostgator"}`,
+    "",
+    "Entrada IMAP",
+    `Servidor: ${account.incomingHost}`,
+    `Puerto: ${account.incomingPort}`,
+    `Seguridad: ${account.securityType}`,
+    `Usuario: ${account.email}`,
+    "",
+    "Salida SMTP",
+    `Servidor: ${account.outgoingHost}`,
+    `Puerto: ${account.outgoingPort}`,
+    `Seguridad: ${account.securityType}`,
+    `Usuario: ${account.email}`,
+    "",
+    `Password temporal: ${account.temporaryPassword || "Solicitar al administrador"}`,
+    `Webmail: ${account.webmailUrl || "Pendiente"}`,
+    "",
+    "Firma empresarial",
+    account.signature || "Pendiente",
+    "",
+    `Vendedor / desarrollador: ${DEVELOPER_VENDOR}`
+  ].join("\n");
+}
+
+function downloadAndroidEmailConfig(item) {
+  const account = normalizeEmailConfig(item);
+  downloadFile(
+    `gbmailer-${account.email || "cuenta"}-android.txt`,
+    gbMailerConfigText(account),
+    "text/plain;charset=utf-8"
+  );
+}
+
+function downloadIosEmailConfig(item) {
+  const account = normalizeEmailConfig(item);
+  const payloadId = `com.gatobusiness.gbmailer.${slugify(account.email) || Date.now()}`;
+  const passwordBlock = account.temporaryPassword
+    ? `<key>EmailAccountPassword</key><string>${xmlEscape(account.temporaryPassword)}</string>`
+    : "";
+  const profile = `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>PayloadContent</key>
+  <array>
+    <dict>
+      <key>PayloadType</key><string>com.apple.mail.managed</string>
+      <key>PayloadVersion</key><integer>1</integer>
+      <key>PayloadIdentifier</key><string>${xmlEscape(payloadId)}.mail</string>
+      <key>PayloadUUID</key><string>${cryptoRandomId()}</string>
+      <key>PayloadDisplayName</key><string>GBMailer - ${xmlEscape(account.email)}</string>
+      <key>EmailAccountDescription</key><string>${xmlEscape(account.displayName || account.email)}</string>
+      <key>EmailAccountName</key><string>${xmlEscape(account.displayName || account.email)}</string>
+      <key>EmailAddress</key><string>${xmlEscape(account.email)}</string>
+      <key>IncomingMailServerAuthentication</key><string>EmailAuthPassword</string>
+      <key>IncomingMailServerHostName</key><string>${xmlEscape(account.incomingHost)}</string>
+      <key>IncomingMailServerPortNumber</key><integer>${Number(account.incomingPort || 993)}</integer>
+      <key>IncomingMailServerUseSSL</key><true/>
+      <key>IncomingMailServerUsername</key><string>${xmlEscape(account.email)}</string>
+      <key>IncomingMailServerIMAPPathPrefix</key><string></string>
+      <key>OutgoingMailServerAuthentication</key><string>EmailAuthPassword</string>
+      <key>OutgoingMailServerHostName</key><string>${xmlEscape(account.outgoingHost)}</string>
+      <key>OutgoingMailServerPortNumber</key><integer>${Number(account.outgoingPort || 465)}</integer>
+      <key>OutgoingMailServerUseSSL</key><true/>
+      <key>OutgoingMailServerUsername</key><string>${xmlEscape(account.email)}</string>
+      ${passwordBlock}
+    </dict>
+  </array>
+  <key>PayloadDisplayName</key><string>GBMailer ${xmlEscape(account.email)}</string>
+  <key>PayloadIdentifier</key><string>${xmlEscape(payloadId)}</string>
+  <key>PayloadOrganization</key><string>Gato Business Mail</string>
+  <key>PayloadRemovalDisallowed</key><false/>
+  <key>PayloadType</key><string>Configuration</string>
+  <key>PayloadUUID</key><string>${cryptoRandomId()}</string>
+  <key>PayloadVersion</key><integer>1</integer>
+</dict>
+</plist>`;
+  downloadFile(
+    `gbmailer-${account.email || "cuenta"}-iphone.mobileconfig`,
+    profile,
+    "application/x-apple-aspen-config;charset=utf-8"
+  );
 }
 
 function applyRoleAccess() {
@@ -1372,6 +1513,14 @@ emailEditor.addEventListener("submit", async (event) => {
     role: data.get("role").trim(),
     provider: data.get("provider"),
     status: data.get("status"),
+    temporaryPassword: data.get("temporaryPassword").trim(),
+    incomingHost: data.get("incomingHost").trim(),
+    incomingPort: Number(data.get("incomingPort") || 993),
+    outgoingHost: data.get("outgoingHost").trim(),
+    outgoingPort: Number(data.get("outgoingPort") || 465),
+    securityType: data.get("securityType"),
+    webmailUrl: data.get("webmailUrl").trim(),
+    signature: data.get("signature").trim(),
     notes: data.get("notes").trim()
   });
   emailEditor.reset();
@@ -1379,6 +1528,20 @@ emailEditor.addEventListener("submit", async (event) => {
 });
 
 emailList.addEventListener("click", async (event) => {
+  const iosButton = event.target.closest("[data-download-ios-email]");
+  if (iosButton) {
+    const item = teamEmailsCache.find((row) => String(row.id) === String(iosButton.dataset.downloadIosEmail));
+    if (item) downloadIosEmailConfig(item);
+    return;
+  }
+
+  const androidButton = event.target.closest("[data-download-android-email]");
+  if (androidButton) {
+    const item = teamEmailsCache.find((row) => String(row.id) === String(androidButton.dataset.downloadAndroidEmail));
+    if (item) downloadAndroidEmailConfig(item);
+    return;
+  }
+
   const button = event.target.closest("[data-delete-email]");
   if (!button) return;
   await deleteTeamEmail(button.dataset.deleteEmail);

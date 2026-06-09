@@ -96,18 +96,38 @@
           </section>
 
           <section class="admin-card superadmin-only" id="correos-admin">
-            <div class="card-heading"><div><p class="eyebrow">Equipo</p><h2>Cuentas de correo</h2></div></div>
+            <div class="card-heading">
+              <div>
+                <p class="eyebrow">Gato Business Mail</p>
+                <h2>GBMailer empresarial</h2>
+              </div>
+            </div>
+            <div class="gbmail-hero">
+              <div>
+                <strong>GBMailer</strong>
+                <p>Webmail empresarial propio sobre HostGator, con una interfaz practica inspirada en la eficiencia de Gmail: bandeja limpia, busqueda rapida, firma corporativa y configuracion movil guiada.</p>
+              </div>
+              <span>Proveedor base: HostGator</span>
+            </div>
             <form class="email-editor" id="email-editor">
               <label>Sitio <select name="siteKey" id="email-site-select"></select></label>
               <label>Nombre <input name="displayName" type="text" placeholder="Reservas Xadani" required /></label>
               <label>Correo <input name="email" type="email" placeholder="reservas@xadanienoaxaca.com" required /></label>
               <label>Rol <input name="role" type="text" placeholder="reservas, marketing, gerencia" /></label>
-              <label>Proveedor <select name="provider"><option value="pending">Pendiente</option><option value="google-workspace">Google Workspace</option><option value="zoho">Zoho Mail</option><option value="cpanel">cPanel</option><option value="brevo">Brevo SMTP</option><option value="other">Otro</option></select></label>
+              <label>Proveedor <select name="provider"><option value="hostgator">HostGator</option><option value="google-workspace">Google Workspace</option><option value="zoho">Zoho Mail</option><option value="cpanel">cPanel</option><option value="brevo">Brevo SMTP</option><option value="other">Otro</option></select></label>
               <label>Estado <select name="status"><option value="requested">Solicitada</option><option value="created">Creada</option><option value="dns-pending">DNS pendiente</option><option value="active">Activa</option></select></label>
-              <label class="wide">Notas <textarea name="notes" rows="3" placeholder="Password temporal, MX/SPF/DKIM pendientes, responsable."></textarea></label>
-              <button class="button primary" type="submit">Crear solicitud de correo</button>
+              <label>Password temporal <input name="temporaryPassword" type="text" placeholder="Temporal seguro" /></label>
+              <label>Servidor IMAP <input name="incomingHost" type="text" placeholder="mail.tudominio.com" /></label>
+              <label>Puerto IMAP <input name="incomingPort" type="number" value="993" /></label>
+              <label>Servidor SMTP <input name="outgoingHost" type="text" placeholder="mail.tudominio.com" /></label>
+              <label>Puerto SMTP <input name="outgoingPort" type="number" value="465" /></label>
+              <label>Seguridad <select name="securityType"><option value="SSL/TLS">SSL/TLS</option><option value="STARTTLS">STARTTLS</option><option value="None">Sin cifrado</option></select></label>
+              <label class="wide">URL webmail <input name="webmailUrl" type="url" placeholder="https://tudominio.com/webmail" /></label>
+              <label class="wide">Firma empresarial <textarea name="signature" rows="4" placeholder="Nombre | Cargo&#10;Empresa&#10;Telefono | Sitio web"></textarea></label>
+              <label class="wide">Notas <textarea name="notes" rows="3" placeholder="MX/SPF/DKIM pendientes, responsable, cPanel, cuota, alias."></textarea></label>
+              <button class="button primary" type="submit">Guardar cuenta GBMailer</button>
             </form>
-            <p class="admin-note">Para crear cuentas reales necesitamos acceso al proveedor de correo del dominio. Aqui queda la solicitud lista y auditable.</p>
+            <p class="admin-note">HostGator entrega los datos exactos por cuenta en cPanel. GBMailer guarda esos datos y genera archivos de configuracion para iPhone y Android.</p>
             <div class="superadmin-list" id="email-admin-list"></div>
           </section>
 
@@ -127,6 +147,11 @@
               <article><strong>CRM</strong><span>Clientes, historial, etiquetas, comentarios, alergias, preferencias y campanas.</span></article>
               <article><strong>Canales</strong><span>Google Business, WhatsApp, correo, Stripe, resenas, notificaciones e integraciones externas.</span></article>
               <article><strong>Apps</strong><span>PWA primero; iOS/Android cuando tengamos App Store Connect y Play Console.</span></article>
+            </div>
+            <div class="developer-credentials">
+              <strong>Credenciales temporales de desarrollador</strong>
+              <span>Vendedor: GEMINPEC S.A. de C.V. SOFOM ENR</span>
+              <span>Este bloque se incluira por defecto en las apps y entregables administrados por GBMailer / Gato Business.</span>
             </div>
             <div class="superadmin-list" id="mobile-app-admin-list"></div>
           </section>
@@ -622,6 +647,6 @@
       </section>
     </main>
 
-    <script src="/admin.js?v=20260608-superadmin-suite"></script>
+    <script src="/admin.js?v=20260608-gbmailer"></script>
   </body>
 </html>

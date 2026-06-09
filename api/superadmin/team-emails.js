@@ -9,6 +9,14 @@ function mapEmail(row) {
     role: row.role,
     provider: row.provider,
     status: row.status,
+    temporaryPassword: row.temporary_password || "",
+    incomingHost: row.incoming_host || "",
+    incomingPort: row.incoming_port || 993,
+    outgoingHost: row.outgoing_host || "",
+    outgoingPort: row.outgoing_port || 465,
+    securityType: row.security_type || "SSL/TLS",
+    webmailUrl: row.webmail_url || "",
+    signature: row.signature || "",
     notes: row.notes || ""
   };
 }
@@ -31,8 +39,12 @@ module.exports = async function handler(req, res) {
     if (req.method === "POST") {
       const item = req.body || {};
       const result = await query(
-        `insert into team_email_accounts (site_key, display_name, email, role, provider, status, notes)
-         values ($1,$2,$3,$4,$5,$6,$7)
+        `insert into team_email_accounts (
+           site_key, display_name, email, role, provider, status, temporary_password,
+           incoming_host, incoming_port, outgoing_host, outgoing_port, security_type,
+           webmail_url, signature, notes
+         )
+         values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
          on conflict (id)
          do update set site_key=excluded.site_key,
                        display_name=excluded.display_name,
@@ -40,6 +52,14 @@ module.exports = async function handler(req, res) {
                        role=excluded.role,
                        provider=excluded.provider,
                        status=excluded.status,
+                       temporary_password=excluded.temporary_password,
+                       incoming_host=excluded.incoming_host,
+                       incoming_port=excluded.incoming_port,
+                       outgoing_host=excluded.outgoing_host,
+                       outgoing_port=excluded.outgoing_port,
+                       security_type=excluded.security_type,
+                       webmail_url=excluded.webmail_url,
+                       signature=excluded.signature,
                        notes=excluded.notes,
                        updated_at=now()
          returning *`,
@@ -48,8 +68,16 @@ module.exports = async function handler(req, res) {
           item.displayName || "",
           item.email || "",
           item.role || "team",
-          item.provider || "pending",
+          item.provider || "hostgator",
           item.status || "requested",
+          item.temporaryPassword || "",
+          item.incomingHost || "",
+          Number(item.incomingPort || 993),
+          item.outgoingHost || "",
+          Number(item.outgoingPort || 465),
+          item.securityType || "SSL/TLS",
+          item.webmailUrl || "",
+          item.signature || "",
           item.notes || ""
         ]
       );
