@@ -7,6 +7,30 @@
     {
       "source": "/admin/",
       "destination": "/admin/index.html"
+    },
+    {
+      "source": "/reservas",
+      "destination": "/reservas.html"
+    },
+    {
+      "source": "/reservas/",
+      "destination": "/reservas.html"
+    },
+    {
+      "source": "/goreservas",
+      "destination": "/goreservas.html"
+    },
+    {
+      "source": "/goreservas/",
+      "destination": "/goreservas.html"
+    },
+    {
+      "source": "/xadsis",
+      "destination": "/xadsis.html"
+    },
+    {
+      "source": "/xadsis/",
+      "destination": "/xadsis.html"
     }
   ]
 }

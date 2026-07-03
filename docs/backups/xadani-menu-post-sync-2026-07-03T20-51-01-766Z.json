@@ -1,0 +1,1230 @@
+{
+  "createdAt": "2026-07-03T20:51:01.768Z",
+  "database": {
+    "host": "ep-square-union-at1jpm6s-pooler.c-9.us-east-1.aws.neon.tech",
+    "database": "neondb"
+  },
+  "settings": [
+    {
+      "key": "menu_structure_version",
+      "value": "20260529-v2"
+    },
+    {
+      "key": "physical_menu_sync_version",
+      "value": "20260703-menu-confirmado-v1"
+    }
+  ],
+  "menu_items": [
+    {
+      "id": 14,
+      "category": "bebidas-con-alcohol",
+      "name": "Coctel de mezcal con hoja santa",
+      "description": "Mezcal joven, hoja santa, limon, jarabe de agave y sal de chile.",
+      "price": 190,
+      "price_label": "",
+      "image": "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=900&q=80",
+      "tags": [
+        "Mezcal"
+      ],
+      "active": false,
+      "sort_order": 13,
+      "created_at": "2026-07-03T20:50:15.734Z",
+      "updated_at": "2026-07-03T20:50:24.853Z"
+    },
+    {
+      "id": 15,
+      "category": "bebidas-sin-alcohol",
+      "name": "Agua de cacao",
+      "description": "Cacao, maiz, canela y espuma ligera, servida fria.",
+      "price": 95,
+      "price_label": "",
+      "image": "https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=900&q=80",
+      "tags": [
+        "Sin alcohol"
+      ],
+      "active": false,
+      "sort_order": 14,
+      "created_at": "2026-07-03T20:50:15.817Z",
+      "updated_at": "2026-07-03T20:50:24.853Z"
+    },
+    {
+      "id": 5,
+      "category": "entradas-caldos",
+      "name": "Caldo de piedra estilo casa",
+      "description": "Caldo claro con pescado, jitomate, chile y hierbas frescas.",
+      "price": 185,
+      "price_label": "",
+      "image": "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=900&q=80",
+      "tags": [
+        "Casa"
+      ],
+      "active": false,
+      "sort_order": 4,
+      "created_at": "2026-07-03T20:50:14.961Z",
+      "updated_at": "2026-07-03T20:50:24.853Z"
+    },
+    {
+      "id": 43,
+      "category": "entradas-caldos",
+      "name": "Caldo de camarón",
+      "description": "Caldo de camarón con tomate, cebolla, chipotle, fumet de camarón y epazote. Incluye seis piezas.",
+      "price": 250,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Caldo"
+      ],
+      "active": true,
+      "sort_order": 27,
+      "created_at": "2026-07-03T20:50:20.611Z",
+      "updated_at": "2026-07-03T20:50:20.611Z"
+    },
+    {
+      "id": 44,
+      "category": "entradas-caldos",
+      "name": "Caldo de pescado",
+      "description": "Caldo de pescado con tomate, cebolla, chipotle, fumet de pescado y epazote.",
+      "price": 230,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Caldo"
+      ],
+      "active": true,
+      "sort_order": 28,
+      "created_at": "2026-07-03T20:50:20.774Z",
+      "updated_at": "2026-07-03T20:50:20.774Z"
+    },
+    {
+      "id": 45,
+      "category": "entradas-caldos",
+      "name": "Caldo de pescado con camarones",
+      "description": "Caldo de pescado con camarones, tomate, cebolla, chipotle, fumet de pescado y epazote.",
+      "price": 250,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Caldo"
+      ],
+      "active": true,
+      "sort_order": 29,
+      "created_at": "2026-07-03T20:50:20.937Z",
+      "updated_at": "2026-07-03T20:50:20.937Z"
+    },
+    {
+      "id": 4,
+      "category": "entradas-calientes",
+      "name": "Tetela de requeson y hoja santa",
+      "description": "Masa azul, requeson fresco, hoja santa y salsa de chile pasilla mixe.",
+      "price": 145,
+      "price_label": "",
+      "image": "https://images.unsplash.com/photo-1618040996337-56904b7850b9?auto=format&fit=crop&w=900&q=80",
+      "tags": [
+        "Maiz criollo"
+      ],
+      "active": false,
+      "sort_order": 3,
+      "created_at": "2026-07-03T20:50:14.875Z",
+      "updated_at": "2026-07-03T20:50:24.853Z"
+    },
+    {
+      "id": 19,
+      "category": "entradas-calientes",
+      "name": "Empanadas de pescado",
+      "description": "Cinco empanadas de masa con pescado, cebolla, tomate y cilantro, servidas calientes.",
+      "price": 200,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Maíz"
+      ],
+      "active": true,
+      "sort_order": 3,
+      "created_at": "2026-07-03T20:50:16.640Z",
+      "updated_at": "2026-07-03T20:50:16.640Z"
+    },
+    {
+      "id": 60,
+      "category": "entradas-calientes",
+      "name": "Molote de plátano",
+      "description": "Puré de plátano relleno de queso, servido con crema y queso fresco.",
+      "price": 120,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Istmo"
+      ],
+      "active": true,
+      "sort_order": 44,
+      "created_at": "2026-07-03T20:50:23.413Z",
+      "updated_at": "2026-07-03T20:50:23.413Z"
+    },
+    {
+      "id": 64,
+      "category": "entradas-calientes",
+      "name": "Bolitas de queso",
+      "description": "Cinco bolitas de queso vaquero con huevo, fritas en aceite.",
+      "price": 100,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Queso"
+      ],
+      "active": true,
+      "sort_order": 48,
+      "created_at": "2026-07-03T20:50:24.081Z",
+      "updated_at": "2026-07-03T20:50:24.081Z"
+    },
+    {
+      "id": 2,
+      "category": "entradas-cocteles",
+      "name": "Coctel de camaron Xadani",
+      "description": "Camaron, jitomate, aguacate, cilantro y salsa de la casa.",
+      "price": 210,
+      "price_label": "",
+      "image": "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=900&q=80",
+      "tags": [
+        "Fresco"
+      ],
+      "active": false,
+      "sort_order": 1,
+      "created_at": "2026-07-03T20:50:14.710Z",
+      "updated_at": "2026-07-03T20:50:24.853Z"
+    },
+    {
+      "id": 35,
+      "category": "entradas-cocteles",
+      "name": "Cóctel de camarón mediano",
+      "description": "Camarón en salsa de cátsup con cilantro, cebolla y aguacate. Disponible en tamaño mediano o grande.",
+      "price": 200,
+      "price_label": "M $200 / G $250",
+      "image": "",
+      "tags": [
+        "Fresco"
+      ],
+      "active": true,
+      "sort_order": 19,
+      "created_at": "2026-07-03T20:50:19.287Z",
+      "updated_at": "2026-07-03T20:50:24.769Z"
+    },
+    {
+      "id": 36,
+      "category": "entradas-cocteles",
+      "name": "Cóctel campechano",
+      "description": "Combinación de pulpo, camarón y caracol en salsa de cátsup con cilantro, cebolla y aguacate. Disponible en tamaño mediano o grande.",
+      "price": 200,
+      "price_label": "M $200 / G $250",
+      "image": "",
+      "tags": [
+        "Mariscos"
+      ],
+      "active": true,
+      "sort_order": 20,
+      "created_at": "2026-07-03T20:50:19.451Z",
+      "updated_at": "2026-07-03T20:50:19.451Z"
+    },
+    {
+      "id": 37,
+      "category": "entradas-cocteles",
+      "name": "Vuelve a la vida",
+      "description": "Pulpo, camarón y caracol en salsa de cátsup con cilantro, cebolla y aguacate; fresco, abundante y reparador.",
+      "price": 200,
+      "price_label": "M $200 / G $250",
+      "image": "",
+      "tags": [
+        "Mariscos"
+      ],
+      "active": true,
+      "sort_order": 21,
+      "created_at": "2026-07-03T20:50:19.612Z",
+      "updated_at": "2026-07-03T20:50:19.612Z"
+    },
+    {
+      "id": 7,
+      "category": "entradas-consomes",
+      "name": "Consome de barbacoa",
+      "description": "Consome especiado con garbanzo, arroz y chile de agua.",
+      "price": 170,
+      "price_label": "",
+      "image": "https://images.unsplash.com/photo-1603105037880-880cd4edfb0d?auto=format&fit=crop&w=900&q=80",
+      "tags": [
+        "Caliente"
+      ],
+      "active": false,
+      "sort_order": 6,
+      "created_at": "2026-07-03T20:50:15.137Z",
+      "updated_at": "2026-07-03T20:50:24.853Z"
+    },
+    {
+      "id": 47,
+      "category": "entradas-consomes",
+      "name": "Consomé de pescado",
+      "description": "Consomé de pescado con tomate, cebolla, chipotle, fumet de pescado, epazote y pescado.",
+      "price": 150,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Consomé"
+      ],
+      "active": true,
+      "sort_order": 31,
+      "created_at": "2026-07-03T20:50:21.269Z",
+      "updated_at": "2026-07-03T20:50:21.269Z"
+    },
+    {
+      "id": 17,
+      "category": "entradas-ensaladas",
+      "name": "Ensalada con camarón seco",
+      "description": "Tomate, cebolla, cilantro y chile curtido con camarón seco; fresca, directa y de sabor intenso.",
+      "price": 180,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Fresco"
+      ],
+      "active": true,
+      "sort_order": 1,
+      "created_at": "2026-07-03T20:50:16.311Z",
+      "updated_at": "2026-07-03T20:50:16.311Z"
+    },
+    {
+      "id": 3,
+      "category": "entradas-ensaladas",
+      "name": "Ensalada de quelites",
+      "description": "Tomate criollo, aguacate, vinagreta de limon y pepita tostada.",
+      "price": 155,
+      "price_label": "",
+      "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=900&q=80",
+      "tags": [
+        "Vegetariano"
+      ],
+      "active": false,
+      "sort_order": 2,
+      "created_at": "2026-07-03T20:50:14.791Z",
+      "updated_at": "2026-07-03T20:50:24.853Z"
+    },
+    {
+      "id": 18,
+      "category": "entradas-ensaladas",
+      "name": "Ensalada con camarón fresco",
+      "description": "Camarón fresco con tomate, cebolla, cilantro, chile, aceite de oliva, pepino y aguacate.",
+      "price": 250,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Camarón"
+      ],
+      "active": true,
+      "sort_order": 2,
+      "created_at": "2026-07-03T20:50:16.474Z",
+      "updated_at": "2026-07-03T20:50:16.474Z"
+    },
+    {
+      "id": 22,
+      "category": "entradas-ensaladas",
+      "name": "Ensalada de mariscos",
+      "description": "Camarón, caracol y pulpo con tomate, cebolla, chile, cilantro, pepino y aguacate.",
+      "price": 280,
+      "price_label": "",
+      "image": "/assets/xadani-hero-portada.jpg",
+      "tags": [
+        "Mariscos"
+      ],
+      "active": true,
+      "sort_order": 6,
+      "created_at": "2026-07-03T20:50:17.138Z",
+      "updated_at": "2026-07-03T20:50:17.138Z"
+    },
+    {
+      "id": 1,
+      "category": "entradas-frias",
+      "name": "Aguachile de pesca local",
+      "description": "Chile de agua, pepino, cebolla morada, limon criollo y aceite de cilantro.",
+      "price": 235,
+      "price_label": "",
+      "image": "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=900&q=80",
+      "tags": [
+        "Picante",
+        "Fresco"
+      ],
+      "active": false,
+      "sort_order": 0,
+      "created_at": "2026-07-03T20:50:14.626Z",
+      "updated_at": "2026-07-03T20:50:24.853Z"
+    },
+    {
+      "id": 16,
+      "category": "entradas-frias",
+      "name": "Tacos de camarón",
+      "description": "Cinco tacos en tortilla de maíz con camarón, tomate, cebolla, chile, queso, salsa de la casa y aguacate.",
+      "price": 250,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Camarón",
+        "Istmo"
+      ],
+      "active": true,
+      "sort_order": 0,
+      "created_at": "2026-07-03T20:50:16.144Z",
+      "updated_at": "2026-07-03T20:50:16.144Z"
+    },
+    {
+      "id": 20,
+      "category": "entradas-frias",
+      "name": "Minilla Xadani",
+      "description": "Pescado desmenuzado con tomate, cebolla y huevo, preparado al sazón de la casa.",
+      "price": 150,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Casa"
+      ],
+      "active": true,
+      "sort_order": 4,
+      "created_at": "2026-07-03T20:50:16.803Z",
+      "updated_at": "2026-07-03T20:50:16.803Z"
+    },
+    {
+      "id": 21,
+      "category": "entradas-frias",
+      "name": "Ceviche de pescado",
+      "description": "Pescado curtido en jugo de limón con cebolla morada, pepino y supremas de naranja.",
+      "price": 250,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Fresco"
+      ],
+      "active": true,
+      "sort_order": 5,
+      "created_at": "2026-07-03T20:50:16.967Z",
+      "updated_at": "2026-07-03T20:50:16.967Z"
+    },
+    {
+      "id": 23,
+      "category": "entradas-frias",
+      "name": "Jaibas enchipotladas",
+      "description": "Jaibas servidas con aderezo de chipotle o preparación enchipotlada, de carácter profundo y ligeramente picante.",
+      "price": 180,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Chipotle"
+      ],
+      "active": true,
+      "sort_order": 7,
+      "created_at": "2026-07-03T20:50:17.304Z",
+      "updated_at": "2026-07-03T20:50:17.304Z"
+    },
+    {
+      "id": 24,
+      "category": "entradas-frias",
+      "name": "Aguachile de camarón",
+      "description": "Camarones con limón, pepino, cebolla y chile habanero; una entrada fresca y vibrante.",
+      "price": 250,
+      "price_label": "",
+      "image": "/assets/xadani-portada-foto-18.jpg",
+      "tags": [
+        "Picante"
+      ],
+      "active": true,
+      "sort_order": 8,
+      "created_at": "2026-07-03T20:50:17.468Z",
+      "updated_at": "2026-07-03T20:50:24.769Z"
+    },
+    {
+      "id": 6,
+      "category": "entradas-sopas",
+      "name": "Sopa de guias",
+      "description": "Guias de calabaza, elote, flor de calabaza y chochoyotes.",
+      "price": 165,
+      "price_label": "",
+      "image": "https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a?auto=format&fit=crop&w=900&q=80",
+      "tags": [
+        "Temporada"
+      ],
+      "active": false,
+      "sort_order": 5,
+      "created_at": "2026-07-03T20:50:15.044Z",
+      "updated_at": "2026-07-03T20:50:24.853Z"
+    },
+    {
+      "id": 46,
+      "category": "entradas-sopas",
+      "name": "Sopa de mariscos",
+      "description": "Sopa con camarón, pulpo, caracol, pescado y jaibas en fumet de pescado con tomate, cebolla, epazote y chipotle.",
+      "price": 280,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Mariscos"
+      ],
+      "active": true,
+      "sort_order": 30,
+      "created_at": "2026-07-03T20:50:21.103Z",
+      "updated_at": "2026-07-03T20:50:21.103Z"
+    },
+    {
+      "id": 10,
+      "category": "fuertes-camarones",
+      "name": "Camarones al mojo de chile costeño",
+      "description": "Camarones salteados, ajo, chile costeño y arroz con hierbas.",
+      "price": 360,
+      "price_label": "",
+      "image": "https://images.unsplash.com/photo-1625944525533-473f1a3d54e7?auto=format&fit=crop&w=900&q=80",
+      "tags": [
+        "Mar"
+      ],
+      "active": false,
+      "sort_order": 9,
+      "created_at": "2026-07-03T20:50:15.387Z",
+      "updated_at": "2026-07-03T20:50:24.853Z"
+    },
+    {
+      "id": 31,
+      "category": "fuertes-camarones",
+      "name": "Camarones al horno",
+      "description": "Seis camarones preparados al horno de barro, a elegir natural, al mojo de ajo, enchipotados o con aderezo de chipotle; servidos con ensalada de verduras.",
+      "price": 250,
+      "price_label": "",
+      "image": "/assets/gallery/xadani-menu-confirmado/camarones-al-horno.jpg",
+      "tags": [
+        "Horno"
+      ],
+      "active": true,
+      "sort_order": 15,
+      "created_at": "2026-07-03T20:50:18.628Z",
+      "updated_at": "2026-07-03T20:50:18.628Z"
+    },
+    {
+      "id": 32,
+      "category": "fuertes-camarones",
+      "name": "Camarones al mojo de ajo horneados",
+      "description": "Seis camarones al mojo de ajo, acompañados con ensalada de verduras, arroz a la jardinera y aderezo de chipotle.",
+      "price": 250,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Ajo"
+      ],
+      "active": true,
+      "sort_order": 16,
+      "created_at": "2026-07-03T20:50:18.793Z",
+      "updated_at": "2026-07-03T20:50:24.769Z"
+    },
+    {
+      "id": 33,
+      "category": "fuertes-camarones",
+      "name": "Camarones empanizados",
+      "description": "Seis camarones empanizados con ensalada de verduras, arroz a la jardinera y aderezo de chipotle.",
+      "price": 250,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Crujiente"
+      ],
+      "active": true,
+      "sort_order": 17,
+      "created_at": "2026-07-03T20:50:18.958Z",
+      "updated_at": "2026-07-03T20:50:18.958Z"
+    },
+    {
+      "id": 34,
+      "category": "fuertes-camarones",
+      "name": "Camarones para pelar",
+      "description": "Camarones hervidos en agua caliente con sal, servidos con limones.",
+      "price": 250,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Clásico"
+      ],
+      "active": true,
+      "sort_order": 18,
+      "created_at": "2026-07-03T20:50:19.122Z",
+      "updated_at": "2026-07-03T20:50:19.122Z"
+    },
+    {
+      "id": 9,
+      "category": "fuertes-especiales-istmenos",
+      "name": "Garnacha istmena de res",
+      "description": "Tortilla crujiente, carne especiada, curtido y salsa roja.",
+      "price": 245,
+      "price_label": "",
+      "image": "https://images.unsplash.com/photo-1565299507177-b0ac66763828?auto=format&fit=crop&w=900&q=80",
+      "tags": [
+        "Istmo"
+      ],
+      "active": false,
+      "sort_order": 8,
+      "created_at": "2026-07-03T20:50:15.304Z",
+      "updated_at": "2026-07-03T20:50:24.853Z"
+    },
+    {
+      "id": 28,
+      "category": "fuertes-especiales-istmenos",
+      "name": "Nuggets de pollo",
+      "description": "Nuggets de pollo acompañados con papas fritas, cátsup y mayonesa.",
+      "price": 200,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Familiar"
+      ],
+      "active": true,
+      "sort_order": 12,
+      "created_at": "2026-07-03T20:50:18.122Z",
+      "updated_at": "2026-07-03T20:50:18.122Z"
+    },
+    {
+      "id": 57,
+      "category": "fuertes-especiales-istmenos",
+      "name": "Garnachas istmeñas",
+      "description": "Tortillas de nixtamal con carne, cebolla, col en vinagre, chile curtido y salsa de chipotle.",
+      "price": 150,
+      "price_label": "",
+      "image": "/assets/gallery/xadani-menu-confirmado/garnachas-istmenas.jpg",
+      "tags": [
+        "Istmo"
+      ],
+      "active": true,
+      "sort_order": 41,
+      "created_at": "2026-07-03T20:50:22.921Z",
+      "updated_at": "2026-07-03T20:50:22.921Z"
+    },
+    {
+      "id": 58,
+      "category": "fuertes-especiales-istmenos",
+      "name": "Pollo garnachero",
+      "description": "Pollo acompañado con col y chile curtido, dos garnachas, papas y salsa de chipotle.",
+      "price": 250,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Istmo"
+      ],
+      "active": true,
+      "sort_order": 42,
+      "created_at": "2026-07-03T20:50:23.086Z",
+      "updated_at": "2026-07-03T20:50:23.086Z"
+    },
+    {
+      "id": 59,
+      "category": "fuertes-especiales-istmenos",
+      "name": "Molote istmeño (guetabingui)",
+      "description": "Cinco molotes de nixtamal especiado con epazote, rellenos de camarón seco y cubiertos con pepita en mole.",
+      "price": 120,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Istmo"
+      ],
+      "active": true,
+      "sort_order": 43,
+      "created_at": "2026-07-03T20:50:23.248Z",
+      "updated_at": "2026-07-03T20:50:23.248Z"
+    },
+    {
+      "id": 61,
+      "category": "fuertes-especiales-istmenos",
+      "name": "Puré de papa",
+      "description": "Papa y zanahoria con queso vaquero, crema, mostaza, chícharos y chile curtido.",
+      "price": 150,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Istmo"
+      ],
+      "active": true,
+      "sort_order": 45,
+      "created_at": "2026-07-03T20:50:23.587Z",
+      "updated_at": "2026-07-03T20:50:23.587Z"
+    },
+    {
+      "id": 62,
+      "category": "fuertes-especiales-istmenos",
+      "name": "Tamal de elote al horno",
+      "description": "Tamal de elote al horno acompañado con queso fresco y crema.",
+      "price": 150,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Horno"
+      ],
+      "active": true,
+      "sort_order": 46,
+      "created_at": "2026-07-03T20:50:23.751Z",
+      "updated_at": "2026-07-03T20:50:23.751Z"
+    },
+    {
+      "id": 63,
+      "category": "fuertes-especiales-istmenos",
+      "name": "Ubre de vaca al horno",
+      "description": "Ubre de vaca al horno acompañada con frijol refrito seco, guacamole y pico de gallo.",
+      "price": 280,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Horno"
+      ],
+      "active": true,
+      "sort_order": 47,
+      "created_at": "2026-07-03T20:50:23.914Z",
+      "updated_at": "2026-07-03T20:50:23.914Z"
+    },
+    {
+      "id": 12,
+      "category": "fuertes-extras",
+      "name": "Orden de quesillo",
+      "description": "Quesillo fresco para acompanar tlayudas, moles o entradas.",
+      "price": 85,
+      "price_label": "",
+      "image": "https://images.unsplash.com/photo-1633436375795-12b3b339712f?auto=format&fit=crop&w=900&q=80",
+      "tags": [
+        "Extra"
+      ],
+      "active": false,
+      "sort_order": 11,
+      "created_at": "2026-07-03T20:50:15.570Z",
+      "updated_at": "2026-07-03T20:50:24.853Z"
+    },
+    {
+      "id": 30,
+      "category": "fuertes-extras",
+      "name": "Papas a la francesa",
+      "description": "Papas fritas servidas con cátsup.",
+      "price": 150,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Extra"
+      ],
+      "active": true,
+      "sort_order": 14,
+      "created_at": "2026-07-03T20:50:18.454Z",
+      "updated_at": "2026-07-03T20:50:18.454Z"
+    },
+    {
+      "id": 48,
+      "category": "fuertes-extras",
+      "name": "Orden de frijoles",
+      "description": "Orden extra de frijoles para acompañar la mesa.",
+      "price": 35,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Extra"
+      ],
+      "active": true,
+      "sort_order": 32,
+      "created_at": "2026-07-03T20:50:21.439Z",
+      "updated_at": "2026-07-03T20:50:21.439Z"
+    },
+    {
+      "id": 49,
+      "category": "fuertes-extras",
+      "name": "Orden de queso",
+      "description": "Orden extra de queso fresco o vaquero.",
+      "price": 35,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Extra"
+      ],
+      "active": true,
+      "sort_order": 33,
+      "created_at": "2026-07-03T20:50:21.603Z",
+      "updated_at": "2026-07-03T20:50:21.603Z"
+    },
+    {
+      "id": 50,
+      "category": "fuertes-extras",
+      "name": "Orden de totopos",
+      "description": "Totopos crujientes para acompañar entradas, caldos o botanas.",
+      "price": 30,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Extra"
+      ],
+      "active": true,
+      "sort_order": 34,
+      "created_at": "2026-07-03T20:50:21.771Z",
+      "updated_at": "2026-07-03T20:50:21.771Z"
+    },
+    {
+      "id": 51,
+      "category": "fuertes-extras",
+      "name": "Orden de salsas",
+      "description": "Selección de salsas de la casa.",
+      "price": 30,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Extra"
+      ],
+      "active": true,
+      "sort_order": 35,
+      "created_at": "2026-07-03T20:50:21.938Z",
+      "updated_at": "2026-07-03T20:50:21.938Z"
+    },
+    {
+      "id": 52,
+      "category": "fuertes-extras",
+      "name": "Orden de tortillas",
+      "description": "Tortillas calientes para acompañar los platillos.",
+      "price": 30,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Extra"
+      ],
+      "active": true,
+      "sort_order": 36,
+      "created_at": "2026-07-03T20:50:22.102Z",
+      "updated_at": "2026-07-03T20:50:22.102Z"
+    },
+    {
+      "id": 11,
+      "category": "fuertes-para-compartir",
+      "name": "Tlayuda Xadani con tasajo premium",
+      "description": "Asiento, frijol, quesillo, col, aguacate y salsa de molcajete.",
+      "price": 285,
+      "price_label": "",
+      "image": "https://images.unsplash.com/photo-1624300629298-e9de39c13be8?auto=format&fit=crop&w=900&q=80",
+      "tags": [
+        "Oaxaca"
+      ],
+      "active": false,
+      "sort_order": 10,
+      "created_at": "2026-07-03T20:50:15.489Z",
+      "updated_at": "2026-07-03T20:50:24.853Z"
+    },
+    {
+      "id": 38,
+      "category": "fuertes-para-compartir",
+      "name": "Botana istmeña",
+      "description": "Selección para compartir con beela doo, empanadas, garnachas, guetabingui, ensalada con camarón seco, camarones al horno, tamales de elote, bolitas de queso y totopos.",
+      "price": 0,
+      "price_label": "S/P",
+      "image": "",
+      "tags": [
+        "Para compartir"
+      ],
+      "active": true,
+      "sort_order": 22,
+      "created_at": "2026-07-03T20:50:19.797Z",
+      "updated_at": "2026-07-03T20:50:19.797Z"
+    },
+    {
+      "id": 39,
+      "category": "fuertes-para-compartir",
+      "name": "Botana istmeña para 2 personas",
+      "description": "Botana istmeña servida al centro para dos personas.",
+      "price": 700,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Para compartir"
+      ],
+      "active": true,
+      "sort_order": 23,
+      "created_at": "2026-07-03T20:50:19.960Z",
+      "updated_at": "2026-07-03T20:50:19.960Z"
+    },
+    {
+      "id": 40,
+      "category": "fuertes-para-compartir",
+      "name": "Botana istmeña para 3 personas",
+      "description": "Botana istmeña servida al centro para tres personas.",
+      "price": 900,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Para compartir"
+      ],
+      "active": true,
+      "sort_order": 24,
+      "created_at": "2026-07-03T20:50:20.122Z",
+      "updated_at": "2026-07-03T20:50:20.122Z"
+    },
+    {
+      "id": 41,
+      "category": "fuertes-para-compartir",
+      "name": "Botana istmeña para 4 personas",
+      "description": "Botana istmeña servida al centro para cuatro personas.",
+      "price": 1200,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Para compartir"
+      ],
+      "active": true,
+      "sort_order": 25,
+      "created_at": "2026-07-03T20:50:20.285Z",
+      "updated_at": "2026-07-03T20:50:20.285Z"
+    },
+    {
+      "id": 42,
+      "category": "fuertes-para-compartir",
+      "name": "Botana istmeña para 5 personas",
+      "description": "Botana istmeña servida al centro para cinco personas.",
+      "price": 1500,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Para compartir"
+      ],
+      "active": true,
+      "sort_order": 26,
+      "created_at": "2026-07-03T20:50:20.449Z",
+      "updated_at": "2026-07-03T20:50:20.449Z"
+    },
+    {
+      "id": 8,
+      "category": "fuertes-pesca-del-dia",
+      "name": "Pesca del dia con coloradito",
+      "description": "Filete a la plancha, coloradito, verduras tatemadas y limon quemado.",
+      "price": 390,
+      "price_label": "",
+      "image": "https://images.unsplash.com/photo-1485921325833-c519f76c4927?auto=format&fit=crop&w=900&q=80",
+      "tags": [
+        "Fresco"
+      ],
+      "active": false,
+      "sort_order": 7,
+      "created_at": "2026-07-03T20:50:15.221Z",
+      "updated_at": "2026-07-03T20:50:24.853Z"
+    },
+    {
+      "id": 25,
+      "category": "fuertes-pesca-del-dia",
+      "name": "Filete relleno de mariscos",
+      "description": "Filete con pulpo, camarón, caracol y queso gratinado, terminado con tomate, cebolla y aderezo de chipotle.",
+      "price": 280,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Mariscos"
+      ],
+      "active": true,
+      "sort_order": 9,
+      "created_at": "2026-07-03T20:50:17.631Z",
+      "updated_at": "2026-07-03T20:50:17.631Z"
+    },
+    {
+      "id": 26,
+      "category": "fuertes-pesca-del-dia",
+      "name": "Filete de pescado empanizado",
+      "description": "Filete empanizado acompañado con ensalada de verduras y arroz a la jardinera.",
+      "price": 250,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Crujiente"
+      ],
+      "active": true,
+      "sort_order": 10,
+      "created_at": "2026-07-03T20:50:17.794Z",
+      "updated_at": "2026-07-03T20:50:17.794Z"
+    },
+    {
+      "id": 27,
+      "category": "fuertes-pesca-del-dia",
+      "name": "Hueva de lisa",
+      "description": "Hueva de lisa frita o al horno, acompañada con ensalada de verduras.",
+      "price": 250,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Especial"
+      ],
+      "active": true,
+      "sort_order": 11,
+      "created_at": "2026-07-03T20:50:17.954Z",
+      "updated_at": "2026-07-03T20:50:17.954Z"
+    },
+    {
+      "id": 29,
+      "category": "fuertes-pesca-del-dia",
+      "name": "Filete al horno al mojo de ajo",
+      "description": "Filete horneado al mojo de ajo, servido con ensalada de verduras y arroz a la jardinera.",
+      "price": 250,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Horno"
+      ],
+      "active": true,
+      "sort_order": 13,
+      "created_at": "2026-07-03T20:50:18.288Z",
+      "updated_at": "2026-07-03T20:50:18.288Z"
+    },
+    {
+      "id": 65,
+      "category": "fuertes-pesca-del-dia",
+      "name": "Lisa al horno de barro tradicional con aderezo de la casa",
+      "description": "Lisa horneada en barro, preparada al estilo tradicional de la casa; se sirve con ensalada de verduras. Precio según tamaño.",
+      "price": 0,
+      "price_label": "S/T",
+      "image": "/assets/gallery/xadani-menu-confirmado/lisa-al-horno-barro.jpg",
+      "tags": [
+        "Horno"
+      ],
+      "active": true,
+      "sort_order": 49,
+      "created_at": "2026-07-03T20:50:24.275Z",
+      "updated_at": "2026-07-03T20:50:24.275Z"
+    },
+    {
+      "id": 66,
+      "category": "fuertes-pesca-del-dia",
+      "name": "Posta de robalo",
+      "description": "Posta de robalo a elegir natural, mojo de ajo, a la mexicana, enchipotlada o con aderezo de chipotle; servida con ensalada de verduras.",
+      "price": 0,
+      "price_label": "S/T",
+      "image": "",
+      "tags": [
+        "Pesca"
+      ],
+      "active": true,
+      "sort_order": 50,
+      "created_at": "2026-07-03T20:50:24.438Z",
+      "updated_at": "2026-07-03T20:50:24.438Z"
+    },
+    {
+      "id": 67,
+      "category": "fuertes-pesca-del-dia",
+      "name": "Salmón del patrón",
+      "description": "Salmón horneado con orégano, aceite de oliva y ajo; acompañado con ensalada de verduras y arroz a la jardinera.",
+      "price": 350,
+      "price_label": "",
+      "image": "/assets/xadani-portada-foto-02.jpg",
+      "tags": [
+        "Horno"
+      ],
+      "active": true,
+      "sort_order": 51,
+      "created_at": "2026-07-03T20:50:24.603Z",
+      "updated_at": "2026-07-03T20:50:24.769Z"
+    },
+    {
+      "id": 13,
+      "category": "postres",
+      "name": "Nicuatole con frutos rojos",
+      "description": "Postre tradicional de maiz con compota de temporada.",
+      "price": 135,
+      "price_label": "",
+      "image": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=900&q=80",
+      "tags": [
+        "Maiz"
+      ],
+      "active": false,
+      "sort_order": 12,
+      "created_at": "2026-07-03T20:50:15.653Z",
+      "updated_at": "2026-07-03T20:50:24.853Z"
+    },
+    {
+      "id": 53,
+      "category": "postres",
+      "name": "Plátanos al horno",
+      "description": "Plátanos al horno acompañados con queso vaquero o fresco y crema.",
+      "price": 80,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Postre"
+      ],
+      "active": true,
+      "sort_order": 37,
+      "created_at": "2026-07-03T20:50:22.273Z",
+      "updated_at": "2026-07-03T20:50:22.273Z"
+    },
+    {
+      "id": 54,
+      "category": "postres",
+      "name": "Plátanos fritos",
+      "description": "Plátanos fritos acompañados con queso vaquero o fresco y crema.",
+      "price": 100,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Postre"
+      ],
+      "active": true,
+      "sort_order": 38,
+      "created_at": "2026-07-03T20:50:22.436Z",
+      "updated_at": "2026-07-03T20:50:22.436Z"
+    },
+    {
+      "id": 55,
+      "category": "postres",
+      "name": "Helado",
+      "description": "Helado servido con chocolate líquido.",
+      "price": 80,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Postre"
+      ],
+      "active": true,
+      "sort_order": 39,
+      "created_at": "2026-07-03T20:50:22.597Z",
+      "updated_at": "2026-07-03T20:50:22.597Z"
+    },
+    {
+      "id": 56,
+      "category": "postres",
+      "name": "Ciruela curada",
+      "description": "Ciruela y nance curtidos en alcohol y azúcar.",
+      "price": 80,
+      "price_label": "",
+      "image": "",
+      "tags": [
+        "Postre"
+      ],
+      "active": true,
+      "sort_order": 40,
+      "created_at": "2026-07-03T20:50:22.759Z",
+      "updated_at": "2026-07-03T20:50:22.759Z"
+    }
+  ],
+  "menu_categories": [
+    {
+      "slug": "entradas-frias",
+      "group_name": "ENTRADAS",
+      "name": "FRIAS",
+      "active": true,
+      "sort_order": 0,
+      "created_at": "2026-07-03T20:50:13.377Z",
+      "updated_at": "2026-07-03T20:50:13.377Z"
+    },
+    {
+      "slug": "entradas-cocteles",
+      "group_name": "ENTRADAS",
+      "name": "COCTELES",
+      "active": true,
+      "sort_order": 1,
+      "created_at": "2026-07-03T20:50:13.461Z",
+      "updated_at": "2026-07-03T20:50:13.461Z"
+    },
+    {
+      "slug": "entradas-ensaladas",
+      "group_name": "ENTRADAS",
+      "name": "ENSALADAS",
+      "active": true,
+      "sort_order": 2,
+      "created_at": "2026-07-03T20:50:13.543Z",
+      "updated_at": "2026-07-03T20:50:13.543Z"
+    },
+    {
+      "slug": "entradas-calientes",
+      "group_name": "ENTRADAS",
+      "name": "CALIENTES",
+      "active": true,
+      "sort_order": 3,
+      "created_at": "2026-07-03T20:50:13.627Z",
+      "updated_at": "2026-07-03T20:50:13.627Z"
+    },
+    {
+      "slug": "entradas-caldos",
+      "group_name": "ENTRADAS",
+      "name": "CALDOS",
+      "active": true,
+      "sort_order": 4,
+      "created_at": "2026-07-03T20:50:13.709Z",
+      "updated_at": "2026-07-03T20:50:13.709Z"
+    },
+    {
+      "slug": "entradas-sopas",
+      "group_name": "ENTRADAS",
+      "name": "SOPAS",
+      "active": true,
+      "sort_order": 5,
+      "created_at": "2026-07-03T20:50:13.794Z",
+      "updated_at": "2026-07-03T20:50:13.794Z"
+    },
+    {
+      "slug": "entradas-consomes",
+      "group_name": "ENTRADAS",
+      "name": "CONSOMES",
+      "active": true,
+      "sort_order": 6,
+      "created_at": "2026-07-03T20:50:13.880Z",
+      "updated_at": "2026-07-03T20:50:13.880Z"
+    },
+    {
+      "slug": "fuertes-pesca-del-dia",
+      "group_name": "FUERTES",
+      "name": "PESCA DEL DÍA",
+      "active": true,
+      "sort_order": 7,
+      "created_at": "2026-07-03T20:50:13.962Z",
+      "updated_at": "2026-07-03T20:50:13.962Z"
+    },
+    {
+      "slug": "fuertes-especiales-istmenos",
+      "group_name": "FUERTES",
+      "name": "ESPECIALES ISTMEÑOS",
+      "active": true,
+      "sort_order": 8,
+      "created_at": "2026-07-03T20:50:14.045Z",
+      "updated_at": "2026-07-03T20:50:14.045Z"
+    },
+    {
+      "slug": "fuertes-camarones",
+      "group_name": "FUERTES",
+      "name": "CAMARONES",
+      "active": true,
+      "sort_order": 9,
+      "created_at": "2026-07-03T20:50:14.130Z",
+      "updated_at": "2026-07-03T20:50:14.130Z"
+    },
+    {
+      "slug": "fuertes-para-compartir",
+      "group_name": "FUERTES",
+      "name": "PARA COMPARTIR",
+      "active": true,
+      "sort_order": 10,
+      "created_at": "2026-07-03T20:50:14.212Z",
+      "updated_at": "2026-07-03T20:50:14.212Z"
+    },
+    {
+      "slug": "fuertes-extras",
+      "group_name": "FUERTES",
+      "name": "EXTRAS",
+      "active": true,
+      "sort_order": 11,
+      "created_at": "2026-07-03T20:50:14.294Z",
+      "updated_at": "2026-07-03T20:50:14.294Z"
+    },
+    {
+      "slug": "postres",
+      "group_name": "POSTRES",
+      "name": "POSTRES",
+      "active": true,
+      "sort_order": 12,
+      "created_at": "2026-07-03T20:50:14.375Z",
+      "updated_at": "2026-07-03T20:50:14.375Z"
+    },
+    {
+      "slug": "bebidas-con-alcohol",
+      "group_name": "BEBIDAS",
+      "name": "CON ALCOHOL",
+      "active": true,
+      "sort_order": 13,
+      "created_at": "2026-07-03T20:50:14.459Z",
+      "updated_at": "2026-07-03T20:50:14.459Z"
+    },
+    {
+      "slug": "bebidas-sin-alcohol",
+      "group_name": "BEBIDAS",
+      "name": "SIN ALCOHOL",
+      "active": true,
+      "sort_order": 14,
+      "created_at": "2026-07-03T20:50:14.540Z",
+      "updated_at": "2026-07-03T20:50:14.540Z"
+    }
+  ]
+}
