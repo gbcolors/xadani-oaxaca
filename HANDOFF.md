@@ -14,6 +14,18 @@ El handoff operativo completo esta aqui:
 C:\Users\Usuario\Documents\Codex\projects\xadani-oaxaca\docs\handoff-operadorc101-xadani-menu-20260703.md
 ```
 
+El handoff de pagos presenciales `gopoint` / Mercado Pago Point esta aqui:
+
+```text
+C:\Users\Usuario\Documents\Codex\projects\xadani-oaxaca\docs\GOPOINT_XADANI_HANDOFF_20260704.md
+```
+
+El corte rector de portafolio y depuracion de proyectos duplicados esta aqui:
+
+```text
+C:\Users\Usuario\Documents\Codex\projects\xadani-oaxaca\docs\XADANI_PORTFOLIO_RECTOR_20260711.md
+```
+
 El ticket master esta aqui:
 
 ```text
@@ -34,6 +46,28 @@ git -C "C:\Users\Usuario\Documents\Codex\projects\xadani-oaxaca" status --short
 ## Regla actualizada por direccion
 
 Las instrucciones directas de `japhce411` sobre cambios de menu prevalecen sobre cualquier paquete local, demo, seed anterior o criterio provisional del operador. Esos cambios deben aplicarse en la BD real dedicada de Xadani, no quedarse solo en archivos locales.
+
+## Proyecto canonico vivo
+
+Xadani solo debe operarse desde:
+
+```text
+C:\Users\Usuario\Documents\Codex\projects\xadani-oaxaca
+```
+
+Proyecto Vercel canonico:
+
+```text
+xadani-oaxaca
+```
+
+Los proyectos/deployments `toma-como-base-https-www-fishers` y `deploy-xadani-oaxaca` quedan como historicos o paquetes temporales. No deben recibir variables, dominios, webhooks, BD ni cambios productivos nuevos.
+
+Endpoint CRM worker del portafolio:
+
+```text
+/api/crm-worker
+```
 
 Antes de escribir en produccion:
 

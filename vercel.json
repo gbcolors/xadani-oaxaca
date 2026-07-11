@@ -25,6 +25,14 @@
       "destination": "/goreservas.html"
     },
     {
+      "source": "/club/gobookr",
+      "destination": "/gobookr.html"
+    },
+    {
+      "source": "/gobookr",
+      "destination": "/gobookr.html"
+    },
+    {
       "source": "/xadsis",
       "destination": "/xadsis.html"
     },

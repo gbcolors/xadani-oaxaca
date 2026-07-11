@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="es-MX">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>gobookr | Xadani en Oaxaca</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      body { background: #f7f4ed; color: #231810; }
+      .gobookr-wrap { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 24px 0 48px; }
+      .gobookr-top { display:flex; justify-content:space-between; gap:16px; align-items:center; margin-bottom:18px; }
+      .gobookr-top nav { display:flex; gap:8px; flex-wrap:wrap; }
+      .gobookr-top a, .pill, button { border:1px solid rgba(35,24,16,.12); border-radius:999px; padding:9px 13px; background:#fff; color:#231810; text-decoration:none; }
+      .card { border:1px solid rgba(35,24,16,.12); border-radius:24px; padding:18px; background:rgba(255,255,255,.86); box-shadow:0 18px 48px rgba(35,24,16,.08); }
+      .grid { display:grid; grid-template-columns:.9fr 1.1fr; gap:16px; }
+      .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:12px; }
+      .stats span, .job { border:1px solid rgba(35,24,16,.1); border-radius:16px; padding:12px; background:#fffaf5; }
+      .stats b, .stats small, .job strong, .job span, .job small { display:block; }
+      form { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+      label { display:grid; gap:6px; color:rgba(35,24,16,.68); font-size:12px; }
+      input { border:1px solid rgba(35,24,16,.14); border-radius:14px; padding:11px; font:inherit; }
+      .jobs { display:grid; gap:10px; max-height:620px; overflow:auto; }
+      .job { display:grid; grid-template-columns:1.1fr .8fr .4fr auto; gap:10px; align-items:center; }
+      @media (max-width: 860px) { .grid, form, .job, .stats { grid-template-columns:1fr; } }
+    </style>
+  </head>
+  <body>
+    <main class="gobookr-wrap">
+      <header class="gobookr-top">
+        <div>
+          <p class="eyebrow">instancia independiente</p>
+          <h1>gobookr Xadani</h1>
+          <p>Worker directo a motor de reservas propio. Sin CoverManager.</p>
+        </div>
+        <nav><a href="/admin">Admin</a><a href="/reservas">Reservas publicas</a><a href="/goreservas">GoReservas</a></nav>
+      </header>
+      <section class="card">
+        <h2>Estado worker</h2>
+        <p data-worker-rule>cargando...</p>
+        <div class="stats" data-stats></div>
+      </section>
+      <section class="grid" style="margin-top:16px">
+        <article class="card">
+          <h2>Nueva reserva real</h2>
+          <form id="form">
+            <label>Nombre<input name="guestName" required /></label>
+            <label>Telefono<input name="phone" /></label>
+            <label>Email<input name="email" type="email" /></label>
+            <label>Fecha<input name="date" type="date" required /></label>
+            <label>Hora<input name="time" type="time" required /></label>
+            <label>Personas<input name="party" type="number" min="1" max="40" value="2" /></label>
+            <button type="submit">Confirmar directo</button>
+          </form>
+          <pre id="output">Listo.</pre>
+        </article>
+        <article class="card">
+          <h2>Reservas confirmadas</h2>
+          <div class="jobs" data-jobs></div>
+        </article>
+      </section>
+    </main>
+    <script src="/gobookr.js"></script>
+  </body>
+</html>
